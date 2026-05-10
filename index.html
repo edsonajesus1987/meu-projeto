@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>AutGuia • Lugares acolhedores para pessoas autistas</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+:root{
+--bg:#F7F9FF;
+--surface:rgba(255,255,255,.78);
+--text:#24324B;
+--muted:#6F7C99;
+--border:rgba(255,255,255,.45);
+
+--blue:#4B8BFF;
+--green:#67D66E;
+--yellow:#FFCC33;
+--red:#FF6B81;
+--purple:#B26BFF;
+
+--shadow:0 12px 45px rgba(72,98,255,.10);
+}
+
+body{
+font-family:'Sora',sans-serif;
+background:linear-gradient(180deg,#F7F9FF 0%,#EEF4FF 100%);
+color:var(--text);
+overflow-x:hidden;
+position:relative;
+}
+
+body::before{
+content:'';
+position:fixed;
+top:-250px;
+left:-250px;
+width:550px;
+height:550px;
+background:radial-gradient(circle,rgba(91,140,255,.18) 0%,transparent 70%);
+z-index:-1;
+}
+
+body::after{
+content:'';
+position:fixed;
+bottom:-250px;
+right:-250px;
+width:550px;
+height:550px;
+background:radial-gradient(circle,rgba(178,141,255,.18) 0%,transparent 70%);
+z-index:-1;
+}
+
+nav{
+height:90px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 42px;
+background:rgba(255,255,255,.72);
+backdrop-filter:blur(16px);
+border-bottom:1px solid rgba(255,255,255,.4);
+position:sticky;
+top:0;
+z-index:999;
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:16px;
+}
+
+.logo-icon-img{
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+.logo-icon-img img{
+width:92px;
+height:auto;
+object-fit:contain;
+display:block;
+}
+
+.logo-text-wrap{
+display:flex;
+flex-direction:column;
+}
+
+.logo-text{
+font-size:2.2rem;
+font-weight:700;
+line-height:1;
+letter-spacing:-2px;
+display:flex;
+align-items:center;
+}
+
+.logo-text span{
+display:inline-block;
+}
+
+.logo-text .c1,
+.logo-text .c2,
+.logo-text .c3,
+.logo-text .c4{
+color:#1877F2;
+}
+
+.logo-text .c5{
+color:#FF3131;
+}
+
+.logo-text .c6{
+color:#FFD93D;
+}
+
+.logo-text .c7,
+.logo-text .c8{
+color:#59D84F;
+}
+
+.logo-subtitle{
+font-size:.82rem;
+margin-top:6px;
+font-weight:500;
+color:#6D7B98;
+}
+
+.nav-right{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.btn{
+border:none;
+padding:12px 18px;
+border-radius:16px;
+font-family:'Sora',sans-serif;
+font-weight:600;
+cursor:pointer;
+transition:.25s;
+}
+
+.btn-primary{
+background:linear-gradient(
+135deg,
+#5B8CFF,
+#7A9DFF
+);
+color:white;
+box-shadow:0 10px 25px rgba(91,140,255,.25);
+}
+
+.btn-primary:hover{
+transform:translateY(-2px);
+}
+
+.btn-light{
+background:white;
+border:1px solid #E9EEFF;
+color:var(--text);
+}
+
+.hero{
+padding:20px 10px 10px;
+}
+
+.hero-content{
+max-width:1250px;
+margin:auto;
+display:block;
+}
+
+.badge{
+display:inline-flex;
+align-items:center;
+gap:10px;
+padding:12px 18px;
+border-radius:999px;
+background:rgba(255,255,255,.8);
+backdrop-filter:blur(14px);
+border:1px solid rgba(255,255,255,.5);
+margin-bottom:28px;
+font-size:.9rem;
+font-weight:600;
+box-shadow:var(--shadow);
+}
+
+.hero h1{
+font-size:4rem;
+line-height:1.05;
+margin-bottom:24px;
+font-weight:700;
+letter-spacing:-2px;
+max-width:780px;
+}
+
+.hero p{
+font-size:1.08rem;
+line-height:1.9;
+color:var(--muted);
+max-width:650px;
+margin-bottom:35px;
+}
+
+.search-box{
+display:flex;
+gap:14px;
+padding:16px;
+border-radius:28px;
+background:rgba(255,255,255,.78);
+backdrop-filter:blur(14px);
+border:1px solid rgba(255,255,255,.45);
+box-shadow:var(--shadow);
+}
+
+.search-box input,
+.search-box select{
+flex:1;
+padding:16px;
+border:none;
+outline:none;
+border-radius:18px;
+background:#F8FAFF;
+font-family:'Sora',sans-serif;
+font-size:.95rem;
+color:#24324B;
+}
+
+.search-box select{
+cursor:pointer;
+appearance:none;
+-webkit-appearance:none;
+-moz-appearance:none;
+}
+
+/* NOVA BARRA DE BENEFÍCIOS */
+
+.top-benefits{
+max-width:1250px;
+margin:0 auto 35px;
+display:grid;
+grid-template-columns:repeat(5,1fr);
+background:white;
+border-radius:18px;
+overflow:hidden;
+box-shadow:var(--shadow);
+border:1px solid #EEF2FF;
+}
+
+.benefit-item{
+display:flex;
+align-items:center;
+gap:12px;
+padding:18px;
+border-right:1px solid #EEF2FF;
+}
+
+.benefit-item:last-child{
+border-right:none;
+}
+
+.benefit-icon{
+width:44px;
+height:44px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:1.2rem;
+color:white;
+font-weight:700;
+flex-shrink:0;
+}
+
+.blue{
+background:#4B8BFF;
+}
+
+.yellow{
+background:#FFC107;
+}
+
+.green{
+background:#66CC33;
+}
+
+.purple{
+background:#B26BFF;
+}
+
+.red{
+background:#FF5D7D;
+}
+
+.benefit-text{
+font-size:.82rem;
+font-weight:600;
+line-height:1.4;
+color:#34425C;
+}
+
+/* FIM BENEFÍCIOS */
+
+.section{
+max-width:1250px;
+margin:auto;
+padding:25px 20px;
+}
+
+.section-header{
+margin-bottom:45px;
+}
+
+.section-header h2{
+font-size:2.6rem;
+margin-bottom:16px;
+letter-spacing:-1px;
+}
+
+.section-header p{
+max-width:760px;
+color:var(--muted);
+line-height:1.9;
+}
+
+/* NOVOS CARDS */
+
+.features{
+display:flex;
+flex-direction:column;
+gap:28px;
+max-width:700px;
+}
+
+.feature-card{
+display:flex;
+align-items:flex-start;
+gap:22px;
+}
+
+.feature-icon{
+width:70px;
+height:70px;
+border-radius:22px;
+background:#EEF2FF;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:2rem;
+flex-shrink:0;
+}
+
+.feature-content h4{
+font-size:2rem;
+margin-bottom:8px;
+font-weight:700;
+letter-spacing:-1px;
+}
+
+.feature-content p{
+font-size:1.25rem;
+line-height:1.6;
+color:#7180A0;
+}
+
+/* FIM NOVOS CARDS */
+
+.main-grid{
+display:grid;
+grid-template-columns:1fr 360px;
+gap:28px;
+}
+
+.card{
+background:rgba(255,255,255,.78);
+backdrop-filter:blur(18px);
+border-radius:34px;
+overflow:hidden;
+border:1px solid rgba(255,255,255,.45);
+box-shadow:var(--shadow);
+}
+
+.card-header{
+padding:24px 28px;
+background:linear-gradient(
+135deg,
+#5B8CFF,
+#7A9DFF
+);
+color:white;
+font-weight:700;
+font-size:1rem;
+}
+
+.card-body{
+padding:28px;
+}
+
+.form-group{
+display:flex;
+flex-direction:column;
+gap:8px;
+margin-bottom:18px;
+}
+
+.form-group label{
+font-size:.9rem;
+font-weight:600;
+color:var(--muted);
+}
+
+input,
+textarea,
+select{
+width:100%;
+padding:15px;
+border:none;
+outline:none;
+border-radius:18px;
+background:#F8FAFF;
+font-family:'Sora',sans-serif;
+font-size:.95rem;
+color:#24324B;
+}
+
+select{
+cursor:pointer;
+appearance:none;
+-webkit-appearance:none;
+-moz-appearance:none;
+}
+
+textarea{
+resize:none;
+}
+
+.rank-item{
+display:flex;
+align-items:center;
+gap:18px;
+padding:20px 0;
+border-bottom:1px solid #EDF2FF;
+}
+
+.rank-item:last-child{
+border:none;
+}
+
+.rank-number{
+width:42px;
+height:42px;
+border-radius:50%;
+background:linear-gradient(
+135deg,
+rgba(91,140,255,.14),
+rgba(178,141,255,.14)
+);
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:700;
+color:#5B8CFF;
+flex-shrink:0;
+}
+
+.rank-content{
+flex:1;
+}
+
+.rank-content h4{
+margin-bottom:5px;
+}
+
+.rank-content p{
+font-size:.85rem;
+color:var(--muted);
+}
+
+.rank-score{
+font-weight:700;
+color:#FFB703;
+}
+
+.partner-item{
+padding:18px 0;
+border-bottom:1px solid #EDF2FF;
+}
+
+.partner-item:last-child{
+border:none;
+}
+
+.partner-item h4{
+margin-bottom:5px;
+}
+
+.partner-item p{
+font-size:.84rem;
+color:var(--muted);
+margin-bottom:8px;
+}
+
+.partner-score{
+font-weight:700;
+color:#FFB703;
+}
+
+.side-box{
+padding:26px;
+border-radius:30px;
+margin-top:24px;
+background:linear-gradient(
+135deg,
+rgba(91,140,255,.08),
+rgba(178,141,255,.08)
+);
+border:1px solid #E8EEFF;
+}
+
+.side-box h3{
+margin-bottom:12px;
+}
+
+.side-box p{
+font-size:.92rem;
+line-height:1.8;
+color:var(--muted);
+}
+
+footer{
+margin-top:70px;
+padding:50px 20px;
+text-align:center;
+}
+
+footer p{
+max-width:760px;
+margin:auto;
+line-height:1.8;
+color:var(--muted);
+}
+
+.modal-overlay{
+position:fixed;
+inset:0;
+background:rgba(15,20,35,.55);
+display:flex;
+align-items:center;
+justify-content:center;
+opacity:0;
+pointer-events:none;
+transition:.2s;
+z-index:9999;
+backdrop-filter:blur(8px);
+}
+
+.modal-overlay.open{
+opacity:1;
+pointer-events:all;
+}
+
+.modal{
+width:100%;
+max-width:430px;
+background:white;
+border-radius:36px;
+padding:36px;
+position:relative;
+box-shadow:0 20px 70px rgba(0,0,0,.18);
+}
+
+.close-modal{
+position:absolute;
+right:22px;
+top:20px;
+background:none;
+border:none;
+font-size:1.4rem;
+cursor:pointer;
+}
+
+.tabs{
+display:flex;
+gap:10px;
+margin:28px 0;
+}
+
+.tab{
+flex:1;
+padding:13px;
+border:none;
+border-radius:14px;
+background:#EEF3FF;
+cursor:pointer;
+font-family:'Sora',sans-serif;
+font-weight:600;
+}
+
+.tab.active{
+background:linear-gradient(
+135deg,
+#5B8CFF,
+#7A9DFF
+);
+color:white;
+}
+
+.hidden{
+display:none;
+}
+
+#toast{
+position:fixed;
+bottom:30px;
+left:50%;
+transform:translateX(-50%) translateY(100px);
+background:#1F2B46;
+color:white;
+padding:16px 24px;
+border-radius:999px;
+transition:.3s;
+z-index:999999;
+}
+
+#toast.show{
+transform:translateX(-50%) translateY(0);
+}
+
+@media(max-width:1100px){
+
+.top-benefits{
+grid-template-columns:1fr;
+}
+
+.benefit-item{
+border-right:none;
+border-bottom:1px solid #EEF2FF;
+}
+
+.hero-content{
+grid-template-columns:1fr;
+}
+
+.main-grid{
+grid-template-columns:1fr;
+}
+
+.hero h1{
+font-size:2.8rem;
+}
+
+.logo-text{
+font-size:1.7rem;
+}
+
+.logo-icon-img img{
+width:68px;
+}
+
+.logo-subtitle{
+font-size:.72rem;
+}
+
+nav{
+padding:0 20px;
+}
+
+.feature-content h4{
+font-size:1.5rem;
+}
+
+.feature-content p{
+font-size:1rem;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<nav>
+
+<div class="logo">
+
+<div class="logo-icon-img">
+<img src="logo-autguia.png" alt="AutGuia">
+</div>
+
+<div class="logo-text-wrap">
+
+<div class="logo-text">
+<span class="c1">A</span><span class="c2">u</span><span class="c3">t</span><span class="c4">i</span><span class="c5">G</span><span class="c6">u</span><span class="c7">i</span><span class="c8">a</span>
+</div>
+
+<div class="logo-subtitle">
+Guiando famílias para lugares mais inclusivos.
+</div>
+
+</div>
+
+</div>
+
+<div class="nav-right">
+
+<div id="userArea" class="hidden">
+<span id="userEmail"></span>
+
+<button class="btn btn-light" onclick="logout()">
+Sair
+</button>
+</div>
+
+<button class="btn btn-primary" id="loginBtn" onclick="openModal()">
+Entrar
+</button>
+
+</div>
+
+</nav>
+
+<section class="hero">
+
+<div class="top-benefits">
+
+<div class="benefit-item">
+<div class="benefit-icon blue">📍</div>
+<div class="benefit-text">
+Encontre locais inclusivos perto de você
+</div>
+</div>
+
+<div class="benefit-item">
+<div class="benefit-icon yellow">⭐</div>
+<div class="benefit-text">
+Avaliações reais de famílias
+</div>
+</div>
+
+<div class="benefit-item">
+<div class="benefit-icon green">🏆</div>
+<div class="benefit-text">
+Ranking dos melhores espaços
+</div>
+</div>
+
+<div class="benefit-item">
+<div class="benefit-icon purple">🧩</div>
+<div class="benefit-text">
+Informações sobre acessibilidade sensorial
+</div>
+</div>
+
+<div class="benefit-item">
+<div class="benefit-icon red">💗</div>
+<div class="benefit-text">
+Mais inclusão, mais acolhimento
+</div>
+</div>
+
+</div>
+
+<div class="hero-content">
+
+<div>
+
+<h1>
+Encontre lugares mais acolhedores para pessoas autistas e suas famílias
+</h1>
+
+<p>
+O AutiGuia ajuda famílias atípicas e pessoas autistas a encontrarem ambientes mais tranquilos, acolhedores e preparados para proporcionar experiências melhores, mais seguras e confortáveis.
+</p>
+
+<div class="search-box">
+
+<select
+id="searchCategory"
+onchange="filterRanking()"
+>
+
+<option value="">
+Todas as categorias
+</option>
+
+<option value="Alimentação e Bebidas">
+Alimentação e Bebidas
+</option>
+
+<option value="Animais de Estimação (Pet Shops)">
+Animais de Estimação (Pet Shops)
+</option>
+
+<option value="Artes e Artesanato">
+Artes e Artesanato
+</option>
+
+<option value="Automotivo">
+Automotivo
+</option>
+
+<option value="Beleza e Estética">
+Beleza e Estética
+</option>
+
+<option value="Brinquedos e Jogos">
+Brinquedos e Jogos
+</option>
+
+<option value="Construção e Reforma">
+Construção e Reforma
+</option>
+
+<option value="Cultura e Entretenimento">
+Cultura e Entretenimento
+</option>
+
+<option value="Educação e Cursos">
+Educação e Cursos
+</option>
+
+<option value="Esportes e Lazer">
+Esportes e Lazer
+</option>
+
+<option value="Farmácias e Saúde">
+Farmácias e Saúde
+</option>
+
+<option value="Floricultura e Jardinagem">
+Floricultura e Jardinagem
+</option>
+
+<option value="Hotelaria e Hospedagem">
+Hotelaria e Hospedagem
+</option>
+
+<option value="Imóveis">
+Imóveis
+</option>
+
+<option value="Informática e Tecnologia">
+Informática e Tecnologia
+</option>
+
+<option value="Instrumentos Musicais">
+Instrumentos Musicais
+</option>
+
+<option value="Joias e Acessórios">
+Joias e Acessórios
+</option>
+
+<option value="Livrarias e Papelaria">
+Livrarias e Papelaria
+</option>
+
+<option value="Materiais de Escritório">
+Materiais de Escritório
+</option>
+
+<option value="Móveis e Decoração">
+Móveis e Decoração
+</option>
+
+<option value="Ótica e Fotografia">
+Ótica e Fotografia
+</option>
+
+<option value="Serviços Financeiros">
+Serviços Financeiros
+</option>
+
+<option value="Serviços Gerais">
+Serviços Gerais
+</option>
+
+<option value="Supermercados e Mercearias">
+Supermercados e Mercearias
+</option>
+
+<option value="Turismo e Viagens">
+Turismo e Viagens
+</option>
+
+<option value="Vestuário e Moda">
+Vestuário e Moda
+</option>
+
+</select>
+
+<input
+type="text"
+id="searchCity"
+placeholder="Cidade..."
+oninput="filterRanking()"
+/>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<section class="section">
+
+<div class="features">
+
+<div class="feature-card">
+
+
+</section>
+
+<section class="section">
+
+<div class="main-grid">
+
+<div>
+
+<div class="card" style="margin-bottom:28px;">
+
+<div class="card-header">
+Compartilhe sua experiência
+</div>
+
+<div class="card-body">
+
+<div id="lockedMsg">
+
+<p style="margin-bottom:20px;color:var(--muted);line-height:1.8;">
+Faça login para recomendar um estabelecimento e ajudar outras famílias 💙
+</p>
+
+<button class="btn btn-primary" onclick="openModal()">
+Entrar para compartilhar
+</button>
+
+</div>
+
+<div id="cadastroForm" class="hidden">
+
+<div class="form-group">
+<label>Nome do estabelecimento</label>
+<input type="text" id="nome">
+</div>
+
+<div class="form-group">
+<label>Cidade</label>
+<input type="text" id="cidade">
+</div>
+
+<div class="form-group">
+
+<label>
+Categoria
+</label>
+
+<select id="categoria">
+
+<option value="">
+Selecione uma categoria
+</option>
+
+<option value="Alimentação e Bebidas">
+Alimentação e Bebidas
+</option>
+
+<option value="Animais de Estimação (Pet Shops)">
+Animais de Estimação (Pet Shops)
+</option>
+
+<option value="Artes e Artesanato">
+Artes e Artesanato
+</option>
+
+<option value="Automotivo">
+Automotivo
+</option>
+
+<option value="Beleza e Estética">
+Beleza e Estética
+</option>
+
+<option value="Brinquedos e Jogos">
+Brinquedos e Jogos
+</option>
+
+<option value="Construção e Reforma">
+Construção e Reforma
+</option>
+
+<option value="Cultura e Entretenimento">
+Cultura e Entretenimento
+</option>
+
+<option value="Educação e Cursos">
+Educação e Cursos
+</option>
+
+<option value="Esportes e Lazer">
+Esportes e Lazer
+</option>
+
+<option value="Farmácias e Saúde">
+Farmácias e Saúde
+</option>
+
+<option value="Floricultura e Jardinagem">
+Floricultura e Jardinagem
+</option>
+
+<option value="Hotelaria e Hospedagem">
+Hotelaria e Hospedagem
+</option>
+
+<option value="Imóveis">
+Imóveis
+</option>
+
+<option value="Informática e Tecnologia">
+Informática e Tecnologia
+</option>
+
+<option value="Instrumentos Musicais">
+Instrumentos Musicais
+</option>
+
+<option value="Joias e Acessórios">
+Joias e Acessórios
+</option>
+
+<option value="Livrarias e Papelaria">
+Livrarias e Papelaria
+</option>
+
+<option value="Materiais de Escritório">
+Materiais de Escritório
+</option>
+
+<option value="Móveis e Decoração">
+Móveis e Decoração
+</option>
+
+<option value="Ótica e Fotografia">
+Ótica e Fotografia
+</option>
+
+<option value="Serviços Financeiros">
+Serviços Financeiros
+</option>
+
+<option value="Serviços Gerais">
+Serviços Gerais
+</option>
+
+<option value="Supermercados e Mercearias">
+Supermercados e Mercearias
+</option>
+
+<option value="Turismo e Viagens">
+Turismo e Viagens
+</option>
+
+<option value="Vestuário e Moda">
+Vestuário e Moda
+</option>
+
+</select>
+
+</div>
+
+<div class="form-group">
+<label>Como foi sua experiência?</label>
+<textarea id="descricao" rows="4"></textarea>
+</div>
+
+<div class="form-group">
+<label>Nível de acolhimento (0 a 10)</label>
+<input type="number" id="atendimento">
+</div>
+
+<button class="btn btn-primary" onclick="salvar()">
+Compartilhar experiência
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<div class="card-header">
+Locais recomendados pela comunidade
+</div>
+
+<div class="card-body" id="ranking">
+
+Carregando recomendações...
+
+</div>
+
+</div>
+
+</div>
+
+<div>
+
+<div class="card">
+
+<div class="card-header">
+💙 Lugares acolhedores
+</div>
+
+<div class="card-body" id="partners">
+
+</div>
+
+</div>
+
+<div class="side-box">
+
+<h3>
+♾️ Nossa missão
+</h3>
+
+<p>
+Ajudar famílias e pessoas autistas a encontrarem ambientes mais acolhedores através da força da comunidade e da troca de experiências reais.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<footer>
+
+<p>
+AutiGuia • Cada recomendação ajuda outra família a encontrar um lugar melhor para viver momentos especiais com mais conforto, acolhimento e segurança.
+</p>
+
+</footer>
+
+<div class="modal-overlay" id="modal">
+
+<div class="modal">
+
+<button class="close-modal" onclick="closeModal()">
+✕
+</button>
+
+<h2>
+Bem-vindo 💙
+</h2>
+
+<p style="color:var(--muted);line-height:1.7;">
+Participe da comunidade e compartilhe experiências reais sobre lugares mais acolhedores.
+</p>
+
+<div class="tabs">
+
+<button
+class="tab active"
+id="tabLogin"
+onclick="switchTab('login')"
+>
+Entrar
+</button>
+
+<button
+class="tab"
+id="tabCadastro"
+onclick="switchTab('cadastro')"
+>
+Criar conta
+</button>
+
+</div>
+
+<div id="loginPanel">
+
+<div class="form-group">
+<label>E-mail</label>
+<input type="email" id="loginEmail">
+</div>
+
+<div class="form-group">
+<label>Senha</label>
+<input type="password" id="loginSenha">
+</div>
+
+<button class="btn btn-primary" onclick="login()">
+Entrar
+</button>
+
+</div>
+
+<div id="cadastroPanel" class="hidden">
+
+<div class="form-group">
+<label>E-mail</label>
+<input type="email" id="cadastroEmail">
+</div>
+
+<div class="form-group">
+<label>Senha</label>
+<input type="password" id="cadastroSenha">
+</div>
+
+<button class="btn btn-primary" onclick="criarConta()">
+Criar conta
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+
+const SUPABASE_URL = 'https://ezmmfneawjoawmnqudbh.supabase.co'
+const SUPABASE_KEY = 'sb_publishable_zRXk1cnzVO0HwaEGHPSf4w_VZ1rIcs6'
+
+const { createClient } = supabase
+
+const sb = createClient(SUPABASE_URL,SUPABASE_KEY)
+
+let currentUser = null
+let rankingData = []
+
+init()
+
+async function init(){
+
+const { data:{ session } } = await sb.auth.getSession()
+
+if(session){
+setUser(session.user)
+}
+
+sb.auth.onAuthStateChange((event,session)=>{
+
+if(session){
+setUser(session.user)
+}else{
+clearUser()
+}
+
+})
+
+loadRanking()
+
+}
+
+function setUser(user){
+
+currentUser = user
+
+document.getElementById('userArea').classList.remove('hidden')
+
+document.getElementById('loginBtn').classList.add('hidden')
+
+document.getElementById('lockedMsg').classList.add('hidden')
+
+document.getElementById('cadastroForm').classList.remove('hidden')
+
+document.getElementById('userEmail').innerText = user.email
+
+}
+
+function clearUser(){
+
+currentUser = null
+
+document.getElementById('userArea').classList.add('hidden')
+
+document.getElementById('loginBtn').classList.remove('hidden')
+
+document.getElementById('lockedMsg').classList.remove('hidden')
+
+document.getElementById('cadastroForm').classList.add('hidden')
+
+}
+
+async function criarConta(){
+
+const email = document.getElementById('cadastroEmail').value
+const senha = document.getElementById('cadastroSenha').value
+
+const { error } = await sb.auth.signUp({
+email,
+password:senha
+})
+
+if(error){
+return toast(error.message)
+}
+
+toast('Conta criada com sucesso 💙')
+
+closeModal()
+
+}
+
+async function login(){
+
+const email = document.getElementById('loginEmail').value
+const senha = document.getElementById('loginSenha').value
+
+const { error } = await sb.auth.signInWithPassword({
+email,
+password:senha
+})
+
+if(error){
+return toast(error.message)
+}
+
+toast('Login realizado 💙')
+
+closeModal()
+
+}
+
+async function logout(){
+
+await sb.auth.signOut()
+
+toast('Sessão encerrada')
+
+}
+
+async function salvar(){
+
+if(!currentUser){
+return toast('Faça login primeiro')
+}
+
+const nome = document.getElementById('nome').value
+const cidade = document.getElementById('cidade').value
+const categoria = document.getElementById('categoria').value
+const descricao = document.getElementById('descricao').value
+const atendimento = document.getElementById('atendimento').value
+
+const { error } = await sb
+.from('Cadastro')
+.insert({
+Estabelecimento:nome,
+Cidade:cidade,
+Categoria:categoria,
+Motivo:descricao,
+Atendimento:atendimento,
+Email:currentUser.email,
+user_id:currentUser.id
+})
+
+if(error){
+return toast(error.message)
+}
+
+toast('Experiência compartilhada 💙')
+
+loadRanking()
+
+}
+
+async function loadRanking(){
+
+const { data,error } = await sb
+.from('Cadastro')
+.select('*')
+.order('Atendimento',{ascending:false})
+
+if(error){
+
+document.getElementById('ranking').innerHTML =
+'Erro ao carregar recomendações.'
+
+console.log(error)
+
+return
+}
+
+rankingData = data || []
+
+renderRanking(rankingData)
+
+}
+
+function renderRanking(lista){
+
+const ranking = document.getElementById('ranking')
+
+const partners = document.getElementById('partners')
+
+ranking.innerHTML = ''
+partners.innerHTML = ''
+
+if(lista.length === 0){
+
+ranking.innerHTML = 'Nenhuma recomendação ainda.'
+
+return
+}
+
+lista.forEach((item,index)=>{
+
+ranking.innerHTML += `
+
+<div class="rank-item">
+
+<div class="rank-number">
+${index+1}
+</div>
+
+<div class="rank-content">
+
+<h4>
+${item.Estabelecimento || '-'}
+</h4>
+
+<p>
+${item.Cidade || '-'} • ${item.Categoria || '-'}
+</p>
+
+</div>
+
+<div class="rank-score">
+⭐ ${item.Atendimento || 0}
+</div>
+
+</div>
+
+`
+
+})
+
+lista.slice(0,4).forEach(item=>{
+
+partners.innerHTML += `
+
+<div class="partner-item">
+
+<h4>
+${item.Estabelecimento}
+</h4>
+
+<p>
+${item.Cidade || '-'}
+</p>
+
+<div class="partner-score">
+⭐ ${item.Atendimento || 0}
+</div>
+
+</div>
+
+`
+
+})
+
+}
+
+function filterRanking(){
+
+const categoria =
+document.getElementById('searchCategory').value.toLowerCase()
+
+const cidade =
+document.getElementById('searchCity').value.toLowerCase()
+
+const filtrado = rankingData.filter(item=>{
+
+const categoriaItem =
+(item.Categoria || '').toLowerCase()
+
+const cidadeItem =
+(item.Cidade || '').toLowerCase()
+
+const okCategoria =
+categoria === ''
+||
+categoriaItem.includes(categoria)
+
+const okCidade =
+cidadeItem.includes(cidade)
+
+return okCategoria && okCidade
+
+})
+
+renderRanking(filtrado)
+
+}
+
+function openModal(){
+document.getElementById('modal').classList.add('open')
+}
+
+function closeModal(){
+document.getElementById('modal').classList.remove('open')
+}
+
+function switchTab(tab){
+
+document.getElementById('loginPanel').classList.toggle('hidden',tab !== 'login')
+
+document.getElementById('cadastroPanel').classList.toggle('hidden',tab !== 'cadastro')
+
+document.getElementById('tabLogin').classList.toggle('active',tab === 'login')
+
+document.getElementById('tabCadastro').classList.toggle('active',tab === 'cadastro')
+
+}
+
+function toast(msg){
+
+const el = document.getElementById('toast')
+
+el.innerText = msg
+
+el.classList.add('show')
+
+setTimeout(()=>{
+el.classList.remove('show')
+},3000)
+
+}
+
+</script>
+
+</body>
+</html>
