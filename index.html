@@ -527,6 +527,32 @@ font-weight:700;
 color:#FFB703;
 }
 
+.ranking-scroll{
+max-height:355px;
+overflow-y:auto;
+padding-right:10px;
+}
+
+/* SCROLL MODERNO */
+
+.ranking-scroll::-webkit-scrollbar{
+width:8px;
+}
+
+.ranking-scroll::-webkit-scrollbar-track{
+background:#EEF2FF;
+border-radius:999px;
+}
+
+.ranking-scroll::-webkit-scrollbar-thumb{
+background:linear-gradient(
+180deg,
+#5B8CFF,
+#7A9DFF
+);
+border-radius:999px;
+}
+
 .side-box{
 padding:26px;
 border-radius:30px;
@@ -847,8 +873,31 @@ font-size:.95rem;
 font-size:.78rem;
 }
 
+.products-carousel{
+overflow-x:auto;
+overflow-y:hidden;
+-webkit-overflow-scrolling:touch;
+scrollbar-width:none;
+padding-bottom:6px;
+}
+
+.products-carousel::-webkit-scrollbar{
+display:none;
+}
+
+.products-track{
+animation:none;
+width:max-content;
+display:flex;
+gap:18px;
+padding-right:20px;
+}
+
 .product-card{
 width:210px;
+min-width:210px;
+flex-shrink:0;
+scroll-snap-align:start;
 }
 
 .product-card img{
@@ -1518,7 +1567,7 @@ Compartilhar experiência
 Locais recomendados pela comunidade
 </div>
 
-<div class="card-body" id="ranking">
+<div class="card-body ranking-scroll" id="ranking">
 
 Carregando recomendações...
 
