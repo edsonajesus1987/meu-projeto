@@ -644,6 +644,38 @@ z-index:999999;
 transform:translateX(-50%) translateY(0);
 }
 
+.instagram-btn{
+height:46px;
+padding:0 18px;
+border-radius:16px;
+background:linear-gradient(
+135deg,
+#5B8CFF,
+#7A9DFF
+);
+display:flex;
+align-items:center;
+justify-content:center;
+text-decoration:none;
+font-weight:600;
+font-size:.92rem;
+color:white;
+transition:.25s;
+box-shadow:0 10px 25px rgba(91,140,255,.25);
+}
+
+.instagram-btn:hover{
+transform:translateY(-2px);
+background:linear-gradient(
+135deg,
+#F58529,
+#DD2A7B,
+#8134AF,
+#515BD4
+);
+color:white;
+}
+
 @media(max-width:1100px){
 
 .top-benefits{
@@ -693,6 +725,67 @@ font-size:1rem;
 
 }
 
+.products-carousel{
+overflow:hidden;
+padding:28px;
+}
+
+.products-track{
+display:flex;
+gap:22px;
+width:max-content;
+animation:scrollProducts 35s linear infinite;
+}
+
+.product-card{
+width:240px;
+flex-shrink:0;
+background:white;
+border-radius:24px;
+padding:18px;
+box-shadow:0 8px 24px rgba(0,0,0,.06);
+border:1px solid #EEF2FF;
+}
+
+.product-card img{
+width:100%;
+height:180px;
+object-fit:cover;
+border-radius:18px;
+margin-bottom:14px;
+}
+
+.product-card h4{
+font-size:1rem;
+margin-bottom:8px;
+}
+
+.product-card p{
+font-size:.88rem;
+color:#7180A0;
+line-height:1.6;
+margin-bottom:14px;
+}
+
+.product-btn{
+width:100%;
+justify-content:center;
+text-decoration:none;
+display:flex;
+}
+
+@keyframes scrollProducts{
+
+0%{
+transform:translateX(0);
+}
+
+100%{
+transform:translateX(-50%);
+}
+
+}
+
 </style>
 </head>
 
@@ -721,6 +814,14 @@ Guiando famílias para lugares mais inclusivos.
 </div>
 
 <div class="nav-right">
+
+    <a
+href="https://instagram.com/autiguia"
+target="_blank"
+class="instagram-btn"
+>
+📸 Instagram
+</a>
 
 <div id="userArea" class="hidden">
 <span id="userEmail"></span>
@@ -908,12 +1009,48 @@ Vestuário e Moda
 
 </select>
 
-<input
-type="text"
+<select
 id="searchCity"
-placeholder="Cidade..."
-oninput="filterRanking()"
-/>
+onchange="filterRanking()"
+>
+
+<option value="">
+Todas as cidades
+</option>
+
+<option value="Barueri">
+Barueri
+</option>
+
+<option value="Carapicuiba">
+Carapicuiba
+</option>
+
+<option value="Cotia">
+Cotia
+</option>
+
+<option value="Itapevi">
+Itapevi
+</option>
+
+<option value="Osasco">
+Osasco
+</option>
+
+<option value="São Paulo">
+São Paulo
+</option>
+
+<option value="São Roque">
+São Roque
+</option>
+
+<option value="Vargem Grande Paulista">
+Vargem Grande Paulista
+</option>
+
+</select>
 
 </div>
 
@@ -966,8 +1103,51 @@ Entrar para compartilhar
 </div>
 
 <div class="form-group">
-<label>Cidade</label>
-<input type="text" id="cidade">
+
+<label>
+Cidade
+</label>
+
+<select id="cidade">
+
+<option value="">
+Selecione uma cidade
+</option>
+
+<option value="Barueri">
+Barueri
+</option>
+
+<option value="Carapicuiba">
+Carapicuiba
+</option>
+
+<option value="Cotia">
+Cotia
+</option>
+
+<option value="Itapevi">
+Itapevi
+</option>
+
+<option value="Osasco">
+Osasco
+</option>
+
+<option value="São Paulo">
+São Paulo
+</option>
+
+<option value="São Roque">
+São Roque
+</option>
+
+<option value="Vargem Grande Paulista">
+Vargem Grande Paulista
+</option>
+
+</select>
+
 </div>
 
 <div class="form-group">
@@ -1135,6 +1315,180 @@ Carregando recomendações...
 </div>
 
 <div class="card-body" id="partners">
+
+</div>
+
+</div>
+
+<div class="card" style="margin-top:28px; overflow:hidden;">
+
+<div class="card-header">
+🛍 Produtos recomendados
+</div>
+
+<div class="products-carousel">
+
+<div class="products-track">
+
+<div class="product-card">
+
+<img
+src="https://m.media-amazon.com/images/I/61xVQw6wFOL._AC_SL1500_.jpg"
+alt="Fone Antirruído"
+/>
+
+<h4>
+Fone Antirruído Infantil
+</h4>
+
+<p>
+Ajuda na redução de estímulos sonoros.
+</p>
+
+<a
+href="SEU_LINK_AFILIADO"
+target="_blank"
+class="btn btn-primary product-btn"
+>
+Ver produto
+</a>
+
+</div>
+
+<div class="product-card">
+
+<img
+src="https://m.media-amazon.com/images/I/71r8Q2v7d7L._AC_SL1500_.jpg"
+alt="Kit Sensorial"
+/>
+
+<h4>
+Kit Sensorial
+</h4>
+
+<p>
+Estimulação sensorial educativa.
+</p>
+
+<a
+href="SEU_LINK_AFILIADO"
+target="_blank"
+class="btn btn-primary product-btn"
+>
+Ver produto
+</a>
+
+</div>
+
+<div class="product-card">
+
+<img
+src="https://m.media-amazon.com/images/I/71z2w6lqzXL._AC_SL1500_.jpg"
+alt="Cobertor Sensorial"
+/>
+
+<h4>
+Cobertor Sensorial
+</h4>
+
+<p>
+Sensação de conforto e segurança.
+</p>
+
+<a
+href="SEU_LINK_AFILIADO"
+target="_blank"
+class="btn btn-primary product-btn"
+>
+Ver produto
+</a>
+
+</div>
+
+<div class="product-card">
+
+<img
+src="https://m.media-amazon.com/images/I/61d4zDk-Z-L._AC_SL1200_.jpg"
+alt="Pop It"
+/>
+
+<h4>
+Pop It Sensorial
+</h4>
+
+<p>
+Ajuda no relaxamento e foco.
+</p>
+
+<a
+href="SEU_LINK_AFILIADO"
+target="_blank"
+class="btn btn-primary product-btn"
+>
+Ver produto
+</a>
+
+</div>
+
+<!-- DUPLICADOS PARA LOOP -->
+
+<div class="product-card">
+
+<img
+src="https://m.media-amazon.com/images/I/61xVQw6wFOL._AC_SL1500_.jpg"
+/>
+
+<h4>
+Fone Antirruído Infantil
+</h4>
+
+<p>
+Ajuda na redução de estímulos sonoros.
+</p>
+
+<a
+href="SEU_LINK_AFILIADO"
+target="_blank"
+class="btn btn-primary product-btn"
+>
+Ver produto
+</a>
+
+</div>
+
+<div class="product-card">
+
+<img
+src="https://m.media-amazon.com/images/I/71r8Q2v7d7L._AC_SL1500_.jpg"
+/>
+
+<h4>
+Kit Sensorial
+</h4>
+
+<p>
+Estimulação sensorial educativa.
+</p>
+
+<a
+href="SEU_LINK_AFILIADO"
+target="_blank"
+class="btn btn-primary product-btn"
+>
+Ver produto
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+
 
 </div>
 
