@@ -874,11 +874,15 @@ font-size:.78rem;
 }
 
 .products-carousel{
+display:block;
 overflow-x:auto;
 overflow-y:hidden;
 -webkit-overflow-scrolling:touch;
 scrollbar-width:none;
 padding-bottom:6px;
+touch-action:pan-x;
+cursor:grab;
+scroll-behavior:smooth;
 }
 
 .products-carousel::-webkit-scrollbar{
@@ -886,11 +890,12 @@ display:none;
 }
 
 .products-track{
-animation:none;
-width:max-content;
 display:flex;
 gap:18px;
+width:max-content;
+animation:none;
 padding-right:20px;
+pointer-events:auto;
 }
 
 .product-card{
@@ -1062,6 +1067,10 @@ height:auto;
 .top-benefits{
 width:100%;
 overflow:hidden;
+}
+
+.products-carousel{
+overflow-x:auto !important;
 }
 
 </style>
