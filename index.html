@@ -687,40 +687,205 @@ border-right:none;
 border-bottom:1px solid #EEF2FF;
 }
 
-.hero-content{
-grid-template-columns:1fr;
-}
-
 .main-grid{
 grid-template-columns:1fr;
 }
 
 .hero h1{
-font-size:2.8rem;
+font-size:2.6rem;
+line-height:1.15;
 }
 
 .logo-text{
-font-size:1.7rem;
+font-size:1.6rem;
 }
 
 .logo-icon-img img{
-width:68px;
+width:62px;
 }
 
 .logo-subtitle{
-font-size:.72rem;
-}
-
-nav{
-padding:0 20px;
+font-size:.70rem;
 }
 
 .feature-content h4{
-font-size:1.5rem;
+font-size:1.4rem;
 }
 
 .feature-content p{
 font-size:1rem;
+}
+
+.products-track{
+animation-duration:45s;
+}
+
+}
+
+/* CELULAR */
+
+@media(max-width:768px){
+
+nav{
+padding:14px 16px;
+height:auto;
+flex-direction:column;
+gap:16px;
+align-items:flex-start;
+}
+
+.nav-right{
+width:100%;
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.instagram-btn,
+.btn,
+.support-btn{
+flex:1;
+justify-content:center;
+}
+
+.logo{
+width:100%;
+}
+
+.hero{
+padding:10px 14px 10px;
+}
+
+.section{
+padding:18px 14px;
+}
+
+.hero h1{
+font-size:2rem;
+line-height:1.2;
+margin-bottom:18px;
+}
+
+.hero p{
+font-size:.98rem;
+line-height:1.7;
+margin-bottom:24px;
+}
+
+.search-box{
+flex-direction:column;
+padding:14px;
+border-radius:24px;
+}
+
+.search-box input,
+.search-box select{
+width:100%;
+}
+
+.card{
+border-radius:26px;
+}
+
+.card-header{
+padding:20px;
+font-size:.95rem;
+}
+
+.card-body{
+padding:20px;
+}
+
+.rank-item{
+gap:12px;
+}
+
+.rank-number{
+width:34px;
+height:34px;
+font-size:.85rem;
+}
+
+.rank-content h4{
+font-size:.95rem;
+}
+
+.rank-content p{
+font-size:.78rem;
+}
+
+.product-card{
+width:210px;
+}
+
+.product-card img{
+height:150px;
+}
+
+.logo-text{
+font-size:1.45rem;
+}
+
+.logo-subtitle{
+display:none;
+}
+
+footer{
+padding:35px 16px;
+}
+
+footer p{
+font-size:.9rem;
+line-height:1.7;
+}
+
+.modal{
+margin:20px;
+padding:28px;
+border-radius:28px;
+}
+
+.tabs{
+flex-direction:column;
+}
+
+.tab{
+width:100%;
+}
+
+}
+
+/* CELULAR PEQUENO */
+
+@media(max-width:480px){
+
+.hero h1{
+font-size:1.7rem;
+}
+
+.logo-icon-img img{
+width:52px;
+}
+
+.logo-text{
+font-size:1.25rem;
+}
+
+.badge{
+font-size:.76rem;
+padding:10px 14px;
+}
+
+.product-card{
+width:185px;
+}
+
+.product-card img{
+height:130px;
+}
+
+.benefit-text{
+font-size:.76rem;
 }
 
 }
