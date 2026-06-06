@@ -1,2202 +1,797 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
 <title>AutGuia • Lugares acolhedores para pessoas autistas</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
-
+*{margin:0;padding:0;box-sizing:border-box;}
 :root{
---bg:#F7F9FF;
---surface:rgba(255,255,255,.78);
---text:#24324B;
---muted:#6F7C99;
---border:rgba(255,255,255,.45);
-
---blue:#4B8BFF;
---green:#67D66E;
---yellow:#FFCC33;
---red:#FF6B81;
---purple:#B26BFF;
-
+--bg:#F7F9FF;--surface:rgba(255,255,255,.78);--text:#24324B;--muted:#6F7C99;--border:rgba(255,255,255,.45);
+--blue:#4B8BFF;--green:#67D66E;--yellow:#FFCC33;--red:#FF6B81;--purple:#B26BFF;
 --shadow:0 12px 45px rgba(72,98,255,.10);
 }
-
-body{
-font-family:'Sora',sans-serif;
-background:linear-gradient(180deg,#F7F9FF 0%,#EEF4FF 100%);
-color:var(--text);
-overflow-x:hidden;
-width:100%;
-max-width:100vw;
-position:relative;
-}
-
-body::before{
-content:'';
-position:fixed;
-top:-250px;
-left:-250px;
-width:550px;
-height:550px;
-background:radial-gradient(circle,rgba(91,140,255,.18) 0%,transparent 70%);
-z-index:-1;
-}
-
-body::after{
-content:'';
-position:fixed;
-bottom:-250px;
-right:-250px;
-width:550px;
-height:550px;
-background:radial-gradient(circle,rgba(178,141,255,.18) 0%,transparent 70%);
-z-index:-1;
-}
-
-nav{
-height:90px;
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:0 42px;
-background:rgba(255,255,255,.72);
-backdrop-filter:blur(16px);
-border-bottom:1px solid rgba(255,255,255,.4);
-position:sticky;
-top:0;
-z-index:999;
-}
-
-.logo{
-display:flex;
-align-items:center;
-gap:16px;
-}
-
-.logo-icon-img{
-display:flex;
-align-items:center;
-justify-content:center;
-}
-
-.logo-icon-img img{
-width:92px;
-height:auto;
-object-fit:contain;
-display:block;
-}
-
-.logo-text-wrap{
-display:flex;
-flex-direction:column;
-}
-
-.logo-text{
-font-size:2.2rem;
-font-weight:700;
-line-height:1;
-letter-spacing:-2px;
-display:flex;
-align-items:center;
-}
-
-.logo-text span{
-display:inline-block;
-}
-
-.logo-text .c1,
-.logo-text .c2,
-.logo-text .c3,
-.logo-text .c4{
-color:#1877F2;
-}
-
-.logo-text .c5{
-color:#FF3131;
-}
-
-.logo-text .c6{
-color:#FFD93D;
-}
-
-.logo-text .c7,
-.logo-text .c8{
-color:#59D84F;
-}
-
-.logo-subtitle{
-font-size:.82rem;
-margin-top:6px;
-font-weight:500;
-color:#6D7B98;
-}
-
-.nav-right{
-display:flex;
-align-items:center;
-gap:12px;
-}
-
-.btn{
-border:none;
-padding:12px 18px;
-border-radius:16px;
-font-family:'Sora',sans-serif;
-font-weight:600;
-cursor:pointer;
-transition:.25s;
-}
-
-.btn-primary{
-background:linear-gradient(
-135deg,
-#5B8CFF,
-#7A9DFF
-);
-color:white;
-box-shadow:0 10px 25px rgba(91,140,255,.25);
-}
-
-.btn-primary:hover{
-transform:translateY(-2px);
-}
-
-.btn-light{
-background:white;
-border:1px solid #E9EEFF;
-color:var(--text);
-}
-
-.hero{
-padding:20px 10px 10px;
-}
-
-.hero-content{
-max-width:1250px;
-margin:auto;
-display:block;
-}
-
-.badge{
-display:inline-flex;
-align-items:center;
-gap:10px;
-padding:12px 18px;
-border-radius:999px;
-background:rgba(255,255,255,.8);
-backdrop-filter:blur(14px);
-border:1px solid rgba(255,255,255,.5);
-margin-bottom:28px;
-font-size:.9rem;
-font-weight:600;
-box-shadow:var(--shadow);
-}
-
-.hero h1{
-font-size:4rem;
-line-height:1.05;
-margin-bottom:24px;
-font-weight:700;
-letter-spacing:-2px;
-max-width:780px;
-}
-
-.hero p{
-font-size:1.08rem;
-line-height:1.9;
-color:var(--muted);
-max-width:650px;
-margin-bottom:35px;
-}
-
-.search-box{
-display:flex;
-gap:14px;
-padding:16px;
-border-radius:28px;
-background:rgba(255,255,255,.78);
-backdrop-filter:blur(14px);
-border:1px solid rgba(255,255,255,.45);
-box-shadow:var(--shadow);
-}
-
-.search-box input,
-.search-box select{
-flex:1;
-padding:16px;
-border:none;
-outline:none;
-border-radius:18px;
-background:#F8FAFF;
-font-family:'Sora',sans-serif;
-font-size:.95rem;
-color:#24324B;
-}
-
-.search-box select{
-cursor:pointer;
-appearance:none;
--webkit-appearance:none;
--moz-appearance:none;
-}
-
-/* NOVA BARRA DE BENEFÍCIOS */
-
-.top-benefits{
-max-width:1250px;
-margin:0 auto 35px;
-display:grid;
-grid-template-columns:repeat(5,1fr);
-background:white;
-border-radius:18px;
-overflow:hidden;
-box-shadow:var(--shadow);
-border:1px solid #EEF2FF;
-}
-
-.benefit-item{
-display:flex;
-align-items:center;
-gap:12px;
-padding:18px;
-border-right:1px solid #EEF2FF;
-}
-
-.benefit-item:last-child{
-border-right:none;
-}
-
-.benefit-icon{
-width:44px;
-height:44px;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:1.2rem;
-color:white;
-font-weight:700;
-flex-shrink:0;
-}
-
-.blue{
-background:#4B8BFF;
-}
-
-.yellow{
-background:#FFC107;
-}
-
-.green{
-background:#66CC33;
-}
-
-.purple{
-background:#B26BFF;
-}
-
-.red{
-background:#FF5D7D;
-}
-
-.benefit-text{
-font-size:.82rem;
-font-weight:600;
-line-height:1.4;
-color:#34425C;
-}
-
-/* FIM BENEFÍCIOS */
-
-.section{
-max-width:1250px;
-margin:auto;
-padding:25px 20px;
-}
-
-.section-header{
-margin-bottom:45px;
-}
-
-.section-header h2{
-font-size:2.6rem;
-margin-bottom:16px;
-letter-spacing:-1px;
-}
-
-.section-header p{
-max-width:760px;
-color:var(--muted);
-line-height:1.9;
-}
-
-/* NOVOS CARDS */
-
-.features{
-display:flex;
-flex-direction:column;
-gap:28px;
-max-width:700px;
-}
-
-.feature-card{
-display:flex;
-align-items:flex-start;
-gap:22px;
-}
-
-.feature-icon{
-width:70px;
-height:70px;
-border-radius:22px;
-background:#EEF2FF;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:2rem;
-flex-shrink:0;
-}
-
-.feature-content h4{
-font-size:2rem;
-margin-bottom:8px;
-font-weight:700;
-letter-spacing:-1px;
-}
-
-.feature-content p{
-font-size:1.25rem;
-line-height:1.6;
-color:#7180A0;
-}
-
-/* FIM NOVOS CARDS */
-
-.main-grid{
-display:grid;
-grid-template-columns:1fr 360px;
-gap:28px;
-}
-
-.card{
-background:rgba(255,255,255,.78);
-backdrop-filter:blur(18px);
-border-radius:34px;
-overflow:hidden;
-border:1px solid rgba(255,255,255,.45);
-box-shadow:var(--shadow);
-width:100%;
-max-width:100%;
-}
-
-.card-header{
-padding:24px 28px;
-background:linear-gradient(
-135deg,
-#5B8CFF,
-#7A9DFF
-);
-color:white;
-font-weight:700;
-font-size:1rem;
-}
-
-.card-body{
-padding:28px;
-}
-
-.form-group{
-display:flex;
-flex-direction:column;
-gap:8px;
-margin-bottom:18px;
-}
-
-.form-group label{
-font-size:.9rem;
-font-weight:600;
-color:var(--muted);
-}
-
-input,
-textarea,
-select{
-width:100%;
-padding:15px;
-border:none;
-outline:none;
-border-radius:18px;
-background:#F8FAFF;
-font-family:'Sora',sans-serif;
-font-size:.95rem;
-color:#24324B;
-}
-
-select{
-cursor:pointer;
-appearance:none;
--webkit-appearance:none;
--moz-appearance:none;
-}
-
-textarea{
-resize:none;
-}
-
-.rank-item{
-display:flex;
-align-items:center;
-gap:18px;
-padding:20px 0;
-border-bottom:1px solid #EDF2FF;
-}
-
-.rank-item:last-child{
-border:none;
-}
-
-.rank-number{
-width:42px;
-height:42px;
-border-radius:50%;
-background:linear-gradient(
-135deg,
-rgba(91,140,255,.14),
-rgba(178,141,255,.14)
-);
-display:flex;
-align-items:center;
-justify-content:center;
-font-weight:700;
-color:#5B8CFF;
-flex-shrink:0;
-}
-
-.rank-content{
-flex:1;
-}
-
-.rank-content h4{
-margin-bottom:5px;
-}
-
-.rank-content p{
-font-size:.85rem;
-color:var(--muted);
-}
-
-.rank-score{
-font-weight:700;
-color:#FFB703;
-}
-
-.partner-item{
-padding:18px 0;
-border-bottom:1px solid #EDF2FF;
-}
-
-.partner-item:last-child{
-border:none;
-}
-
-.partner-item h4{
-margin-bottom:5px;
-}
-
-.partner-item p{
-font-size:.84rem;
-color:var(--muted);
-margin-bottom:8px;
-}
-
-.partner-score{
-font-weight:700;
-color:#FFB703;
-}
-
-.ranking-scroll{
-max-height:355px;
-overflow-y:auto;
-padding-right:10px;
-}
-
-/* SCROLL MODERNO */
-
-.ranking-scroll::-webkit-scrollbar{
-width:8px;
-}
-
-.ranking-scroll::-webkit-scrollbar-track{
-background:#EEF2FF;
-border-radius:999px;
-}
-
-.ranking-scroll::-webkit-scrollbar-thumb{
-background:linear-gradient(
-180deg,
-#5B8CFF,
-#7A9DFF
-);
-border-radius:999px;
-}
-
-.side-box{
-padding:26px;
-border-radius:30px;
-margin-top:24px;
-background:linear-gradient(
-135deg,
-rgba(91,140,255,.08),
-rgba(178,141,255,.08)
-);
-border:1px solid #E8EEFF;
-}
-
-.side-box h3{
-margin-bottom:12px;
-}
-
-.side-box p{
-font-size:.92rem;
-line-height:1.8;
-color:var(--muted);
-}
-
-footer{
-margin-top:70px;
-padding:50px 20px;
-text-align:center;
-}
-
-footer p{
-max-width:760px;
-margin:auto;
-line-height:1.8;
-color:var(--muted);
-}
-
-.modal-overlay{
-position:fixed;
-inset:0;
-background:rgba(15,20,35,.55);
-display:flex;
-align-items:center;
-justify-content:center;
-opacity:0;
-pointer-events:none;
-transition:.2s;
-z-index:9999;
-backdrop-filter:blur(8px);
-}
-
-.modal-overlay.open{
-opacity:1;
-pointer-events:all;
-}
-
-.modal{
-width:100%;
-max-width:430px;
-background:white;
-border-radius:36px;
-padding:36px;
-position:relative;
-box-shadow:0 20px 70px rgba(0,0,0,.18);
-}
-
-.close-modal{
-position:absolute;
-right:22px;
-top:20px;
-background:none;
-border:none;
-font-size:1.4rem;
-cursor:pointer;
-}
-
-.tabs{
-display:flex;
-gap:10px;
-margin:28px 0;
-}
-
-.tab{
-flex:1;
-padding:13px;
-border:none;
-border-radius:14px;
-background:#EEF3FF;
-cursor:pointer;
-font-family:'Sora',sans-serif;
-font-weight:600;
-}
-
-.tab.active{
-background:linear-gradient(
-135deg,
-#5B8CFF,
-#7A9DFF
-);
-color:white;
-}
-
-.hidden{
-display:none;
-}
-
-#toast{
-position:fixed;
-bottom:30px;
-left:50%;
-transform:translateX(-50%) translateY(100px);
-background:#1F2B46;
-color:white;
-padding:16px 24px;
-border-radius:999px;
-transition:.3s;
-z-index:999999;
-}
-
-#toast.show{
-transform:translateX(-50%) translateY(0);
-}
-
-.instagram-btn{
-height:46px;
-padding:0 18px;
-border-radius:16px;
-background:linear-gradient(
-135deg,
-#5B8CFF,
-#7A9DFF
-);
-display:flex;
-align-items:center;
-justify-content:center;
-text-decoration:none;
-font-weight:600;
-font-size:.92rem;
-color:white;
-transition:.25s;
-box-shadow:0 10px 25px rgba(91,140,255,.25);
-}
-
-.instagram-btn:hover{
-transform:translateY(-2px);
-background:linear-gradient(
-135deg,
-#F58529,
-#DD2A7B,
-#8134AF,
-#515BD4
-);
-color:white;
-}
-
+body{font-family:'Sora',sans-serif;background:linear-gradient(180deg,#F7F9FF 0%,#EEF4FF 100%);color:var(--text);overflow-x:hidden;width:100%;max-width:100vw;position:relative;}
+body::before{content:'';position:fixed;top:-250px;left:-250px;width:550px;height:550px;background:radial-gradient(circle,rgba(91,140,255,.18) 0%,transparent 70%);z-index:-1;}
+body::after{content:'';position:fixed;bottom:-250px;right:-250px;width:550px;height:550px;background:radial-gradient(circle,rgba(178,141,255,.18) 0%,transparent 70%);z-index:-1;}
+nav{height:90px;display:flex;align-items:center;justify-content:space-between;padding:0 42px;background:rgba(255,255,255,.72);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,.4);position:sticky;top:0;z-index:999;}
+.logo{display:flex;align-items:center;gap:16px;}
+.logo-icon-img{display:flex;align-items:center;justify-content:center;}
+.logo-icon-img img{width:92px;height:auto;object-fit:contain;display:block;}
+.logo-text-wrap{display:flex;flex-direction:column;}
+.logo-text{font-size:2.2rem;font-weight:700;line-height:1;letter-spacing:-2px;display:flex;align-items:center;}
+.logo-text span{display:inline-block;}
+.logo-text .c1,.logo-text .c2,.logo-text .c3,.logo-text .c4{color:#1877F2;}
+.logo-text .c5{color:#FF3131;}
+.logo-text .c6{color:#FFD93D;}
+.logo-text .c7,.logo-text .c8{color:#59D84F;}
+.logo-subtitle{font-size:.82rem;margin-top:6px;font-weight:500;color:#6D7B98;}
+.nav-right{display:flex;align-items:center;gap:12px;}
+.btn{border:none;padding:12px 18px;border-radius:16px;font-family:'Sora',sans-serif;font-weight:600;cursor:pointer;transition:.25s;}
+.btn-primary{background:linear-gradient(135deg,#5B8CFF,#7A9DFF);color:white;box-shadow:0 10px 25px rgba(91,140,255,.25);}
+.btn-primary:hover{transform:translateY(-2px);}
+.btn-light{background:white;border:1px solid #E9EEFF;color:var(--text);}
+.hero{padding:20px 10px 10px;}
+.hero-content{max-width:1250px;margin:auto;display:block;}
+.hero h1{font-size:4rem;line-height:1.05;margin-bottom:24px;font-weight:700;letter-spacing:-2px;max-width:780px;}
+.hero p{font-size:1.08rem;line-height:1.9;color:var(--muted);max-width:650px;margin-bottom:35px;}
+.search-box{display:flex;gap:14px;padding:16px;border-radius:28px;background:rgba(255,255,255,.78);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.45);box-shadow:var(--shadow);}
+.search-box input,.search-box select{flex:1;padding:16px;border:none;outline:none;border-radius:18px;background:#F8FAFF;font-family:'Sora',sans-serif;font-size:.95rem;color:#24324B;}
+.search-box select{cursor:pointer;appearance:none;-webkit-appearance:none;-moz-appearance:none;}
+.top-benefits{max-width:1250px;margin:0 auto 35px;display:grid;grid-template-columns:repeat(5,1fr);background:white;border-radius:18px;overflow:hidden;box-shadow:var(--shadow);border:1px solid #EEF2FF;}
+.benefit-item{display:flex;align-items:center;gap:12px;padding:18px;border-right:1px solid #EEF2FF;}
+.benefit-item:last-child{border-right:none;}
+.benefit-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:white;font-weight:700;flex-shrink:0;}
+.blue{background:#4B8BFF;}.yellow{background:#FFC107;}.green{background:#66CC33;}.purple{background:#B26BFF;}.red{background:#FF5D7D;}
+.benefit-text{font-size:.82rem;font-weight:600;line-height:1.4;color:#34425C;}
+.section{max-width:1250px;margin:auto;padding:25px 20px;}
+#mapa-wrapper{max-width:1250px;margin:0 auto 28px;padding:0 20px;}
+#mapa{width:100%;height:420px;border-radius:28px;overflow:hidden;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.45);background:#EEF4FF;}
+.mapa-tag{display:inline-flex;align-items:center;gap:6px;background:#5B8CFF;color:white;font-size:.75rem;font-weight:600;padding:4px 10px;border-radius:999px;margin-left:8px;vertical-align:middle;}
+.main-grid{display:grid;grid-template-columns:1fr 360px;gap:28px;}
+.card{background:rgba(255,255,255,.78);backdrop-filter:blur(18px);border-radius:34px;overflow:hidden;border:1px solid rgba(255,255,255,.45);box-shadow:var(--shadow);width:100%;max-width:100%;}
+.card-header{padding:24px 28px;background:linear-gradient(135deg,#5B8CFF,#7A9DFF);color:white;font-weight:700;font-size:1rem;}
+.card-body{padding:28px;}
+.form-group{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+.form-group label{font-size:.9rem;font-weight:600;color:var(--muted);}
+input,textarea,select{width:100%;padding:15px;border:none;outline:none;border-radius:18px;background:#F8FAFF;font-family:'Sora',sans-serif;font-size:.95rem;color:#24324B;}
+select{cursor:pointer;appearance:none;-webkit-appearance:none;-moz-appearance:none;}
+textarea{resize:none;}
+
+/* RANK ITEM */
+.rank-item{display:flex;align-items:center;gap:18px;padding:16px 12px;border-bottom:1px solid #EDF2FF;cursor:pointer;transition:.2s;border-radius:12px;}
+.rank-item:hover{background:rgba(91,140,255,.06);}
+.rank-item.ativo{background:linear-gradient(135deg,rgba(91,140,255,.10),rgba(178,141,255,.08));border-left:3px solid #5B8CFF;}
+.rank-item:last-child{border-bottom:none;}
+.rank-number{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,rgba(91,140,255,.14),rgba(178,141,255,.14));display:flex;align-items:center;justify-content:center;font-weight:700;color:#5B8CFF;flex-shrink:0;}
+.rank-content{flex:1;min-width:0;}
+.rank-content h4{margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rank-content p{font-size:.85rem;color:var(--muted);}
+.rank-score{font-weight:700;color:#FFB703;white-space:nowrap;}
+
+/* PAINEL DE DETALHES */
+.detalhe-overlay{position:fixed;inset:0;background:rgba(15,20,35,.50);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.25s;z-index:8888;backdrop-filter:blur(6px);}
+.detalhe-overlay.open{opacity:1;pointer-events:all;}
+.detalhe-modal{width:100%;max-width:480px;background:white;border-radius:36px;padding:0;position:relative;box-shadow:0 24px 80px rgba(0,0,0,.18);overflow:hidden;transform:translateY(20px);transition:.25s;}
+.detalhe-overlay.open .detalhe-modal{transform:translateY(0);}
+.detalhe-header{padding:28px 32px 20px;background:linear-gradient(135deg,#5B8CFF,#7A9DFF);color:white;}
+.detalhe-header h3{font-size:1.4rem;font-weight:700;margin-bottom:6px;line-height:1.2;}
+.detalhe-header p{font-size:.88rem;opacity:.85;}
+.detalhe-body{padding:28px 32px;}
+.detalhe-nota{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;font-weight:700;font-size:1rem;margin-bottom:20px;}
+.detalhe-nota.alta{background:#e8faf0;color:#1a7a3e;}
+.detalhe-nota.media{background:#fffbea;color:#8a6200;}
+.detalhe-nota.baixa{background:#fff0f2;color:#9b1c2e;}
+.detalhe-secao{margin-bottom:18px;}
+.detalhe-secao label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;}
+.detalhe-secao p{font-size:.95rem;line-height:1.7;color:var(--text);}
+.detalhe-close{position:absolute;right:20px;top:20px;background:rgba(255,255,255,.25);border:none;color:white;width:32px;height:32px;border-radius:50%;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;}
+.detalhe-close:hover{background:rgba(255,255,255,.4);}
+.ver-mapa-btn{width:100%;padding:14px;border-radius:16px;background:linear-gradient(135deg,#5B8CFF,#7A9DFF);color:white;border:none;font-family:'Sora',sans-serif;font-weight:600;font-size:.95rem;cursor:pointer;transition:.2s;margin-top:8px;}
+.ver-mapa-btn:hover{transform:translateY(-2px);}
+.dica-clique{font-size:.78rem;color:var(--muted);text-align:center;margin-top:10px;padding-top:10px;border-top:1px solid #EDF2FF;}
+
+.partner-item{padding:18px 0;border-bottom:1px solid #EDF2FF;}
+.partner-item:last-child{border:none;}
+.partner-item h4{margin-bottom:5px;}
+.partner-item p{font-size:.84rem;color:var(--muted);margin-bottom:8px;}
+.partner-score{font-weight:700;color:#FFB703;}
+.ranking-scroll{max-height:420px;overflow-y:auto;padding-right:6px;}
+.ranking-scroll::-webkit-scrollbar{width:6px;}
+.ranking-scroll::-webkit-scrollbar-track{background:#EEF2FF;border-radius:999px;}
+.ranking-scroll::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#5B8CFF,#7A9DFF);border-radius:999px;}
+.side-box{padding:26px;border-radius:30px;margin-top:24px;background:linear-gradient(135deg,rgba(91,140,255,.08),rgba(178,141,255,.08));border:1px solid #E8EEFF;}
+.side-box h3{margin-bottom:12px;}
+.side-box p{font-size:.92rem;line-height:1.8;color:var(--muted);}
+footer{margin-top:70px;padding:50px 20px;text-align:center;}
+footer p{max-width:760px;margin:auto;line-height:1.8;color:var(--muted);}
+.modal-overlay{position:fixed;inset:0;background:rgba(15,20,35,.55);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.2s;z-index:9999;backdrop-filter:blur(8px);}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{width:100%;max-width:430px;background:white;border-radius:36px;padding:36px;position:relative;box-shadow:0 20px 70px rgba(0,0,0,.18);}
+.close-modal{position:absolute;right:22px;top:20px;background:none;border:none;font-size:1.4rem;cursor:pointer;}
+.tabs{display:flex;gap:10px;margin:28px 0;}
+.tab{flex:1;padding:13px;border:none;border-radius:14px;background:#EEF3FF;cursor:pointer;font-family:'Sora',sans-serif;font-weight:600;}
+.tab.active{background:linear-gradient(135deg,#5B8CFF,#7A9DFF);color:white;}
+.hidden{display:none;}
+#toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:#1F2B46;color:white;padding:16px 24px;border-radius:999px;transition:.3s;z-index:999999;}
+#toast.show{transform:translateX(-50%) translateY(0);}
+.instagram-btn{height:46px;padding:0 18px;border-radius:16px;background:linear-gradient(135deg,#5B8CFF,#7A9DFF);display:flex;align-items:center;justify-content:center;text-decoration:none;font-weight:600;font-size:.92rem;color:white;transition:.25s;box-shadow:0 10px 25px rgba(91,140,255,.25);}
+.instagram-btn:hover{transform:translateY(-2px);background:linear-gradient(135deg,#F58529,#DD2A7B,#8134AF,#515BD4);color:white;}
+.login-share-box{display:flex;flex-direction:column;gap:8px;}
+.login-share-text{color:var(--muted);line-height:1.8;margin-bottom:20px;}
+.products-carousel{overflow:hidden;padding:28px;}
+.products-track{display:flex;gap:22px;width:max-content;padding-right:22px;}
+@media(min-width:769px){.products-track{animation:scrollProducts 35s linear infinite;}}
+.product-card{width:240px;flex-shrink:0;background:white;border-radius:24px;padding:18px;box-shadow:0 8px 24px rgba(0,0,0,.06);border:1px solid #EEF2FF;}
+.product-card img{width:100%;height:180px;object-fit:cover;border-radius:18px;margin-bottom:14px;}
+.product-card h4{font-size:1rem;margin-bottom:8px;}
+.product-card p{font-size:.88rem;color:#7180A0;line-height:1.6;margin-bottom:14px;}
+.product-btn{width:100%;justify-content:center;text-decoration:none;display:flex;}
+@keyframes scrollProducts{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
 @media(max-width:1100px){
-
-.top-benefits{
-grid-template-columns:1fr;
+.top-benefits{grid-template-columns:1fr;}
+.benefit-item{border-right:none;border-bottom:1px solid #EEF2FF;}
+.main-grid{grid-template-columns:1fr;}
+.hero h1{font-size:2.6rem;line-height:1.15;}
+.logo-text{font-size:1.6rem;}
+.logo-icon-img img{width:62px;}
+.logo-subtitle{font-size:.70rem;}
+#mapa{height:300px;}
 }
-
-.benefit-item{
-border-right:none;
-border-bottom:1px solid #EEF2FF;
-}
-
-.main-grid{
-grid-template-columns:1fr;
-}
-
-.hero h1{
-font-size:2.6rem;
-line-height:1.15;
-}
-
-.logo-text{
-font-size:1.6rem;
-}
-
-.logo-icon-img img{
-width:62px;
-}
-
-.logo-subtitle{
-font-size:.70rem;
-}
-
-.feature-content h4{
-font-size:1.4rem;
-}
-
-.feature-content p{
-font-size:1rem;
-}
-
-.products-track{
-animation-duration:45s;
-}
-
-}
-
-/* CELULAR */
-
 @media(max-width:768px){
-
-    .login-share-box{
-display:flex;
-flex-direction:column;
-align-items:flex-start;
-gap:18px;
-width:100%;
+.login-share-box{flex-direction:column;align-items:flex-start;gap:18px;width:100%;}
+.login-share-text{width:100%;font-size:1rem;line-height:1.7;}
+.card-body{padding:20px;}
+nav{padding:14px 16px;height:auto;flex-direction:column;gap:16px;align-items:flex-start;}
+.nav-right{width:100%;display:flex;flex-wrap:wrap;gap:10px;}
+.instagram-btn,.btn{flex:1;justify-content:center;}
+.logo{width:100%;}
+.hero{padding:10px 14px 10px;}
+.section{padding:18px 14px;}
+.hero h1{font-size:2rem;line-height:1.2;margin-bottom:18px;}
+.hero p{font-size:.98rem;line-height:1.7;margin-bottom:24px;}
+.search-box{flex-direction:column;padding:14px;border-radius:24px;}
+.search-box input,.search-box select{width:100%;}
+.card{border-radius:26px;}
+.card-header{padding:20px;font-size:.95rem;}
+.products-carousel{display:block;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:6px;}
+.products-carousel::-webkit-scrollbar{display:none;}
+.products-track{display:flex;gap:18px;width:max-content;animation:none;padding-right:20px;}
+.product-card{width:210px;min-width:210px;flex-shrink:0;}
+.product-card img{height:150px;}
+.logo-text{font-size:1.45rem;}
+.logo-subtitle{display:none;}
+footer{padding:35px 16px;}
+footer p{font-size:.9rem;line-height:1.7;}
+.modal{margin:20px;padding:28px;border-radius:28px;}
+.detalhe-modal{margin:16px;border-radius:28px;}
+.detalhe-header{padding:22px 24px 16px;}
+.detalhe-body{padding:20px 24px;}
+.tabs{flex-direction:column;}
+.tab{width:100%;}
+#mapa{height:250px;}
+#mapa-wrapper{padding:0 14px;}
 }
-
-.login-share-text{
-width:100%;
-font-size:1rem;
-line-height:1.7;
-white-space:normal;
-word-break:break-word;
-overflow-wrap:break-word;
-}
-
-    .card-body p{
-font-size:.95rem;
-line-height:1.7;
-word-break:break-word;
-overflow-wrap:break-word;
-white-space:normal;
-}
-
-.card-body{
-padding:22px;
-}
-
-nav{
-padding:14px 16px;
-height:auto;
-flex-direction:column;
-gap:16px;
-align-items:flex-start;
-}
-
-.nav-right{
-width:100%;
-display:flex;
-flex-wrap:wrap;
-gap:10px;
-}
-
-.instagram-btn,
-.btn,
-.support-btn{
-flex:1;
-justify-content:center;
-}
-
-.logo{
-width:100%;
-}
-
-.hero{
-padding:10px 14px 10px;
-}
-
-.section{
-padding:18px 14px;
-}
-
-.hero h1{
-font-size:2rem;
-line-height:1.2;
-margin-bottom:18px;
-}
-
-.hero p{
-font-size:.98rem;
-line-height:1.7;
-margin-bottom:24px;
-}
-
-.search-box{
-flex-direction:column;
-padding:14px;
-border-radius:24px;
-}
-
-.search-box input,
-.search-box select{
-width:100%;
-}
-
-.card{
-border-radius:26px;
-}
-
-.card-header{
-padding:20px;
-font-size:.95rem;
-}
-
-.card-body{
-padding:20px;
-}
-
-.rank-item{
-gap:12px;
-}
-
-.rank-number{
-width:34px;
-height:34px;
-font-size:.85rem;
-}
-
-.rank-content h4{
-font-size:.95rem;
-}
-
-.rank-content p{
-font-size:.78rem;
-}
-
-.products-carousel{
-display:block;
-overflow-x:auto;
-overflow-y:hidden;
--webkit-overflow-scrolling:touch;
-scrollbar-width:none;
-padding-bottom:6px;
-touch-action:pan-x;
-cursor:grab;
-scroll-behavior:smooth;
-}
-
-.products-carousel::-webkit-scrollbar{
-display:none;
-}
-
-.products-track{
-display:flex;
-gap:18px;
-width:max-content;
-animation:none;
-padding-right:20px;
-pointer-events:auto;
-}
-
-.product-card{
-width:210px;
-min-width:210px;
-flex-shrink:0;
-scroll-snap-align:start;
-}
-
-.product-card img{
-height:150px;
-}
-
-.logo-text{
-font-size:1.45rem;
-}
-
-.logo-subtitle{
-display:none;
-}
-
-footer{
-padding:35px 16px;
-}
-
-footer p{
-font-size:.9rem;
-line-height:1.7;
-}
-
-.modal{
-margin:20px;
-padding:28px;
-border-radius:28px;
-}
-
-.tabs{
-flex-direction:column;
-}
-
-.tab{
-width:100%;
-}
-
-}
-
-/* CELULAR PEQUENO */
-
 @media(max-width:480px){
-
-.hero h1{
-font-size:1.7rem;
+.hero h1{font-size:1.7rem;}
+.logo-icon-img img{width:52px;}
+.logo-text{font-size:1.25rem;}
+.product-card{width:185px;}
+.product-card img{height:130px;}
+.benefit-text{font-size:.76rem;}
 }
-
-.logo-icon-img img{
-width:52px;
-}
-
-.logo-text{
-font-size:1.25rem;
-}
-
-.badge{
-font-size:.76rem;
-padding:10px 14px;
-}
-
-.product-card{
-width:185px;
-}
-
-.product-card img{
-height:130px;
-}
-
-.benefit-text{
-font-size:.76rem;
-}
-
-}
-
-.products-carousel{
-overflow:hidden;
-padding:28px;
-}
-
-.products-track{
-display:flex;
-gap:22px;
-width:max-content;
-padding-right:22px;
-}
-
-@media(min-width:769px){
-
-.products-track{
-animation:scrollProducts 35s linear infinite;
-}
-
-}
-
-.product-card{
-width:240px;
-flex-shrink:0;
-background:white;
-border-radius:24px;
-padding:18px;
-box-shadow:0 8px 24px rgba(0,0,0,.06);
-border:1px solid #EEF2FF;
-}
-
-.product-card img{
-width:100%;
-height:180px;
-object-fit:cover;
-border-radius:18px;
-margin-bottom:14px;
-}
-
-.product-card h4{
-font-size:1rem;
-margin-bottom:8px;
-}
-
-.product-card p{
-font-size:.88rem;
-color:#7180A0;
-line-height:1.6;
-margin-bottom:14px;
-}
-
-.product-btn{
-width:100%;
-justify-content:center;
-text-decoration:none;
-display:flex;
-}
-
-@keyframes scrollProducts{
-
-0%{
-transform:translateX(0);
-}
-
-100%{
-transform:translateX(-50%);
-}
-
-}
-
-html,
-body{
-overflow-x:hidden;
-max-width:100%;
-}
-
-*{
-max-width:100%;
-}
-
-img{
-max-width:100%;
-height:auto;
-}
-
-.main-grid,
-.hero-content,
-.search-box,
-.top-benefits{
-width:100%;
-overflow:hidden;
-}
-
-.products-carousel{
-overflow-x:auto !important;
-}
-
+html,body{overflow-x:hidden;max-width:100%;}
+img{max-width:100%;height:auto;}
+.main-grid,.hero-content,.search-box,.top-benefits{width:100%;overflow:hidden;}
+.products-carousel{overflow-x:auto !important;}
 </style>
 </head>
-
 <body>
 
 <nav>
-
-<div class="logo">
-
-<div class="logo-icon-img">
-<img src="logo-autguia.png" alt="AutGuia">
-</div>
-
-<div class="logo-text-wrap">
-
-<div class="logo-text">
-<span class="c1">A</span><span class="c2">u</span><span class="c3">t</span><span class="c4">i</span><span class="c5">G</span><span class="c6">u</span><span class="c7">i</span><span class="c8">a</span>
-</div>
-
-<div class="logo-subtitle">
-Guiando famílias para lugares mais inclusivos.
-</div>
-
-</div>
-
-</div>
-
-<div class="nav-right">
-
-    <a
-href="https://instagram.com/autiguia"
-target="_blank"
-class="instagram-btn"
->
-📸 Instagram
-</a>
-
-<div id="userArea" class="hidden">
-<span id="userEmail"></span>
-
-<button class="btn btn-light" onclick="logout()">
-Sair
-</button>
-</div>
-
-<button class="btn btn-primary" id="loginBtn" onclick="openModal()">
-Entrar
-</button>
-
-</div>
-
+  <div class="logo">
+    <div class="logo-icon-img"><img src="logo-autguia.png" alt="AutGuia"></div>
+    <div class="logo-text-wrap">
+      <div class="logo-text">
+        <span class="c1">A</span><span class="c2">u</span><span class="c3">t</span><span class="c4">i</span><span class="c5">G</span><span class="c6">u</span><span class="c7">i</span><span class="c8">a</span>
+      </div>
+      <div class="logo-subtitle">Guiando famílias para lugares mais inclusivos.</div>
+    </div>
+  </div>
+  <div class="nav-right">
+    <a href="https://instagram.com/autiguia" target="_blank" class="instagram-btn">📸 Instagram</a>
+    <div id="userArea" class="hidden">
+      <span id="userEmail"></span>
+      <button class="btn btn-light" onclick="logout()">Sair</button>
+    </div>
+    <button class="btn btn-primary" id="loginBtn" onclick="openModal()">Entrar</button>
+  </div>
 </nav>
 
 <section class="hero">
-
-<div class="top-benefits">
-
-<div class="benefit-item">
-<div class="benefit-icon blue">📍</div>
-<div class="benefit-text">
-Encontre locais inclusivos perto de você
-</div>
-</div>
-
-<div class="benefit-item">
-<div class="benefit-icon yellow">⭐</div>
-<div class="benefit-text">
-Avaliações reais de famílias
-</div>
-</div>
-
-<div class="benefit-item">
-<div class="benefit-icon green">🏆</div>
-<div class="benefit-text">
-Ranking dos melhores espaços
-</div>
-</div>
-
-<div class="benefit-item">
-<div class="benefit-icon purple">🧩</div>
-<div class="benefit-text">
-Informações sobre acessibilidade sensorial
-</div>
-</div>
-
-<div class="benefit-item">
-<div class="benefit-icon red">💗</div>
-<div class="benefit-text">
-Mais inclusão, mais acolhimento
-</div>
-</div>
-
-</div>
-
-<div class="hero-content">
-
-<div>
-
-<h1>
-Encontre lugares mais acolhedores para pessoas autistas e suas famílias
-</h1>
-
-<p>
-O AutiGuia ajuda famílias atípicas e pessoas autistas a encontrarem ambientes mais tranquilos, acolhedores e preparados para proporcionar experiências melhores, mais seguras e confortáveis.
-</p>
-
-<div class="search-box">
-
-<select
-id="searchCategory"
-onchange="filterRanking()"
->
-
-<option value="">
-Todas as categorias
-</option>
-
-<option value="Alimentação e Bebidas">
-Alimentação e Bebidas
-</option>
-
-<option value="Animais de Estimação (Pet Shops)">
-Animais de Estimação (Pet Shops)
-</option>
-
-<option value="Artes e Artesanato">
-Artes e Artesanato
-</option>
-
-<option value="Automotivo">
-Automotivo
-</option>
-
-<option value="Beleza e Estética">
-Beleza e Estética
-</option>
-
-<option value="Brinquedos e Jogos">
-Brinquedos e Jogos
-</option>
-
-<option value="Construção e Reforma">
-Construção e Reforma
-</option>
-
-<option value="Cultura e Entretenimento">
-Cultura e Entretenimento
-</option>
-
-<option value="Educação e Cursos">
-Educação e Cursos
-</option>
-
-<option value="Esportes e Lazer">
-Esportes e Lazer
-</option>
-
-<option value="Farmácias e Saúde">
-Farmácias e Saúde
-</option>
-
-<option value="Floricultura e Jardinagem">
-Floricultura e Jardinagem
-</option>
-
-<option value="Hotelaria e Hospedagem">
-Hotelaria e Hospedagem
-</option>
-
-<option value="Imóveis">
-Imóveis
-</option>
-
-<option value="Informática e Tecnologia">
-Informática e Tecnologia
-</option>
-
-<option value="Instrumentos Musicais">
-Instrumentos Musicais
-</option>
-
-<option value="Joias e Acessórios">
-Joias e Acessórios
-</option>
-
-<option value="Livrarias e Papelaria">
-Livrarias e Papelaria
-</option>
-
-<option value="Materiais de Escritório">
-Materiais de Escritório
-</option>
-
-<option value="Móveis e Decoração">
-Móveis e Decoração
-</option>
-
-<option value="Ótica e Fotografia">
-Ótica e Fotografia
-</option>
-
-<option value="Serviços Financeiros">
-Serviços Financeiros
-</option>
-
-<option value="Serviços Gerais">
-Serviços Gerais
-</option>
-
-<option value="Supermercados e Mercearias">
-Supermercados e Mercearias
-</option>
-
-<option value="Turismo e Viagens">
-Turismo e Viagens
-</option>
-
-<option value="Vestuário e Moda">
-Vestuário e Moda
-</option>
-
-</select>
-
-<select
-id="searchCity"
-onchange="filterRanking()"
->
-
-<option value="">
-Todas as cidades
-</option>
-
-<option value="Barueri">
-Barueri
-</option>
-
-<option value="Carapicuiba">
-Carapicuiba
-</option>
-
-<option value="Cotia">
-Cotia
-</option>
-
-<option value="Itapevi">
-Itapevi
-</option>
-
-<option value="Osasco">
-Osasco
-</option>
-
-<option value="São Paulo">
-São Paulo
-</option>
-
-<option value="São Roque">
-São Roque
-</option>
-
-<option value="Vargem Grande Paulista">
-Vargem Grande Paulista
-</option>
-
-</select>
-
-</div>
-
-</div>
-
-</div>
-
+  <div class="top-benefits">
+    <div class="benefit-item"><div class="benefit-icon blue">📍</div><div class="benefit-text">Encontre locais inclusivos perto de você</div></div>
+    <div class="benefit-item"><div class="benefit-icon yellow">⭐</div><div class="benefit-text">Avaliações reais de famílias</div></div>
+    <div class="benefit-item"><div class="benefit-icon green">🏆</div><div class="benefit-text">Ranking dos melhores espaços</div></div>
+    <div class="benefit-item"><div class="benefit-icon purple">🧩</div><div class="benefit-text">Informações sobre acessibilidade sensorial</div></div>
+    <div class="benefit-item"><div class="benefit-icon red">💗</div><div class="benefit-text">Mais inclusão, mais acolhimento</div></div>
+  </div>
+  <div class="hero-content">
+    <h1>Encontre lugares mais acolhedores para pessoas autistas e suas famílias</h1>
+    <p>O AutiGuia ajuda famílias atípicas e pessoas autistas a encontrarem ambientes mais tranquilos, acolhedores e preparados para proporcionar experiências melhores, mais seguras e confortáveis.</p>
+    <div class="search-box">
+      <select id="searchCategory" onchange="filterRanking()">
+        <option value="">Todas as categorias</option>
+        <option value="Alimentação e Bebidas">Alimentação e Bebidas</option>
+        <option value="Animais de Estimação (Pet Shops)">Animais de Estimação (Pet Shops)</option>
+        <option value="Artes e Artesanato">Artes e Artesanato</option>
+        <option value="Automotivo">Automotivo</option>
+        <option value="Beleza e Estética">Beleza e Estética</option>
+        <option value="Brinquedos e Jogos">Brinquedos e Jogos</option>
+        <option value="Construção e Reforma">Construção e Reforma</option>
+        <option value="Cultura e Entretenimento">Cultura e Entretenimento</option>
+        <option value="Educação e Cursos">Educação e Cursos</option>
+        <option value="Esportes e Lazer">Esportes e Lazer</option>
+        <option value="Farmácias e Saúde">Farmácias e Saúde</option>
+        <option value="Floricultura e Jardinagem">Floricultura e Jardinagem</option>
+        <option value="Hotelaria e Hospedagem">Hotelaria e Hospedagem</option>
+        <option value="Imóveis">Imóveis</option>
+        <option value="Informática e Tecnologia">Informática e Tecnologia</option>
+        <option value="Instrumentos Musicais">Instrumentos Musicais</option>
+        <option value="Joias e Acessórios">Joias e Acessórios</option>
+        <option value="Livrarias e Papelaria">Livrarias e Papelaria</option>
+        <option value="Materiais de Escritório">Materiais de Escritório</option>
+        <option value="Móveis e Decoração">Móveis e Decoração</option>
+        <option value="Ótica e Fotografia">Ótica e Fotografia</option>
+        <option value="Serviços Financeiros">Serviços Financeiros</option>
+        <option value="Serviços Gerais">Serviços Gerais</option>
+        <option value="Supermercados e Mercearias">Supermercados e Mercearias</option>
+        <option value="Turismo e Viagens">Turismo e Viagens</option>
+        <option value="Vestuário e Moda">Vestuário e Moda</option>
+      </select>
+      <select id="searchCity" onchange="filterRanking()">
+        <option value="">Todas as cidades</option>
+        <option value="Barueri">Barueri</option>
+        <option value="Carapicuiba">Carapicuiba</option>
+        <option value="Cotia">Cotia</option>
+        <option value="Itapevi">Itapevi</option>
+        <option value="Osasco">Osasco</option>
+        <option value="São Paulo">São Paulo</option>
+        <option value="São Roque">São Roque</option>
+        <option value="Vargem Grande Paulista">Vargem Grande Paulista</option>
+      </select>
+    </div>
+  </div>
 </section>
 
-<section class="section">
 
-<div class="features">
-
-<div class="feature-card">
-
-
-</section>
 
 <section class="section">
-
-<div class="main-grid">
-
-<div>
-
-<div class="card" style="margin-bottom:28px;">
-
-<div class="card-header">
-Compartilhe sua experiência
+  <div class="main-grid">
+    <div>
+      <!-- FORMULÁRIO -->
+      <div class="card" style="margin-bottom:28px;">
+        <div class="card-header">Compartilhe sua experiência</div>
+        <div class="card-body">
+          <div id="lockedMsg" class="login-share-box">
+            <p class="login-share-text">Faça login para recomendar um estabelecimento e ajudar outras famílias 💙</p>
+            <button class="btn btn-primary" onclick="openModal()">Entrar para compartilhar</button>
+          </div>
+          <div id="cadastroForm" class="hidden">
+            <div class="form-group"><label>Nome do estabelecimento</label><input type="text" id="nome"></div>
+            <div class="form-group">
+  <label>Endereço</label>
+  <input
+    type="text"
+    id="endereco"
+    placeholder="Rua, número, bairro"
+  >
 </div>
-
-<div class="card-body">
-
-<div id="lockedMsg" class="login-share-box"></div>
-
-<p class="login-share-text" style="margin-bottom:20px;color:var(--muted);line-height:1.8;"></p>
-Faça login para recomendar um estabelecimento e ajudar outras famílias 💙
-</p>
-
-<button class="btn btn-primary" onclick="openModal()">
-Entrar para compartilhar
-</button>
-
-</div>
-
-<div id="cadastroForm" class="hidden">
-
-<div class="form-group">
-<label>Nome do estabelecimento</label>
-<input type="text" id="nome">
-</div>
-
-<div class="form-group">
-
-<label>
-Cidade
-</label>
-
-<select id="cidade">
-
-<option value="">
-Selecione uma cidade
-</option>
-
-<option value="Barueri">
-Barueri
-</option>
-
-<option value="Carapicuiba">
-Carapicuiba
-</option>
-
-<option value="Cotia">
-Cotia
-</option>
-
-<option value="Itapevi">
-Itapevi
-</option>
-
-<option value="Osasco">
-Osasco
-</option>
-
-<option value="São Paulo">
-São Paulo
-</option>
-
-<option value="São Roque">
-São Roque
-</option>
-
-<option value="Vargem Grande Paulista">
-Vargem Grande Paulista
-</option>
-
-</select>
-
-</div>
-
-<div class="form-group">
-
-<label>
-Categoria
-</label>
-
-<select id="categoria">
-
-<option value="">
-Selecione uma categoria
-</option>
-
-<option value="Alimentação e Bebidas">
-Alimentação e Bebidas
-</option>
-
-<option value="Animais de Estimação (Pet Shops)">
-Animais de Estimação (Pet Shops)
-</option>
-
-<option value="Artes e Artesanato">
-Artes e Artesanato
-</option>
-
-<option value="Automotivo">
-Automotivo
-</option>
-
-<option value="Beleza e Estética">
-Beleza e Estética
-</option>
-
-<option value="Brinquedos e Jogos">
-Brinquedos e Jogos
-</option>
-
-<option value="Construção e Reforma">
-Construção e Reforma
-</option>
-
-<option value="Cultura e Entretenimento">
-Cultura e Entretenimento
-</option>
-
-<option value="Educação e Cursos">
-Educação e Cursos
-</option>
-
-<option value="Esportes e Lazer">
-Esportes e Lazer
-</option>
-
-<option value="Farmácias e Saúde">
-Farmácias e Saúde
-</option>
-
-<option value="Floricultura e Jardinagem">
-Floricultura e Jardinagem
-</option>
-
-<option value="Hotelaria e Hospedagem">
-Hotelaria e Hospedagem
-</option>
-
-<option value="Imóveis">
-Imóveis
-</option>
-
-<option value="Informática e Tecnologia">
-Informática e Tecnologia
-</option>
-
-<option value="Instrumentos Musicais">
-Instrumentos Musicais
-</option>
-
-<option value="Joias e Acessórios">
-Joias e Acessórios
-</option>
-
-<option value="Livrarias e Papelaria">
-Livrarias e Papelaria
-</option>
-
-<option value="Materiais de Escritório">
-Materiais de Escritório
-</option>
-
-<option value="Móveis e Decoração">
-Móveis e Decoração
-</option>
-
-<option value="Ótica e Fotografia">
-Ótica e Fotografia
-</option>
-
-<option value="Serviços Financeiros">
-Serviços Financeiros
-</option>
-
-<option value="Serviços Gerais">
-Serviços Gerais
-</option>
-
-<option value="Supermercados e Mercearias">
-Supermercados e Mercearias
-</option>
-
-<option value="Turismo e Viagens">
-Turismo e Viagens
-</option>
-
-<option value="Vestuário e Moda">
-Vestuário e Moda
-</option>
-
-</select>
-
-</div>
-
-<div class="form-group">
-<label>Como foi sua experiência?</label>
-<textarea id="descricao" rows="4"></textarea>
-</div>
-
-<div class="form-group">
-<label>Nível de acolhimento (0 a 10)</label>
-<input type="number" id="atendimento">
-</div>
-
-<button class="btn btn-primary" onclick="salvar()">
-Compartilhar experiência
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-<div class="card">
-
-<div class="card-header">
-Locais recomendados pela comunidade
-</div>
-
-<div class="card-body ranking-scroll" id="ranking">
-
-Carregando recomendações...
-
-</div>
-
-</div>
-
-</div>
-
-<div>
-
-<div class="card">
-
-<div class="card-header">
-💙 Lugares parceiros 
-</div>
-
-<div class="card-body" id="partners">
-
-</div>
-
-</div>
-
-<div class="card" style="margin-top:28px; overflow:hidden;">
-
-<div class="card-header">
-🛍 Produtos recomendados
-</div>
-
-<div class="products-carousel">
-
-<div class="products-track">
-
-<div class="product-card">
-
-<img
-src="https://m.media-amazon.com/images/I/61xVQw6wFOL._AC_SL1500_.jpg"
-alt="Fone Antirruído"
-/>
-
-<h4>
-Fone Antirruído Infantil
-</h4>
-
-<p>
-Ajuda na redução de estímulos sonoros.
-</p>
-
-<a
-href="SEU_LINK_AFILIADO"
-target="_blank"
-class="btn btn-primary product-btn"
->
-Ver produto
-</a>
-
-</div>
-
-<div class="product-card">
-
-<img
-src="https://m.media-amazon.com/images/I/71r8Q2v7d7L._AC_SL1500_.jpg"
-alt="Kit Sensorial"
-/>
-
-<h4>
-Kit Sensorial
-</h4>
-
-<p>
-Estimulação sensorial educativa.
-</p>
-
-<a
-href="SEU_LINK_AFILIADO"
-target="_blank"
-class="btn btn-primary product-btn"
->
-Ver produto
-</a>
-
-</div>
-
-<div class="product-card">
-
-<img
-src="https://m.media-amazon.com/images/I/71z2w6lqzXL._AC_SL1500_.jpg"
-alt="Cobertor Sensorial"
-/>
-
-<h4>
-Cobertor Sensorial
-</h4>
-
-<p>
-Sensação de conforto e segurança.
-</p>
-
-<a
-href="SEU_LINK_AFILIADO"
-target="_blank"
-class="btn btn-primary product-btn"
->
-Ver produto
-</a>
-
-</div>
-
-<div class="product-card">
-
-<img
-src="https://m.media-amazon.com/images/I/61d4zDk-Z-L._AC_SL1200_.jpg"
-alt="Pop It"
-/>
-
-<h4>
-Pop It Sensorial
-</h4>
-
-<p>
-Ajuda no relaxamento e foco.
-</p>
-
-<a
-href="SEU_LINK_AFILIADO"
-target="_blank"
-class="btn btn-primary product-btn"
->
-Ver produto
-</a>
-
-</div>
-
-<!-- DUPLICADOS PARA LOOP -->
-
-<div class="product-card">
-
-<img
-src="https://m.media-amazon.com/images/I/61xVQw6wFOL._AC_SL1500_.jpg"
-/>
-
-<h4>
-Fone Antirruído Infantil
-</h4>
-
-<p>
-Ajuda na redução de estímulos sonoros.
-</p>
-
-<a
-href="SEU_LINK_AFILIADO"
-target="_blank"
-class="btn btn-primary product-btn"
->
-Ver produto
-</a>
-
-</div>
-
-<div class="product-card">
-
-<img
-src="https://m.media-amazon.com/images/I/71r8Q2v7d7L._AC_SL1500_.jpg"
-/>
-
-<h4>
-Kit Sensorial
-</h4>
-
-<p>
-Estimulação sensorial educativa.
-</p>
-
-<a
-href="SEU_LINK_AFILIADO"
-target="_blank"
-class="btn btn-primary product-btn"
->
-Ver produto
-</a>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-
-
-
-
-</div>
-
-</div>
-
-<div class="side-box">
-
-<h3>
-♾️ Nossa missão
-</h3>
-
-<p>
-Ajudar famílias e pessoas autistas a encontrarem ambientes mais acolhedores através da força da comunidade e da troca de experiências reais.
-</p>
-
-</div>
-
-</div>
-
-</div>
-
+            <div class="form-group">
+              <label>Cidade</label>
+              <select id="cidade">
+                <option value="">Selecione uma cidade</option>
+                <option value="Barueri">Barueri</option>
+                <option value="Carapicuiba">Carapicuiba</option>
+                <option value="Cotia">Cotia</option>
+                <option value="Itapevi">Itapevi</option>
+                <option value="Osasco">Osasco</option>
+                <option value="São Paulo">São Paulo</option>
+                <option value="São Roque">São Roque</option>
+                <option value="Vargem Grande Paulista">Vargem Grande Paulista</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Categoria</label>
+              <select id="categoria">
+                <option value="">Selecione uma categoria</option>
+                <option value="Alimentação e Bebidas">Alimentação e Bebidas</option>
+                <option value="Animais de Estimação (Pet Shops)">Animais de Estimação (Pet Shops)</option>
+                <option value="Artes e Artesanato">Artes e Artesanato</option>
+                <option value="Automotivo">Automotivo</option>
+                <option value="Beleza e Estética">Beleza e Estética</option>
+                <option value="Brinquedos e Jogos">Brinquedos e Jogos</option>
+                <option value="Construção e Reforma">Construção e Reforma</option>
+                <option value="Cultura e Entretenimento">Cultura e Entretenimento</option>
+                <option value="Educação e Cursos">Educação e Cursos</option>
+                <option value="Esportes e Lazer">Esportes e Lazer</option>
+                <option value="Farmácias e Saúde">Farmácias e Saúde</option>
+                <option value="Floricultura e Jardinagem">Floricultura e Jardinagem</option>
+                <option value="Hotelaria e Hospedagem">Hotelaria e Hospedagem</option>
+                <option value="Imóveis">Imóveis</option>
+                <option value="Informática e Tecnologia">Informática e Tecnologia</option>
+                <option value="Instrumentos Musicais">Instrumentos Musicais</option>
+                <option value="Joias e Acessórios">Joias e Acessórios</option>
+                <option value="Livrarias e Papelaria">Livrarias e Papelaria</option>
+                <option value="Materiais de Escritório">Materiais de Escritório</option>
+                <option value="Móveis e Decoração">Móveis e Decoração</option>
+                <option value="Ótica e Fotografia">Ótica e Fotografia</option>
+                <option value="Serviços Financeiros">Serviços Financeiros</option>
+                <option value="Serviços Gerais">Serviços Gerais</option>
+                <option value="Supermercados e Mercearias">Supermercados e Mercearias</option>
+                <option value="Turismo e Viagens">Turismo e Viagens</option>
+                <option value="Vestuário e Moda">Vestuário e Moda</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Como foi sua experiência?</label><textarea id="descricao" rows="4"></textarea></div>
+            <div class="form-group"><label>Nível de acolhimento (0 a 10)</label><input type="number" id="atendimento" min="0" max="10"></div>
+            <button class="btn btn-primary" onclick="salvar()">Compartilhar experiência</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RANKING -->
+      <div class="card">
+        <div class="card-header">Locais recomendados pela comunidade</div>
+        <div class="card-body ranking-scroll" id="ranking">Carregando recomendações...</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-header">💙 Lugares parceiros</div>
+        <div class="card-body" id="partners"></div>
+      </div>
+      <div class="card" style="margin-top:28px;overflow:hidden;">
+        <div class="card-header">🛍 Produtos recomendados</div>
+        <div class="products-carousel">
+          <div class="products-track">
+            <div class="product-card">
+              <img src="https://m.media-amazon.com/images/I/61xVQw6wFOL._AC_SL1500_.jpg" alt="Fone Antirruído"/>
+              <h4>Fone Antirruído Infantil</h4>
+              <p>Ajuda na redução de estímulos sonoros.</p>
+              <a href="SEU_LINK_AFILIADO" target="_blank" class="btn btn-primary product-btn">Ver produto</a>
+            </div>
+            <div class="product-card">
+              <img src="https://m.media-amazon.com/images/I/71r8Q2v7d7L._AC_SL1500_.jpg" alt="Kit Sensorial"/>
+              <h4>Kit Sensorial</h4>
+              <p>Estimulação sensorial educativa.</p>
+              <a href="SEU_LINK_AFILIADO" target="_blank" class="btn btn-primary product-btn">Ver produto</a>
+            </div>
+            <div class="product-card">
+              <img src="https://m.media-amazon.com/images/I/71z2w6lqzXL._AC_SL1500_.jpg" alt="Cobertor Sensorial"/>
+              <h4>Cobertor Sensorial</h4>
+              <p>Sensação de conforto e segurança.</p>
+              <a href="SEU_LINK_AFILIADO" target="_blank" class="btn btn-primary product-btn">Ver produto</a>
+            </div>
+            <div class="product-card">
+              <img src="https://m.media-amazon.com/images/I/61d4zDk-Z-L._AC_SL1200_.jpg" alt="Pop It"/>
+              <h4>Pop It Sensorial</h4>
+              <p>Ajuda no relaxamento e foco.</p>
+              <a href="SEU_LINK_AFILIADO" target="_blank" class="btn btn-primary product-btn">Ver produto</a>
+            </div>
+            <div class="product-card">
+              <img src="https://m.media-amazon.com/images/I/61xVQw6wFOL._AC_SL1500_.jpg"/>
+              <h4>Fone Antirruído Infantil</h4>
+              <p>Ajuda na redução de estímulos sonoros.</p>
+              <a href="SEU_LINK_AFILIADO" target="_blank" class="btn btn-primary product-btn">Ver produto</a>
+            </div>
+            <div class="product-card">
+              <img src="https://m.media-amazon.com/images/I/71r8Q2v7d7L._AC_SL1500_.jpg"/>
+              <h4>Kit Sensorial</h4>
+              <p>Estimulação sensorial educativa.</p>
+              <a href="SEU_LINK_AFILIADO" target="_blank" class="btn btn-primary product-btn">Ver produto</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="side-box">
+        <h3>♾️ Nossa missão</h3>
+        <p>Ajudar famílias e pessoas autistas a encontrarem ambientes mais acolhedores através da força da comunidade e da troca de experiências reais.</p>
+      </div>
+    </div>
+  </div>
 </section>
 
 <footer>
-
-<p>
-AutiGuia • Cada recomendação ajuda outra família a encontrar um lugar melhor para viver momentos especiais com mais conforto, acolhimento e segurança.
-</p>
-
+  <p>AutiGuia • Cada recomendação ajuda outra família a encontrar um lugar melhor para viver momentos especiais com mais conforto, acolhimento e segurança.</p>
 </footer>
 
+<!-- MODAL LOGIN -->
 <div class="modal-overlay" id="modal">
-
-<div class="modal">
-
-<button class="close-modal" onclick="closeModal()">
-✕
-</button>
-
-<h2>
-Bem-vindo 💙
-</h2>
-
-<p style="color:var(--muted);line-height:1.7;">
-Participe da comunidade e compartilhe experiências reais sobre lugares mais acolhedores.
-</p>
-
-<div class="tabs">
-
-<button
-class="tab active"
-id="tabLogin"
-onclick="switchTab('login')"
->
-Entrar
-</button>
-
-<button
-class="tab"
-id="tabCadastro"
-onclick="switchTab('cadastro')"
->
-Criar conta
-</button>
-
+  <div class="modal">
+    <button class="close-modal" onclick="closeModal()">✕</button>
+    <h2>Bem-vindo 💙</h2>
+    <p style="color:var(--muted);line-height:1.7;">Participe da comunidade e compartilhe experiências reais sobre lugares mais acolhedores.</p>
+    <div class="tabs">
+      <button class="tab active" id="tabLogin" onclick="switchTab('login')">Entrar</button>
+      <button class="tab" id="tabCadastro" onclick="switchTab('cadastro')">Criar conta</button>
+    </div>
+    <div id="loginPanel">
+      <div class="form-group"><label>E-mail</label><input type="email" id="loginEmail"></div>
+      <div class="form-group"><label>Senha</label><input type="password" id="loginSenha"></div>
+      <button class="btn btn-primary" onclick="login()">Entrar</button>
+    </div>
+    <div id="cadastroPanel" class="hidden">
+      <div class="form-group"><label>E-mail</label><input type="email" id="cadastroEmail"></div>
+      <div class="form-group"><label>Senha</label><input type="password" id="cadastroSenha"></div>
+      <button class="btn btn-primary" onclick="criarConta()">Criar conta</button>
+    </div>
+  </div>
 </div>
 
-<div id="loginPanel">
-
-<div class="form-group">
-<label>E-mail</label>
-<input type="email" id="loginEmail">
+<!-- MODAL DETALHES DO ESTABELECIMENTO -->
+<div class="detalhe-overlay" id="detalheOverlay" onclick="fecharDetalhe(event)">
+  <div class="detalhe-modal">
+    <div class="detalhe-header">
+      <button class="detalhe-close" onclick="fecharDetalheBtn()">✕</button>
+      <h3 id="det-nome">-</h3>
+      <p id="det-sub">-</p>
+    </div>
+    <div class="detalhe-body">
+      <div id="det-nota" class="detalhe-nota alta">⭐ -/10</div>
+      <div class="detalhe-secao">
+        <label>Experiência compartilhada</label>
+        <p id="det-motivo">-</p>
+      </div>
+      <div class="detalhe-secao">
+  <label>Endereço</label>
+  <p id="det-endereco">-</p>
 </div>
-
-<div class="form-group">
-<label>Senha</label>
-<input type="password" id="loginSenha">
-</div>
-
-<button class="btn btn-primary" onclick="login()">
-Entrar
-</button>
-
-</div>
-
-<div id="cadastroPanel" class="hidden">
-
-<div class="form-group">
-<label>E-mail</label>
-<input type="email" id="cadastroEmail">
-</div>
-
-<div class="form-group">
-<label>Senha</label>
-<input type="password" id="cadastroSenha">
-</div>
-
-<button class="btn btn-primary" onclick="criarConta()">
-Criar conta
-</button>
-
-</div>
-
-</div>
-
+      <div class="detalhe-secao">
+        <label>Compartilhado por</label>
+        <p id="det-email">-</p>
+      </div>
+      <button class="ver-mapa-btn" onclick="verNoMapa()">📍 Ver no mapa</button>
+      <p class="dica-clique">Clique fora para fechar</p>
+    </div>
+  </div>
 </div>
 
 <div id="toast"></div>
 
-<script>
+<!-- Google Maps — substitua SUA_CHAVE_AQUI pela sua chave real -->
+<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBp7p9Qe8caRgqmtGTMJvZflpkw69fFgjo&libraries=places&callback=initMap"></script>
 
+<script>
 const SUPABASE_URL = 'https://ezmmfneawjoawmnqudbh.supabase.co'
 const SUPABASE_KEY = 'sb_publishable_zRXk1cnzVO0HwaEGHPSf4w_VZ1rIcs6'
-
 const { createClient } = supabase
-
-const sb = createClient(SUPABASE_URL,SUPABASE_KEY)
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 let currentUser = null
 let rankingData = []
+let map = null
+let markers = []
+let infoWindowAberta = null
+let itemSelecionado = null
+let indiceAtivo = -1
+
+// ── GOOGLE MAPS ──────────────────────────────────
+
+function initMap() {
+  map = new google.maps.Map(document.getElementById('mapa'), {
+    center: { lat: -23.55, lng: -46.63 },
+    zoom: 10,
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: true,
+    styles: [
+      { featureType:'all', elementType:'geometry', stylers:[{color:'#f5f7ff'}] },
+      { featureType:'water', stylers:[{color:'#c8d8ff'}] },
+      { featureType:'road', elementType:'geometry', stylers:[{color:'#ffffff'}] },
+      { featureType:'road', elementType:'geometry.stroke', stylers:[{color:'#e0e8ff'}] },
+      { featureType:'poi.park', elementType:'geometry', stylers:[{color:'#d4edda'}] },
+      { featureType:'transit', stylers:[{visibility:'off'}] }
+    ]
+  })
+}
+
+function atualizarMapa(lista) {
+  if (!map) return
+  markers.forEach(m => m.setMap(null))
+  markers = []
+  if (infoWindowAberta) { infoWindowAberta.close(); infoWindowAberta = null }
+  if (lista.length === 0) return
+
+  const geocoder = new google.maps.Geocoder()
+
+  lista.forEach((item, index) => {
+    const endereco =
+`${item.Endereco || ''}, ${item.Cidade || ''}, São Paulo, Brasil`
+    geocoder.geocode({ address: endereco }, (results, status) => {
+      if (status !== 'OK') return
+      const nota = Number(item.Atendimento) || 0
+      let cor = '#FF6B81'
+      if (nota >= 8) cor = '#67D66E'
+      else if (nota >= 5) cor = '#FFCC33'
+
+      const marker = new google.maps.Marker({
+        position: results[0].geometry.location,
+        map: map,
+        title: item.Estabelecimento,
+        icon: {
+          path: google.maps.SymbolPath.CIRCLE,
+          scale: 11,
+          fillColor: cor,
+          fillOpacity: 1,
+          strokeColor: '#ffffff',
+          strokeWeight: 2.5
+        },
+        animation: google.maps.Animation.DROP
+      })
+
+      const infoWindow = new google.maps.InfoWindow({
+        content: `
+          <div style="font-family:'Sora',sans-serif;padding:10px 4px 4px;max-width:220px;">
+            <div style="font-weight:700;font-size:.95rem;color:#24324B;margin-bottom:4px;">${item.Estabelecimento}</div>
+            <div style="font-size:.8rem;color:#6F7C99;margin-bottom:6px;">
+📍 ${item.Endereco || '-'}
+</div>
+
+<div style="font-size:.8rem;color:#6F7C99;margin-bottom:6px;">
+${item.Cidade || '-'} • ${item.Categoria || '-'}
+</div>
+            <div style="font-size:.83rem;color:#24324B;line-height:1.5;margin-bottom:8px;">${item.Motivo ? '"' + item.Motivo.substring(0,100) + (item.Motivo.length > 100 ? '…' : '') + '"' : ''}</div>
+            <div style="display:inline-block;background:${cor};color:${nota >= 5 ? '#24324B' : 'white'};font-weight:700;font-size:.85rem;padding:4px 10px;border-radius:999px;">⭐ ${nota}/10</div>
+          </div>
+        `
+      })
+
+      marker.addListener('click', () => {
+        if (infoWindowAberta) infoWindowAberta.close()
+        infoWindow.open(map, marker)
+        infoWindowAberta = infoWindow
+        // abre painel de detalhes ao clicar no marcador também
+        abrirDetalhe(item, index)
+      })
+
+      markers.push(marker)
+    })
+  })
+}
+
+// ── PAINEL DE DETALHES ───────────────────────────
+
+function abrirDetalhe(item, index) {
+  itemSelecionado = item
+  indiceAtivo = index
+
+  // destaca item no ranking
+  document.querySelectorAll('.rank-item').forEach((el, i) => {
+    el.classList.toggle('ativo', i === index)
+  })
+
+  const nota = Number(item.Atendimento) || 0
+  document.getElementById('det-nome').textContent = item.Estabelecimento || '-'
+  document.getElementById('det-sub').textContent = (item.Cidade || '-') + ' • ' + (item.Categoria || '-')
+  document.getElementById('det-motivo').textContent = item.Motivo || 'Nenhuma descrição informada.'
+  document.getElementById('det-endereco').textContent =
+  item.Endereco || 'Não informado'
+  document.getElementById('det-email').textContent = item.Email || 'Anônimo'
+
+  const notaEl = document.getElementById('det-nota')
+  notaEl.textContent = '⭐ ' + nota + '/10'
+  notaEl.className = 'detalhe-nota ' + (nota >= 8 ? 'alta' : nota >= 5 ? 'media' : 'baixa')
+
+  document.getElementById('detalheOverlay').classList.add('open')
+}
+
+function fecharDetalhe(e) {
+  if (e.target === document.getElementById('detalheOverlay')) {
+    fecharDetalheBtn()
+  }
+}
+
+function fecharDetalheBtn() {
+  document.getElementById('detalheOverlay').classList.remove('open')
+  document.querySelectorAll('.rank-item').forEach(el => el.classList.remove('ativo'))
+  itemSelecionado = null
+  indiceAtivo = -1
+}
+
+function verNoMapa() {
+
+  if (!itemSelecionado) return
+
+  const endereco = encodeURIComponent(
+    `${itemSelecionado.Endereco || ''},
+    ${itemSelecionado.Cidade || ''},
+    São Paulo,
+    Brasil`
+  )
+
+  window.open(
+    `https://www.google.com/maps/search/?api=1&query=${endereco}`,
+    '_blank'
+  )
+}
+    
+  
+
+// ── SUPABASE ─────────────────────────────────────
 
 init()
 
-async function init(){
-
-const { data:{ session } } = await sb.auth.getSession()
-
-if(session){
-setUser(session.user)
+async function init() {
+  const { data: { session } } = await sb.auth.getSession()
+  if (session) setUser(session.user)
+  sb.auth.onAuthStateChange((event, session) => {
+    if (session) setUser(session.user)
+    else clearUser()
+  })
+  loadRanking()
 }
 
-sb.auth.onAuthStateChange((event,session)=>{
-
-if(session){
-setUser(session.user)
-}else{
-clearUser()
+function setUser(user) {
+  currentUser = user
+  document.getElementById('userArea').classList.remove('hidden')
+  document.getElementById('loginBtn').classList.add('hidden')
+  document.getElementById('lockedMsg').classList.add('hidden')
+  document.getElementById('cadastroForm').classList.remove('hidden')
+  document.getElementById('userEmail').innerText = user.email
 }
 
+function clearUser() {
+  currentUser = null
+  document.getElementById('userArea').classList.add('hidden')
+  document.getElementById('loginBtn').classList.remove('hidden')
+  document.getElementById('lockedMsg').classList.remove('hidden')
+  document.getElementById('cadastroForm').classList.add('hidden')
+}
+
+async function criarConta() {
+  const email = document.getElementById('cadastroEmail').value
+  const senha = document.getElementById('cadastroSenha').value
+  const { error } = await sb.auth.signUp({ email, password: senha })
+  if (error) return toast(error.message)
+  toast('Conta criada com sucesso 💙')
+  closeModal()
+}
+
+async function login() {
+  const email = document.getElementById('loginEmail').value
+  const senha = document.getElementById('loginSenha').value
+  const { error } = await sb.auth.signInWithPassword({ email, password: senha })
+  if (error) return toast(error.message)
+  toast('Login realizado 💙')
+  closeModal()
+}
+
+async function logout() {
+  await sb.auth.signOut()
+  toast('Sessão encerrada')
+}
+
+
+
+async function salvar() {
+  if (!currentUser) return toast('Faça login primeiro')
+  const nome = document.getElementById('nome').value
+const endereco = document.getElementById('endereco').value
+  const cidade = document.getElementById('cidade').value
+  const categoria = document.getElementById('categoria').value
+  const descricao = document.getElementById('descricao').value
+  const atendimento = document.getElementById('atendimento').value
+  
+  const { error } = await sb.from('Cadastro').insert({
+  Estabelecimento: nome,
+  Endereco: endereco,
+  Cidade: cidade,
+  Categoria: categoria,
+  Motivo: descricao,
+  Atendimento: atendimento,
+  
+  Email: currentUser.email,
+  user_id: currentUser.id
 })
-
-loadRanking()
-
+  if (error) return toast(error.message)
+  toast('Experiência compartilhada 💙')
+  loadRanking()
 }
 
-function setUser(user){
-
-currentUser = user
-
-document.getElementById('userArea').classList.remove('hidden')
-
-document.getElementById('loginBtn').classList.add('hidden')
-
-document.getElementById('lockedMsg').classList.add('hidden')
-
-document.getElementById('cadastroForm').classList.remove('hidden')
-
-document.getElementById('userEmail').innerText = user.email
-
+async function loadRanking() {
+  const { data, error } = await sb.from('Cadastro').select('*').order('Atendimento', { ascending: false })
+  if (error) {
+    document.getElementById('ranking').innerHTML = 'Erro ao carregar recomendações.'
+    return
+  }
+  rankingData = data || []
+  renderRanking(rankingData)
 }
 
-function clearUser(){
+function renderRanking(lista) {
+  const ranking = document.getElementById('ranking')
+  const partners = document.getElementById('partners')
+  ranking.innerHTML = ''
+  partners.innerHTML = ''
 
-currentUser = null
+  if (lista.length === 0) {
+    ranking.innerHTML = '<p style="color:var(--muted)">Nenhuma recomendação ainda.</p>'
+    return
+  }
 
-document.getElementById('userArea').classList.add('hidden')
-
-document.getElementById('loginBtn').classList.remove('hidden')
-
-document.getElementById('lockedMsg').classList.remove('hidden')
-
-document.getElementById('cadastroForm').classList.add('hidden')
-
-}
-
-async function criarConta(){
-
-const email = document.getElementById('cadastroEmail').value
-const senha = document.getElementById('cadastroSenha').value
-
-const { error } = await sb.auth.signUp({
-email,
-password:senha
-})
-
-if(error){
-return toast(error.message)
-}
-
-toast('Conta criada com sucesso 💙')
-
-closeModal()
-
-}
-
-async function login(){
-
-const email = document.getElementById('loginEmail').value
-const senha = document.getElementById('loginSenha').value
-
-const { error } = await sb.auth.signInWithPassword({
-email,
-password:senha
-})
-
-if(error){
-return toast(error.message)
-}
-
-toast('Login realizado 💙')
-
-closeModal()
-
-}
-
-async function logout(){
-
-await sb.auth.signOut()
-
-toast('Sessão encerrada')
-
-}
-
-async function salvar(){
-
-if(!currentUser){
-return toast('Faça login primeiro')
-}
-
-const nome = document.getElementById('nome').value
-const cidade = document.getElementById('cidade').value
-const categoria = document.getElementById('categoria').value
-const descricao = document.getElementById('descricao').value
-const atendimento = document.getElementById('atendimento').value
-
-const { error } = await sb
-.from('Cadastro')
-.insert({
-Estabelecimento:nome,
-Cidade:cidade,
-Categoria:categoria,
-Motivo:descricao,
-Atendimento:atendimento,
-Email:currentUser.email,
-user_id:currentUser.id
-})
-
-if(error){
-return toast(error.message)
-}
-
-toast('Experiência compartilhada 💙')
-
-loadRanking()
-
-}
-
-async function loadRanking(){
-
-const { data,error } = await sb
-.from('Cadastro')
-.select('*')
-.order('Atendimento',{ascending:false})
-
-if(error){
-
-document.getElementById('ranking').innerHTML =
-'Erro ao carregar recomendações.'
-
-console.log(error)
-
-return
-}
-
-rankingData = data || []
-
-renderRanking(rankingData)
-
-}
-
-function renderRanking(lista){
-
-const ranking = document.getElementById('ranking')
-
-const partners = document.getElementById('partners')
-
-ranking.innerHTML = ''
-partners.innerHTML = ''
-
-if(lista.length === 0){
-
-ranking.innerHTML = 'Nenhuma recomendação ainda.'
-
-return
-}
-
-lista.forEach((item,index)=>{
-
-ranking.innerHTML += `
-
-<div class="rank-item">
-
-<div class="rank-number">
-${index+1}
-</div>
-
-<div class="rank-content">
-
-<h4>
-${item.Estabelecimento || '-'}
-</h4>
-
-<p>
+  lista.forEach((item, index) => {
+    const div = document.createElement('div')
+    div.className = 'rank-item'
+    div.title = 'Clique para ver detalhes'
+    div.innerHTML = `
+      <div class="rank-number">${index + 1}</div>
+      <div class="rank-content">
+        <h4>${item.Estabelecimento || '-'}</h4>
+        <p>
 ${item.Cidade || '-'} • ${item.Categoria || '-'}
+<br>
+📍 ${item.Endereco || '-'}
 </p>
+      </div>
+      <div class="rank-score">⭐ ${item.Atendimento || 0}</div>
+    `
+    div.addEventListener('click', () => abrirDetalhe(item, index))
+    ranking.appendChild(div)
+  })
 
-</div>
+  // dica de clique
+  const dica = document.createElement('p')
+  dica.className = 'dica-clique'
+  dica.textContent = '👆 Clique em um local para ver os detalhes'
+  ranking.appendChild(dica)
 
-<div class="rank-score">
-⭐ ${item.Atendimento || 0}
-</div>
+  lista.slice(0, 4).forEach(item => {
+    partners.innerHTML += `
+      <div class="partner-item">
+        <h4>${item.Estabelecimento}</h4>
+        <p>${item.Cidade || '-'}</p>
+        <div class="partner-score">⭐ ${item.Atendimento || 0}</div>
+      </div>
+    `
+  })
 
-</div>
-
-`
-
-})
-
-lista.slice(0,4).forEach(item=>{
-
-partners.innerHTML += `
-
-<div class="partner-item">
-
-<h4>
-${item.Estabelecimento}
-</h4>
-
-<p>
-${item.Cidade || '-'}
-</p>
-
-<div class="partner-score">
-⭐ ${item.Atendimento || 0}
-</div>
-
-</div>
-
-`
-
-})
-
+  atualizarMapa(lista)
 }
 
-function filterRanking(){
-
-const categoria =
-document.getElementById('searchCategory').value.toLowerCase()
-
-const cidade =
-document.getElementById('searchCity').value.toLowerCase()
-
-const filtrado = rankingData.filter(item=>{
-
-const categoriaItem =
-(item.Categoria || '').toLowerCase()
-
-const cidadeItem =
-(item.Cidade || '').toLowerCase()
-
-const okCategoria =
-categoria === ''
-||
-categoriaItem.includes(categoria)
-
-const okCidade =
-cidadeItem.includes(cidade)
-
-return okCategoria && okCidade
-
-})
-
-renderRanking(filtrado)
-
+function filterRanking() {
+  const categoria = document.getElementById('searchCategory').value.toLowerCase()
+  const cidade = document.getElementById('searchCity').value.toLowerCase()
+  const filtrado = rankingData.filter(item => {
+    const okCategoria = categoria === '' || (item.Categoria || '').toLowerCase().includes(categoria)
+    const okCidade = cidade === '' || (item.Cidade || '').toLowerCase().includes(cidade)
+    return okCategoria && okCidade
+  })
+  renderRanking(filtrado)
 }
 
-function openModal(){
-document.getElementById('modal').classList.add('open')
+function openModal() { document.getElementById('modal').classList.add('open') }
+function closeModal() { document.getElementById('modal').classList.remove('open') }
+
+function switchTab(tab) {
+  document.getElementById('loginPanel').classList.toggle('hidden', tab !== 'login')
+  document.getElementById('cadastroPanel').classList.toggle('hidden', tab !== 'cadastro')
+  document.getElementById('tabLogin').classList.toggle('active', tab === 'login')
+  document.getElementById('tabCadastro').classList.toggle('active', tab === 'cadastro')
 }
 
-function closeModal(){
-document.getElementById('modal').classList.remove('open')
+
+
+function toast(msg) {
+  const el = document.getElementById('toast')
+  el.innerText = msg
+  el.classList.add('show')
+  setTimeout(() => el.classList.remove('show'), 3000)
 }
-
-function switchTab(tab){
-
-document.getElementById('loginPanel').classList.toggle('hidden',tab !== 'login')
-
-document.getElementById('cadastroPanel').classList.toggle('hidden',tab !== 'cadastro')
-
-document.getElementById('tabLogin').classList.toggle('active',tab === 'login')
-
-document.getElementById('tabCadastro').classList.toggle('active',tab === 'cadastro')
-
-}
-
-function toast(msg){
-
-const el = document.getElementById('toast')
-
-el.innerText = msg
-
-el.classList.add('show')
-
-setTimeout(()=>{
-el.classList.remove('show')
-},3000)
-
-}
-
 </script>
-
 </body>
 </html>
