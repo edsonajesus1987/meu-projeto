@@ -123,8 +123,7 @@ footer p{max-width:760px;margin:auto;line-height:1.8;color:var(--muted);}
 .login-share-box{display:flex;flex-direction:column;gap:8px;}
 .login-share-text{color:var(--muted);line-height:1.8;margin-bottom:20px;}
 .products-carousel{overflow:hidden;padding:28px;}
-.products-track{display:flex;gap:22px;width:max-content;padding-right:22px;}
-@media(min-width:769px){.products-track{animation:scrollProducts 35s linear infinite;}}
+.products-track{display:flex;gap:22px;width:max-content;padding-right:22px;animation:scrollProducts 35s linear infinite;}
 .product-card{width:240px;flex-shrink:0;background:white;border-radius:24px;padding:18px;box-shadow:0 8px 24px rgba(0,0,0,.06);border:1px solid #EEF2FF;}
 .product-card img{width:100%;height:180px;object-fit:cover;border-radius:18px;margin-bottom:14px;}
 .product-card h4{font-size:1rem;margin-bottom:8px;}
@@ -157,11 +156,10 @@ nav{padding:14px 16px;height:auto;flex-direction:column;gap:16px;align-items:fle
 .search-box input,.search-box select{width:100%;}
 .card{border-radius:26px;}
 .card-header{padding:20px;font-size:.95rem;}
-.products-carousel{display:block;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:6px;}
-.products-carousel::-webkit-scrollbar{display:none;}
-.products-track{display:flex;gap:18px;width:max-content;animation:none;padding-right:20px;}
-.product-card{width:210px;min-width:210px;flex-shrink:0;}
-.product-card img{height:150px;}
+.products-carousel{padding:14px;padding-bottom:6px;}
+.products-track{gap:16px;padding-right:16px;animation-duration:22s;}
+.product-card{width:170px;min-width:170px;flex-shrink:0;}
+.product-card img{height:130px;}
 .logo-text{font-size:1.45rem;}
 .logo-subtitle{display:none;}
 footer{padding:35px 16px;}
@@ -179,14 +177,13 @@ footer p{font-size:.9rem;line-height:1.7;}
 .hero h1{font-size:1.7rem;}
 .logo-icon-img img{width:52px;}
 .logo-text{font-size:1.25rem;}
-.product-card{width:185px;}
-.product-card img{height:130px;}
+.product-card{width:150px;min-width:150px;}
+.product-card img{height:110px;}
 .benefit-text{font-size:.76rem;}
 }
 html,body{overflow-x:hidden;max-width:100%;}
 img{max-width:100%;height:auto;}
 .main-grid,.hero-content,.search-box,.top-benefits{width:100%;overflow:hidden;}
-.products-carousel{overflow-x:auto !important;}
 </style>
 </head>
 <body>
