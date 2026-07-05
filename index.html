@@ -44,6 +44,11 @@ nav{height:90px;display:flex;align-items:center;justify-content:space-between;pa
 .top-benefits{max-width:1250px;margin:0 auto 35px;display:grid;grid-template-columns:repeat(5,1fr);background:white;border-radius:18px;overflow:hidden;box-shadow:var(--shadow);border:1px solid #EEF2FF;}
 .benefit-item{display:flex;align-items:center;gap:12px;padding:18px;border-right:1px solid #EEF2FF;}
 .benefit-item:last-child{border-right:none;}
+.benefit-item.clicavel{cursor:pointer;transition:.2s;}
+.benefit-item.clicavel:hover{background:rgba(91,140,255,.06);}
+.benefit-item.clicavel:active{transform:scale(.98);}
+.ver-todos-btn{margin-left:10px;background:rgba(255,255,255,.25);border:none;color:white;padding:5px 12px;border-radius:999px;font-size:.75rem;font-weight:600;cursor:pointer;font-family:'Sora',sans-serif;transition:.2s;}
+.ver-todos-btn:hover{background:rgba(255,255,255,.4);}
 .benefit-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:white;font-weight:700;flex-shrink:0;}
 .blue{background:#4B8BFF;}.yellow{background:#FFC107;}.green{background:#66CC33;}.purple{background:#B26BFF;}.red{background:#FF5D7D;}
 .benefit-text{font-size:.82rem;font-weight:600;line-height:1.4;color:#34425C;}
@@ -222,7 +227,7 @@ img{max-width:100%;height:auto;}
   <div class="top-benefits">
     <div class="benefit-item"><div class="benefit-icon blue">📍</div><div class="benefit-text">Encontre locais inclusivos perto de você</div></div>
     <div class="benefit-item"><div class="benefit-icon yellow">⭐</div><div class="benefit-text">Avaliações reais de famílias</div></div>
-    <div class="benefit-item"><div class="benefit-icon green">🏆</div><div class="benefit-text">Ranking dos melhores espaços</div></div>
+    <div class="benefit-item clicavel" onclick="mostrarTop5()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();mostrarTop5();}"><div class="benefit-icon green">🏆</div><div class="benefit-text">Ranking dos melhores espaços</div></div>
     <div class="benefit-item"><div class="benefit-icon purple">🧩</div><div class="benefit-text">Informações sobre acessibilidade sensorial</div></div>
     <div class="benefit-item"><div class="benefit-icon red">💗</div><div class="benefit-text">Mais inclusão, mais acolhimento</div></div>
   </div>
@@ -352,7 +357,7 @@ img{max-width:100%;height:auto;}
 
       <!-- RANKING -->
       <div class="card">
-        <div class="card-header">Locais recomendados pela comunidade</div>
+        <div class="card-header" id="rankingHeader">Locais recomendados pela comunidade</div>
         <div class="card-body ranking-scroll" id="ranking">Carregando recomendações...</div>
       </div>
     </div>
@@ -779,6 +784,29 @@ function filterRanking() {
     return okCategoria && okCidade
   })
   renderRanking(filtrado)
+}
+
+function mostrarTop5() {
+  if (!rankingData || rankingData.length === 0) {
+    toast('Ainda não há recomendações suficientes')
+    return
+  }
+  const top5 = [...rankingData]
+    .sort((a, b) => (Number(b.Atendimento) || 0) - (Number(a.Atendimento) || 0))
+    .slice(0, 5)
+  renderRanking(top5)
+
+  const header = document.getElementById('rankingHeader')
+  if (header) {
+    header.innerHTML = '🏆 Top 5 melhores avaliados <button class="ver-todos-btn" onclick="mostrarTodos()">Ver todos</button>'
+  }
+  document.getElementById('ranking').scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+function mostrarTodos() {
+  renderRanking(rankingData)
+  const header = document.getElementById('rankingHeader')
+  if (header) header.textContent = 'Locais recomendados pela comunidade'
 }
 
 function openModal() { document.getElementById('modal').classList.add('open') }
