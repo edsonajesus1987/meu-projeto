@@ -121,7 +121,8 @@ textarea{resize:none;}
 .ver-mapa-btn:hover{transform:translateY(-2px);}
 .dica-clique{font-size:.78rem;color:var(--muted);text-align:center;margin-top:10px;padding-top:10px;border-top:1px solid #EDF2FF;}
 
-.partner-item{padding:18px 0;border-bottom:1px solid #EDF2FF;}
+.partner-item{padding:18px 0;border-bottom:1px solid #EDF2FF;cursor:pointer;transition:.2s;border-radius:10px;}
+.partner-item:hover{background:rgba(91,140,255,.06);padding-left:8px;padding-right:8px;}
 .partner-item:last-child{border:none;}
 .partner-item h4{margin-bottom:5px;}
 .partner-item p{font-size:.84rem;color:var(--muted);margin-bottom:8px;}
@@ -944,15 +945,24 @@ ${grupo.totalAvaliacoes} ${grupo.totalAvaliacoes === 1 ? 'avaliação' : 'avalia
   dica.textContent = '👆 Clique em um local para ver os detalhes'
   ranking.appendChild(dica)
 
-  grupos.slice(0, 4).forEach(grupo => {
-    partners.innerHTML += `
-      <div class="partner-item">
+  const parceiros = grupos.filter(g => g.notaMedia >= 8.5)
+  if (parceiros.length === 0) {
+    partners.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Nenhum lugar parceiro (nota ≥ 8,5) no momento.</p>'
+  } else {
+    parceiros.forEach(grupo => {
+      const idx = grupos.indexOf(grupo)
+      const div = document.createElement('div')
+      div.className = 'partner-item'
+      div.title = 'Clique para ver detalhes'
+      div.innerHTML = `
         <h4>${grupo.Estabelecimento}</h4>
         <p>${grupo.Cidade || '-'}</p>
         <div class="partner-score">⭐ ${formatarNota(grupo.notaMedia)}</div>
-      </div>
-    `
-  })
+      `
+      div.addEventListener('click', () => abrirDetalhe(grupo, idx))
+      partners.appendChild(div)
+    })
+  }
 
   atualizarMapa(grupos)
 }
