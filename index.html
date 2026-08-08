@@ -540,7 +540,7 @@ let rankingData = []
 
 // Nomes dos estabelecimentos patrocinadores (em minúsculo, sem espaços nas pontas).
 // Só aparecem no quadro "Patrocinadores" se a nota média for >= 8,5.
-const ESTABELECIMENTOS_PATROCINADORES = ["habib's"]
+const ESTABELECIMENTOS_PATROCINADORES = ["Habib's", "XPTO"]
 let map = null
 let markers = []
 let infoWindowAberta = null
@@ -919,80 +919,91 @@ function renderRanking(lista) {
   partners.innerHTML = ''
   sponsors.innerHTML = ''
 
-  if (lista.length === 0) {
-    ranking.innerHTML = '<p style="color:var(--muted)">Nenhuma recomendação ainda.</p>'
-    partners.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Nenhum lugar parceiro (nota ≥ 8,5) no momento.</p>'
-    sponsors.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Nenhum patrocinador com nota suficiente no momento.</p>'
-    atualizarMapa([])
-    return
-  }
-
   const grupos = agruparEstabelecimentos(lista).sort((a, b) => b.notaMedia - a.notaMedia)
 
-  grupos.forEach((grupo, index) => {
-    const div = document.createElement('div')
-    div.className = 'rank-item'
-    div.title = 'Clique para ver detalhes'
-    div.innerHTML = `
-      <div class="rank-number">${index + 1}</div>
-      <div class="rank-content">
-        <h4>${grupo.Estabelecimento || '-'}</h4>
-        <p>
+  if (grupos.length === 0) {
+    ranking.innerHTML = '<p style="color:var(--muted)">Nenhuma recomendação ainda.</p>'
+    partners.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Nenhum lugar parceiro (nota ≥ 8,5) no momento.</p>'
+  } else {
+    grupos.forEach((grupo, index) => {
+      const div = document.createElement('div')
+      div.className = 'rank-item'
+      div.title = 'Clique para ver detalhes'
+      div.innerHTML = `
+        <div class="rank-number">${index + 1}</div>
+        <div class="rank-content">
+          <h4>${grupo.Estabelecimento || '-'}</h4>
+          <p>
 ${grupo.Cidade || '-'} • ${grupo.Categoria || '-'}
 <br>
 📍 ${grupo.Endereco || '-'}
 <br>
 ${grupo.totalAvaliacoes} ${grupo.totalAvaliacoes === 1 ? 'avaliação' : 'avaliações'}
 </p>
-      </div>
-      <div class="rank-score">⭐ ${formatarNota(grupo.notaMedia)}</div>
-    `
-    div.addEventListener('click', () => abrirDetalhe(grupo, index))
-    ranking.appendChild(div)
-  })
-
-  // dica de clique
-  const dica = document.createElement('p')
-  dica.className = 'dica-clique'
-  dica.textContent = '👆 Clique em um local para ver os detalhes'
-  ranking.appendChild(dica)
-
-  const parceiros = grupos.filter(g => g.notaMedia >= 8.5)
-  if (parceiros.length === 0) {
-    partners.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Nenhum lugar parceiro (nota ≥ 8,5) no momento.</p>'
-  } else {
-    parceiros.forEach(grupo => {
-      const idx = grupos.indexOf(grupo)
-      const div = document.createElement('div')
-      div.className = 'partner-item'
-      div.title = 'Clique para ver detalhes'
-      div.innerHTML = `
-        <h4>${grupo.Estabelecimento}</h4>
-        <p>${grupo.Cidade || '-'}</p>
-        <div class="partner-score">⭐ ${formatarNota(grupo.notaMedia)}</div>
+        </div>
+        <div class="rank-score">⭐ ${formatarNota(grupo.notaMedia)}</div>
       `
-      div.addEventListener('click', () => abrirDetalhe(grupo, idx))
-      partners.appendChild(div)
+      div.addEventListener('click', () => abrirDetalhe(grupo, index))
+      ranking.appendChild(div)
     })
+
+    // dica de clique
+    const dica = document.createElement('p')
+    dica.className = 'dica-clique'
+    dica.textContent = '👆 Clique em um local para ver os detalhes'
+    ranking.appendChild(dica)
+
+    const parceiros = grupos.filter(g => g.notaMedia >= 8.5)
+    if (parceiros.length === 0) {
+      partners.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Nenhum lugar parceiro (nota ≥ 8,5) no momento.</p>'
+    } else {
+      parceiros.forEach(grupo => {
+        const idx = grupos.indexOf(grupo)
+        const div = document.createElement('div')
+        div.className = 'partner-item'
+        div.title = 'Clique para ver detalhes'
+        div.innerHTML = `
+          <h4>${grupo.Estabelecimento}</h4>
+          <p>${grupo.Cidade || '-'}</p>
+          <div class="partner-score">⭐ ${formatarNota(grupo.notaMedia)}</div>
+        `
+        div.addEventListener('click', () => abrirDetalhe(grupo, idx))
+        partners.appendChild(div)
+      })
+    }
   }
 
-  const patrocinadores = grupos.filter(g =>
-    ESTABELECIMENTOS_PATROCINADORES.includes((g.Estabelecimento || '').trim().toLowerCase()) && g.notaMedia >= 8.5
-  )
+  // Patrocinadores: aparecem se ainda não tiverem nenhuma avaliação, OU se a nota média for >= 8,5.
+  // Só somem da lista quando já têm avaliações e a nota fica abaixo de 8,5.
+  const patrocinadores = ESTABELECIMENTOS_PATROCINADORES.map(nome => {
+    const chave = nome.trim().toLowerCase()
+    const grupo = grupos.find(g => (g.Estabelecimento || '').trim().toLowerCase() === chave)
+    if (!grupo) return { Estabelecimento: nome, semAvaliacoes: true }
+    return grupo.notaMedia >= 8.5 ? grupo : null
+  }).filter(Boolean)
+
   if (patrocinadores.length === 0) {
-    sponsors.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Nenhum patrocinador com nota suficiente no momento.</p>'
+    sponsors.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Nenhum patrocinador no momento.</p>'
   } else {
     patrocinadores.forEach(grupo => {
-      const idx = grupos.indexOf(grupo)
       const div = document.createElement('div')
       div.className = 'partner-item'
-      div.title = 'Clique para ver detalhes'
-      div.innerHTML = `
-        <h4>${grupo.Estabelecimento}</h4>
-        <p>${grupo.Cidade || '-'}</p>
-        <div class="partner-score">⭐ ${formatarNota(grupo.notaMedia)}</div>
-      `
-      div.addEventListener('click', () => abrirDetalhe(grupo, idx))
+      if (grupo.semAvaliacoes) {
+        div.style.cursor = 'default'
+        div.innerHTML = `
+          <h4>${grupo.Estabelecimento}</h4>
+          <p style="color:var(--muted);font-size:.82rem;">Sem avaliações ainda</p>
+        `
+      } else {
+        const idx = grupos.indexOf(grupo)
+        div.title = 'Clique para ver detalhes'
+        div.innerHTML = `
+          <h4>${grupo.Estabelecimento}</h4>
+          <p>${grupo.Cidade || '-'}</p>
+          <div class="partner-score">⭐ ${formatarNota(grupo.notaMedia)}</div>
+        `
+        div.addEventListener('click', () => abrirDetalhe(grupo, idx))
+      }
       sponsors.appendChild(div)
     })
   }
