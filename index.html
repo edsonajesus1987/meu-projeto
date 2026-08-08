@@ -605,15 +605,15 @@ function atualizarMapa(lista) {
       const infoWindow = new google.maps.InfoWindow({
         content: `
           <div style="font-family:'Sora',sans-serif;padding:10px 4px 4px;max-width:220px;">
-            <div style="font-weight:700;font-size:.95rem;color:#24324B;margin-bottom:4px;">${item.Estabelecimento}</div>
+            <div style="font-weight:700;font-size:.95rem;color:#24324B;margin-bottom:4px;">${escapeHtml(item.Estabelecimento)}</div>
             <div style="font-size:.8rem;color:#6F7C99;margin-bottom:6px;">
-📍 ${item.Endereco || '-'}
+📍 ${escapeHtml(item.Endereco || '-')}
 </div>
 
 <div style="font-size:.8rem;color:#6F7C99;margin-bottom:6px;">
-${item.Cidade || '-'} • ${item.Categoria || '-'}
+${escapeHtml(item.Cidade || '-')} • ${escapeHtml(item.Categoria || '-')}
 </div>
-            <div style="font-size:.83rem;color:#24324B;line-height:1.5;margin-bottom:8px;">${ultimaAvaliacao ? '"' + ultimaAvaliacao.substring(0,100) + (ultimaAvaliacao.length > 100 ? '…' : '') + '"' : ''}</div>
+            <div style="font-size:.83rem;color:#24324B;line-height:1.5;margin-bottom:8px;">${ultimaAvaliacao ? '"' + escapeHtml(ultimaAvaliacao.substring(0,100)) + (ultimaAvaliacao.length > 100 ? '…' : '') + '"' : ''}</div>
             <div style="display:inline-block;background:${cor};color:${nota >= 5 ? '#24324B' : 'white'};font-weight:700;font-size:.85rem;padding:4px 10px;border-radius:999px;">⭐ ${formatarNota(nota)}/10 · ${item.totalAvaliacoes} ${item.totalAvaliacoes === 1 ? 'avaliação' : 'avaliações'}</div>
           </div>
         `
@@ -671,9 +671,9 @@ function abrirDetalhe(grupo, index) {
       div.innerHTML = `
         <div class="avaliacao-topo">
           <span class="avaliacao-nota">⭐ ${Number(av.Atendimento) || 0}/10 <span class="avaliacao-seta">▾</span></span>
-          <span class="avaliacao-autor">${av.Email || 'Anônimo'}</span>
+          <span class="avaliacao-autor">${escapeHtml(av.Email || 'Anônimo')}</span>
         </div>
-        <p class="avaliacao-texto">${av.Motivo ? av.Motivo : 'Nenhuma descrição informada.'}</p>
+        <p class="avaliacao-texto">${av.Motivo ? escapeHtml(av.Motivo) : 'Nenhuma descrição informada.'}</p>
         <div class="avaliacao-detalhes">
           <span>🔊 Ruído: ${temRuido ? Number(av.Ruido) + '/10' : 'não informado'}</span>
           <span>💡 Iluminação: ${temIluminacao ? Number(av.Iluminacao) + '/10' : 'não informado'}</span>
@@ -932,11 +932,11 @@ function renderRanking(lista) {
       div.innerHTML = `
         <div class="rank-number">${index + 1}</div>
         <div class="rank-content">
-          <h4>${grupo.Estabelecimento || '-'}</h4>
+          <h4>${escapeHtml(grupo.Estabelecimento || '-')}</h4>
           <p>
-${grupo.Cidade || '-'} • ${grupo.Categoria || '-'}
+${escapeHtml(grupo.Cidade || '-')} • ${escapeHtml(grupo.Categoria || '-')}
 <br>
-📍 ${grupo.Endereco || '-'}
+📍 ${escapeHtml(grupo.Endereco || '-')}
 <br>
 ${grupo.totalAvaliacoes} ${grupo.totalAvaliacoes === 1 ? 'avaliação' : 'avaliações'}
 </p>
@@ -963,8 +963,8 @@ ${grupo.totalAvaliacoes} ${grupo.totalAvaliacoes === 1 ? 'avaliação' : 'avalia
         div.className = 'partner-item'
         div.title = 'Clique para ver detalhes'
         div.innerHTML = `
-          <h4>${grupo.Estabelecimento}</h4>
-          <p>${grupo.Cidade || '-'}</p>
+          <h4>${escapeHtml(grupo.Estabelecimento)}</h4>
+          <p>${escapeHtml(grupo.Cidade || '-')}</p>
           <div class="partner-score">⭐ ${formatarNota(grupo.notaMedia)}</div>
         `
         div.addEventListener('click', () => abrirDetalhe(grupo, idx))
@@ -991,15 +991,15 @@ ${grupo.totalAvaliacoes} ${grupo.totalAvaliacoes === 1 ? 'avaliação' : 'avalia
       if (grupo.semAvaliacoes) {
         div.style.cursor = 'default'
         div.innerHTML = `
-          <h4>${grupo.Estabelecimento}</h4>
+          <h4>${escapeHtml(grupo.Estabelecimento)}</h4>
           <p style="color:var(--muted);font-size:.82rem;">Sem avaliações ainda</p>
         `
       } else {
         const idx = grupos.indexOf(grupo)
         div.title = 'Clique para ver detalhes'
         div.innerHTML = `
-          <h4>${grupo.Estabelecimento}</h4>
-          <p>${grupo.Cidade || '-'}</p>
+          <h4>${escapeHtml(grupo.Estabelecimento)}</h4>
+          <p>${escapeHtml(grupo.Cidade || '-')}</p>
           <div class="partner-score">⭐ ${formatarNota(grupo.notaMedia)}</div>
         `
         div.addEventListener('click', () => abrirDetalhe(grupo, idx))
@@ -1057,6 +1057,16 @@ function switchTab(tab) {
 }
 
 
+
+function escapeHtml(valor) {
+  if (valor === null || valor === undefined) return ''
+  return String(valor)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
 
 function toast(msg) {
   const el = document.getElementById('toast')
