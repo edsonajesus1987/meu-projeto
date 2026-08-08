@@ -94,6 +94,13 @@ textarea{resize:none;}
 .detalhe-secao{margin-bottom:18px;}
 .detalhe-secao label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;}
 .detalhe-secao p{font-size:.95rem;line-height:1.7;color:var(--text);}
+.detalhe-contagem{font-size:.85rem;color:var(--muted);margin:-12px 0 22px;}
+.avaliacao-item{padding:14px 0;border-bottom:1px solid #EDF2FF;}
+.avaliacao-item:last-child{border-bottom:none;padding-bottom:0;}
+.avaliacao-topo{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px;}
+.avaliacao-nota{font-weight:700;color:#FFB703;font-size:.85rem;white-space:nowrap;}
+.avaliacao-autor{font-size:.75rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.avaliacao-texto{font-size:.9rem;line-height:1.6;color:var(--text);}
 .detalhe-close{position:absolute;right:20px;top:20px;background:rgba(255,255,255,.25);border:none;color:white;width:32px;height:32px;border-radius:50%;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;}
 .detalhe-close:hover{background:rgba(255,255,255,.4);}
 .ver-mapa-btn{width:100%;padding:14px;border-radius:16px;background:linear-gradient(135deg,#5B8CFF,#7A9DFF);color:white;border:none;font-family:'Sora',sans-serif;font-weight:600;font-size:.95rem;cursor:pointer;transition:.2s;margin-top:8px;}
@@ -432,17 +439,14 @@ img{max-width:100%;height:auto;}
     </div>
     <div class="detalhe-body">
       <div id="det-nota" class="detalhe-nota alta">⭐ -/10</div>
-      <div class="detalhe-secao">
-        <label>Experiência compartilhada</label>
-        <p id="det-motivo">-</p>
-      </div>
+      <p id="det-contagem" class="detalhe-contagem">-</p>
       <div class="detalhe-secao">
   <label>Endereço</label>
   <p id="det-endereco">-</p>
 </div>
       <div class="detalhe-secao">
-        <label>Compartilhado por</label>
-        <p id="det-email">-</p>
+        <label>Últimas avaliações</label>
+        <div id="det-avaliacoes"></div>
       </div>
       <button class="ver-mapa-btn" onclick="verNoMapa()">📍 Ver no mapa</button>
       <p class="dica-clique">Clique fora para fechar</p>
@@ -503,10 +507,11 @@ function atualizarMapa(lista) {
 `${item.Endereco || ''}, ${item.Cidade || ''}, São Paulo, Brasil`
     geocoder.geocode({ address: endereco }, (results, status) => {
       if (status !== 'OK') return
-      const nota = Number(item.Atendimento) || 0
+      const nota = Number(item.notaMedia) || 0
       let cor = '#FF6B81'
       if (nota >= 8) cor = '#67D66E'
       else if (nota >= 5) cor = '#FFCC33'
+      const ultimaAvaliacao = item.avaliacoes && item.avaliacoes[0] ? item.avaliacoes[0].Motivo : ''
 
       const marker = new google.maps.Marker({
         position: results[0].geometry.location,
@@ -534,8 +539,8 @@ function atualizarMapa(lista) {
 <div style="font-size:.8rem;color:#6F7C99;margin-bottom:6px;">
 ${item.Cidade || '-'} • ${item.Categoria || '-'}
 </div>
-            <div style="font-size:.83rem;color:#24324B;line-height:1.5;margin-bottom:8px;">${item.Motivo ? '"' + item.Motivo.substring(0,100) + (item.Motivo.length > 100 ? '…' : '') + '"' : ''}</div>
-            <div style="display:inline-block;background:${cor};color:${nota >= 5 ? '#24324B' : 'white'};font-weight:700;font-size:.85rem;padding:4px 10px;border-radius:999px;">⭐ ${nota}/10</div>
+            <div style="font-size:.83rem;color:#24324B;line-height:1.5;margin-bottom:8px;">${ultimaAvaliacao ? '"' + ultimaAvaliacao.substring(0,100) + (ultimaAvaliacao.length > 100 ? '…' : '') + '"' : ''}</div>
+            <div style="display:inline-block;background:${cor};color:${nota >= 5 ? '#24324B' : 'white'};font-weight:700;font-size:.85rem;padding:4px 10px;border-radius:999px;">⭐ ${formatarNota(nota)}/10 · ${item.totalAvaliacoes} ${item.totalAvaliacoes === 1 ? 'avaliação' : 'avaliações'}</div>
           </div>
         `
       })
@@ -555,8 +560,8 @@ ${item.Cidade || '-'} • ${item.Categoria || '-'}
 
 // ── PAINEL DE DETALHES ───────────────────────────
 
-function abrirDetalhe(item, index) {
-  itemSelecionado = item
+function abrirDetalhe(grupo, index) {
+  itemSelecionado = grupo
   indiceAtivo = index
 
   // destaca item no ranking
@@ -564,17 +569,36 @@ function abrirDetalhe(item, index) {
     el.classList.toggle('ativo', i === index)
   })
 
-  const nota = Number(item.Atendimento) || 0
-  document.getElementById('det-nome').textContent = item.Estabelecimento || '-'
-  document.getElementById('det-sub').textContent = (item.Cidade || '-') + ' • ' + (item.Categoria || '-')
-  document.getElementById('det-motivo').textContent = item.Motivo || 'Nenhuma descrição informada.'
-  document.getElementById('det-endereco').textContent =
-  item.Endereco || 'Não informado'
-  document.getElementById('det-email').textContent = item.Email || 'Anônimo'
+  const nota = Number(grupo.notaMedia) || 0
+  document.getElementById('det-nome').textContent = grupo.Estabelecimento || '-'
+  document.getElementById('det-sub').textContent = (grupo.Cidade || '-') + ' • ' + (grupo.Categoria || '-')
+  document.getElementById('det-endereco').textContent = grupo.Endereco || 'Não informado'
+  document.getElementById('det-contagem').textContent =
+    grupo.totalAvaliacoes + (grupo.totalAvaliacoes === 1 ? ' avaliação' : ' avaliações')
 
   const notaEl = document.getElementById('det-nota')
-  notaEl.textContent = '⭐ ' + nota + '/10'
+  notaEl.textContent = '⭐ ' + formatarNota(nota) + '/10'
   notaEl.className = 'detalhe-nota ' + (nota >= 8 ? 'alta' : nota >= 5 ? 'media' : 'baixa')
+
+  const cont = document.getElementById('det-avaliacoes')
+  cont.innerHTML = ''
+  const ultimas = (grupo.avaliacoes || []).slice(0, 5)
+  if (ultimas.length === 0) {
+    cont.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Nenhuma avaliação disponível.</p>'
+  } else {
+    ultimas.forEach(av => {
+      const div = document.createElement('div')
+      div.className = 'avaliacao-item'
+      div.innerHTML = `
+        <div class="avaliacao-topo">
+          <span class="avaliacao-nota">⭐ ${Number(av.Atendimento) || 0}/10</span>
+          <span class="avaliacao-autor">${av.Email || 'Anônimo'}</span>
+        </div>
+        <p class="avaliacao-texto">${av.Motivo ? av.Motivo : 'Nenhuma descrição informada.'}</p>
+      `
+      cont.appendChild(div)
+    })
+  }
 
   document.getElementById('detalheOverlay').classList.add('open')
 }
@@ -749,6 +773,45 @@ async function loadRanking() {
   renderRanking(rankingData)
 }
 
+function chaveEstabelecimento(item) {
+  return ((item.Estabelecimento || '').trim().toLowerCase()) + '|' + ((item.Endereco || '').trim().toLowerCase())
+}
+
+function formatarNota(n) {
+  const arred = Math.round((Number(n) || 0) * 10) / 10
+  return arred % 1 === 0 ? String(arred) : arred.toFixed(1).replace('.', ',')
+}
+
+function agruparEstabelecimentos(lista) {
+  const grupos = {}
+  lista.forEach(item => {
+    const chave = chaveEstabelecimento(item)
+    if (!grupos[chave]) {
+      grupos[chave] = {
+        Estabelecimento: item.Estabelecimento,
+        Endereco: item.Endereco,
+        Cidade: item.Cidade,
+        Categoria: item.Categoria,
+        avaliacoes: [],
+        somaNotas: 0
+      }
+    }
+    grupos[chave].avaliacoes.push(item)
+    grupos[chave].somaNotas += Number(item.Atendimento) || 0
+  })
+
+  return Object.values(grupos).map(g => {
+    g.avaliacoes.sort((a, b) => {
+      const da = a.created_at ? new Date(a.created_at).getTime() : (Number(a.id) || 0)
+      const db = b.created_at ? new Date(b.created_at).getTime() : (Number(b.id) || 0)
+      return db - da
+    })
+    g.totalAvaliacoes = g.avaliacoes.length
+    g.notaMedia = g.totalAvaliacoes ? g.somaNotas / g.totalAvaliacoes : 0
+    return g
+  })
+}
+
 function renderRanking(lista) {
   const ranking = document.getElementById('ranking')
   const partners = document.getElementById('partners')
@@ -757,26 +820,31 @@ function renderRanking(lista) {
 
   if (lista.length === 0) {
     ranking.innerHTML = '<p style="color:var(--muted)">Nenhuma recomendação ainda.</p>'
+    atualizarMapa([])
     return
   }
 
-  lista.forEach((item, index) => {
+  const grupos = agruparEstabelecimentos(lista).sort((a, b) => b.notaMedia - a.notaMedia)
+
+  grupos.forEach((grupo, index) => {
     const div = document.createElement('div')
     div.className = 'rank-item'
     div.title = 'Clique para ver detalhes'
     div.innerHTML = `
       <div class="rank-number">${index + 1}</div>
       <div class="rank-content">
-        <h4>${item.Estabelecimento || '-'}</h4>
+        <h4>${grupo.Estabelecimento || '-'}</h4>
         <p>
-${item.Cidade || '-'} • ${item.Categoria || '-'}
+${grupo.Cidade || '-'} • ${grupo.Categoria || '-'}
 <br>
-📍 ${item.Endereco || '-'}
+📍 ${grupo.Endereco || '-'}
+<br>
+${grupo.totalAvaliacoes} ${grupo.totalAvaliacoes === 1 ? 'avaliação' : 'avaliações'}
 </p>
       </div>
-      <div class="rank-score">⭐ ${item.Atendimento || 0}</div>
+      <div class="rank-score">⭐ ${formatarNota(grupo.notaMedia)}</div>
     `
-    div.addEventListener('click', () => abrirDetalhe(item, index))
+    div.addEventListener('click', () => abrirDetalhe(grupo, index))
     ranking.appendChild(div)
   })
 
@@ -786,17 +854,17 @@ ${item.Cidade || '-'} • ${item.Categoria || '-'}
   dica.textContent = '👆 Clique em um local para ver os detalhes'
   ranking.appendChild(dica)
 
-  lista.slice(0, 4).forEach(item => {
+  grupos.slice(0, 4).forEach(grupo => {
     partners.innerHTML += `
       <div class="partner-item">
-        <h4>${item.Estabelecimento}</h4>
-        <p>${item.Cidade || '-'}</p>
-        <div class="partner-score">⭐ ${item.Atendimento || 0}</div>
+        <h4>${grupo.Estabelecimento}</h4>
+        <p>${grupo.Cidade || '-'}</p>
+        <div class="partner-score">⭐ ${formatarNota(grupo.notaMedia)}</div>
       </div>
     `
   })
 
-  atualizarMapa(lista)
+  atualizarMapa(grupos)
 }
 
 function filterRanking() {
@@ -815,10 +883,10 @@ function mostrarTop5() {
     toast('Ainda não há recomendações suficientes')
     return
   }
-  const top5 = [...rankingData]
-    .sort((a, b) => (Number(b.Atendimento) || 0) - (Number(a.Atendimento) || 0))
-    .slice(0, 5)
-  renderRanking(top5)
+  const grupos = agruparEstabelecimentos(rankingData).sort((a, b) => b.notaMedia - a.notaMedia)
+  const top5Chaves = new Set(grupos.slice(0, 5).map(g => chaveEstabelecimento(g)))
+  const itensFiltrados = rankingData.filter(item => top5Chaves.has(chaveEstabelecimento(item)))
+  renderRanking(itensFiltrados)
 
   const header = document.getElementById('rankingHeader')
   if (header) {
@@ -835,6 +903,7 @@ function mostrarTodos() {
 
 function openModal() { document.getElementById('modal').classList.add('open') }
 function closeModal() { document.getElementById('modal').classList.remove('open') }
+
 
 function switchTab(tab) {
   document.getElementById('loginPanel').classList.toggle('hidden', tab !== 'login')
