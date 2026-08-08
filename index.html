@@ -94,13 +94,27 @@ textarea{resize:none;}
 .detalhe-secao{margin-bottom:18px;}
 .detalhe-secao label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;}
 .detalhe-secao p{font-size:.95rem;line-height:1.7;color:var(--text);}
-.detalhe-contagem{font-size:.85rem;color:var(--muted);margin:-12px 0 22px;}
-.avaliacao-item{padding:14px 0;border-bottom:1px solid #EDF2FF;}
+.detalhe-medias{display:flex;gap:10px;margin-bottom:8px;}
+.detalhe-media-item{flex:1;border-radius:16px;padding:14px 8px;text-align:center;background:#F5F8FF;}
+.detalhe-media-item .valor{font-weight:700;font-size:1.05rem;color:#4A5A80;}
+.detalhe-media-item .rotulo{font-size:.68rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.04em;}
+.detalhe-media-item.alta{background:#e8faf0;}
+.detalhe-media-item.alta .valor{color:#1a7a3e;}
+.detalhe-media-item.media{background:#fffbea;}
+.detalhe-media-item.media .valor{color:#8a6200;}
+.detalhe-media-item.baixa{background:#fff0f2;}
+.detalhe-media-item.baixa .valor{color:#9b1c2e;}
+.detalhe-contagem{font-size:.85rem;color:var(--muted);margin:-4px 0 22px;}
+.avaliacao-item{padding:14px 0;border-bottom:1px solid #EDF2FF;cursor:pointer;}
 .avaliacao-item:last-child{border-bottom:none;padding-bottom:0;}
 .avaliacao-topo{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:6px;}
-.avaliacao-nota{font-weight:700;color:#FFB703;font-size:.85rem;white-space:nowrap;}
+.avaliacao-nota{font-weight:700;color:#FFB703;font-size:.85rem;white-space:nowrap;display:flex;align-items:center;gap:6px;}
+.avaliacao-seta{font-size:.7rem;color:var(--muted);transition:.2s;display:inline-block;}
+.avaliacao-item.expandido .avaliacao-seta{transform:rotate(180deg);}
 .avaliacao-autor{font-size:.75rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .avaliacao-texto{font-size:.9rem;line-height:1.6;color:var(--text);}
+.avaliacao-detalhes{display:none;gap:18px;margin-top:10px;padding-top:10px;border-top:1px dashed #EDF2FF;font-size:.82rem;color:var(--muted);}
+.avaliacao-item.expandido .avaliacao-detalhes{display:flex;}
 .detalhe-close{position:absolute;right:20px;top:20px;background:rgba(255,255,255,.25);border:none;color:white;width:32px;height:32px;border-radius:50%;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;}
 .detalhe-close:hover{background:rgba(255,255,255,.4);}
 .ver-mapa-btn{width:100%;padding:14px;border-radius:16px;background:linear-gradient(135deg,#5B8CFF,#7A9DFF);color:white;border:none;font-family:'Sora',sans-serif;font-weight:600;font-size:.95rem;cursor:pointer;transition:.2s;margin-top:8px;}
@@ -187,6 +201,10 @@ footer p{font-size:.9rem;line-height:1.7;}
 .detalhe-modal{margin:16px;border-radius:28px;}
 .detalhe-header{padding:22px 24px 16px;}
 .detalhe-body{padding:20px 24px;}
+.detalhe-medias{gap:6px;}
+.detalhe-media-item{padding:10px 4px;}
+.detalhe-media-item .valor{font-size:.9rem;}
+.detalhe-media-item .rotulo{font-size:.6rem;}
 .tabs{flex-direction:column;}
 .tab{width:100%;}
 #mapa{height:250px;}
@@ -249,13 +267,30 @@ img{max-width:100%;height:auto;}
       <select id="searchCategory" onchange="filterRanking()">
         <option value="">Todas as categorias</option>
         <option value="Alimentação e Bebidas">Alimentação e Bebidas</option>
+        <option value="Animais de Estimação (Pet Shops)">Animais de Estimação (Pet Shops)</option>
+        <option value="Artes e Artesanato">Artes e Artesanato</option>
         <option value="Automotivo">Automotivo</option>
         <option value="Beleza e Estética">Beleza e Estética</option>
         <option value="Brinquedos e Jogos">Brinquedos e Jogos</option>
+        <option value="Construção e Reforma">Construção e Reforma</option>
         <option value="Cultura e Entretenimento">Cultura e Entretenimento</option>
         <option value="Educação e Cursos">Educação e Cursos</option>
         <option value="Esportes e Lazer">Esportes e Lazer</option>
+        <option value="Farmácias e Saúde">Farmácias e Saúde</option>
+        <option value="Floricultura e Jardinagem">Floricultura e Jardinagem</option>
+        <option value="Hotelaria e Hospedagem">Hotelaria e Hospedagem</option>
+        <option value="Imóveis">Imóveis</option>
+        <option value="Informática e Tecnologia">Informática e Tecnologia</option>
+        <option value="Instrumentos Musicais">Instrumentos Musicais</option>
+        <option value="Joias e Acessórios">Joias e Acessórios</option>
+        <option value="Livrarias e Papelaria">Livrarias e Papelaria</option>
+        <option value="Materiais de Escritório">Materiais de Escritório</option>
+        <option value="Móveis e Decoração">Móveis e Decoração</option>
+        <option value="Ótica e Fotografia">Ótica e Fotografia</option>
+        <option value="Serviços Financeiros">Serviços Financeiros</option>
+        <option value="Serviços Gerais">Serviços Gerais</option>
         <option value="Supermercados e Mercearias">Supermercados e Mercearias</option>
+        <option value="Turismo e Viagens">Turismo e Viagens</option>
         <option value="Vestuário e Moda">Vestuário e Moda</option>
       </select>
       <select id="searchCity" onchange="filterRanking()">
@@ -315,13 +350,30 @@ img{max-width:100%;height:auto;}
               <select id="categoria">
                 <option value="">Selecione uma categoria</option>
                 <option value="Alimentação e Bebidas">Alimentação e Bebidas</option>
+                <option value="Animais de Estimação (Pet Shops)">Animais de Estimação (Pet Shops)</option>
+                <option value="Artes e Artesanato">Artes e Artesanato</option>
                 <option value="Automotivo">Automotivo</option>
                 <option value="Beleza e Estética">Beleza e Estética</option>
                 <option value="Brinquedos e Jogos">Brinquedos e Jogos</option>
+                <option value="Construção e Reforma">Construção e Reforma</option>
                 <option value="Cultura e Entretenimento">Cultura e Entretenimento</option>
                 <option value="Educação e Cursos">Educação e Cursos</option>
                 <option value="Esportes e Lazer">Esportes e Lazer</option>
+                <option value="Farmácias e Saúde">Farmácias e Saúde</option>
+                <option value="Floricultura e Jardinagem">Floricultura e Jardinagem</option>
+                <option value="Hotelaria e Hospedagem">Hotelaria e Hospedagem</option>
+                <option value="Imóveis">Imóveis</option>
+                <option value="Informática e Tecnologia">Informática e Tecnologia</option>
+                <option value="Instrumentos Musicais">Instrumentos Musicais</option>
+                <option value="Joias e Acessórios">Joias e Acessórios</option>
+                <option value="Livrarias e Papelaria">Livrarias e Papelaria</option>
+                <option value="Materiais de Escritório">Materiais de Escritório</option>
+                <option value="Móveis e Decoração">Móveis e Decoração</option>
+                <option value="Ótica e Fotografia">Ótica e Fotografia</option>
+                <option value="Serviços Financeiros">Serviços Financeiros</option>
+                <option value="Serviços Gerais">Serviços Gerais</option>
                 <option value="Supermercados e Mercearias">Supermercados e Mercearias</option>
+                <option value="Turismo e Viagens">Turismo e Viagens</option>
                 <option value="Vestuário e Moda">Vestuário e Moda</option>
               </select>
             </div>
@@ -438,7 +490,20 @@ img{max-width:100%;height:auto;}
       <p id="det-sub">-</p>
     </div>
     <div class="detalhe-body">
-      <div id="det-nota" class="detalhe-nota alta">⭐ -/10</div>
+      <div class="detalhe-medias">
+        <div id="det-media-experiencia" class="detalhe-media-item alta">
+          <div class="valor" id="det-nota">⭐ -</div>
+          <div class="rotulo">Experiência</div>
+        </div>
+        <div class="detalhe-media-item">
+          <div class="valor" id="det-ruido">🔊 -</div>
+          <div class="rotulo">Ruído</div>
+        </div>
+        <div class="detalhe-media-item">
+          <div class="valor" id="det-iluminacao">💡 -</div>
+          <div class="rotulo">Iluminação</div>
+        </div>
+      </div>
       <p id="det-contagem" class="detalhe-contagem">-</p>
       <div class="detalhe-secao">
   <label>Endereço</label>
@@ -576,9 +641,12 @@ function abrirDetalhe(grupo, index) {
   document.getElementById('det-contagem').textContent =
     grupo.totalAvaliacoes + (grupo.totalAvaliacoes === 1 ? ' avaliação' : ' avaliações')
 
-  const notaEl = document.getElementById('det-nota')
-  notaEl.textContent = '⭐ ' + formatarNota(nota) + '/10'
-  notaEl.className = 'detalhe-nota ' + (nota >= 8 ? 'alta' : nota >= 5 ? 'media' : 'baixa')
+  document.getElementById('det-nota').textContent = '⭐ ' + formatarNota(nota)
+  const experienciaEl = document.getElementById('det-media-experiencia')
+  experienciaEl.className = 'detalhe-media-item ' + (nota >= 8 ? 'alta' : nota >= 5 ? 'media' : 'baixa')
+
+  document.getElementById('det-ruido').textContent = '🔊 ' + (grupo.ruidoMedia === null ? '-' : formatarNota(grupo.ruidoMedia))
+  document.getElementById('det-iluminacao').textContent = '💡 ' + (grupo.iluminacaoMedia === null ? '-' : formatarNota(grupo.iluminacaoMedia))
 
   const cont = document.getElementById('det-avaliacoes')
   cont.innerHTML = ''
@@ -589,13 +657,20 @@ function abrirDetalhe(grupo, index) {
     ultimas.forEach(av => {
       const div = document.createElement('div')
       div.className = 'avaliacao-item'
+      const temRuido = av.Ruido !== null && av.Ruido !== undefined && av.Ruido !== ''
+      const temIluminacao = av.Iluminacao !== null && av.Iluminacao !== undefined && av.Iluminacao !== ''
       div.innerHTML = `
         <div class="avaliacao-topo">
-          <span class="avaliacao-nota">⭐ ${Number(av.Atendimento) || 0}/10</span>
+          <span class="avaliacao-nota">⭐ ${Number(av.Atendimento) || 0}/10 <span class="avaliacao-seta">▾</span></span>
           <span class="avaliacao-autor">${av.Email || 'Anônimo'}</span>
         </div>
         <p class="avaliacao-texto">${av.Motivo ? av.Motivo : 'Nenhuma descrição informada.'}</p>
+        <div class="avaliacao-detalhes">
+          <span>🔊 Ruído: ${temRuido ? Number(av.Ruido) + '/10' : 'não informado'}</span>
+          <span>💡 Iluminação: ${temIluminacao ? Number(av.Iluminacao) + '/10' : 'não informado'}</span>
+        </div>
       `
+      div.addEventListener('click', () => div.classList.toggle('expandido'))
       cont.appendChild(div)
     })
   }
@@ -793,11 +868,24 @@ function agruparEstabelecimentos(lista) {
         Cidade: item.Cidade,
         Categoria: item.Categoria,
         avaliacoes: [],
-        somaNotas: 0
+        somaNotas: 0,
+        somaRuido: 0,
+        countRuido: 0,
+        somaIluminacao: 0,
+        countIluminacao: 0
       }
     }
-    grupos[chave].avaliacoes.push(item)
-    grupos[chave].somaNotas += Number(item.Atendimento) || 0
+    const g = grupos[chave]
+    g.avaliacoes.push(item)
+    g.somaNotas += Number(item.Atendimento) || 0
+    if (item.Ruido !== null && item.Ruido !== undefined && item.Ruido !== '') {
+      g.somaRuido += Number(item.Ruido) || 0
+      g.countRuido++
+    }
+    if (item.Iluminacao !== null && item.Iluminacao !== undefined && item.Iluminacao !== '') {
+      g.somaIluminacao += Number(item.Iluminacao) || 0
+      g.countIluminacao++
+    }
   })
 
   return Object.values(grupos).map(g => {
@@ -808,6 +896,8 @@ function agruparEstabelecimentos(lista) {
     })
     g.totalAvaliacoes = g.avaliacoes.length
     g.notaMedia = g.totalAvaliacoes ? g.somaNotas / g.totalAvaliacoes : 0
+    g.ruidoMedia = g.countRuido ? g.somaRuido / g.countRuido : null
+    g.iluminacaoMedia = g.countIluminacao ? g.somaIluminacao / g.countIluminacao : null
     return g
   })
 }
