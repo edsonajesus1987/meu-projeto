@@ -121,6 +121,9 @@ footer p{max-width:760px;margin:auto;line-height:1.8;color:var(--muted);}
 .tabs{display:flex;gap:10px;margin:28px 0;}
 .tab{flex:1;padding:13px;border:none;border-radius:14px;background:#EEF3FF;cursor:pointer;font-family:'Sora',sans-serif;font-weight:600;}
 .tab.active{background:linear-gradient(135deg,#5B8CFF,#7A9DFF);color:white;}
+.declaracao-check{display:flex;align-items:flex-start;gap:10px;margin-bottom:18px;cursor:pointer;}
+.declaracao-check input{width:auto;flex-shrink:0;margin-top:3px;accent-color:#5B8CFF;cursor:pointer;}
+.declaracao-check span{font-size:.85rem;line-height:1.5;color:var(--muted);}
 .hidden{display:none!important;}
 #toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:#1F2B46;color:white;padding:16px 24px;border-radius:999px;transition:.3s;z-index:999999;}
 #toast.show{transform:translateX(-50%) translateY(0);}
@@ -239,11 +242,28 @@ img{max-width:100%;height:auto;}
       <select id="searchCategory" onchange="filterRanking()">
         <option value="">Todas as categorias</option>
         <option value="Alimentação e Bebidas">Alimentação e Bebidas</option>
+        <option value="Animais de Estimação (Pet Shops)">Animais de Estimação (Pet Shops)</option>
+        <option value="Artes e Artesanato">Artes e Artesanato</option>
         <option value="Automotivo">Automotivo</option>
         <option value="Beleza e Estética">Beleza e Estética</option>
         <option value="Brinquedos e Jogos">Brinquedos e Jogos</option>
+        <option value="Construção e Reforma">Construção e Reforma</option>
         <option value="Cultura e Entretenimento">Cultura e Entretenimento</option>
+        <option value="Educação e Cursos">Educação e Cursos</option>
         <option value="Esportes e Lazer">Esportes e Lazer</option>
+        <option value="Farmácias e Saúde">Farmácias e Saúde</option>
+        <option value="Floricultura e Jardinagem">Floricultura e Jardinagem</option>
+        <option value="Hotelaria e Hospedagem">Hotelaria e Hospedagem</option>
+        <option value="Imóveis">Imóveis</option>
+        <option value="Informática e Tecnologia">Informática e Tecnologia</option>
+        <option value="Instrumentos Musicais">Instrumentos Musicais</option>
+        <option value="Joias e Acessórios">Joias e Acessórios</option>
+        <option value="Livrarias e Papelaria">Livrarias e Papelaria</option>
+        <option value="Materiais de Escritório">Materiais de Escritório</option>
+        <option value="Móveis e Decoração">Móveis e Decoração</option>
+        <option value="Ótica e Fotografia">Ótica e Fotografia</option>
+        <option value="Serviços Financeiros">Serviços Financeiros</option>
+        <option value="Serviços Gerais">Serviços Gerais</option>
         <option value="Supermercados e Mercearias">Supermercados e Mercearias</option>
         <option value="Turismo e Viagens">Turismo e Viagens</option>
         <option value="Vestuário e Moda">Vestuário e Moda</option>
@@ -424,8 +444,13 @@ img{max-width:100%;height:auto;}
       <button class="btn btn-primary" onclick="login()">Entrar</button>
     </div>
     <div id="cadastroPanel" class="hidden">
+      <div class="form-group"><label>Nome</label><input type="text" id="cadastroNome"></div>
       <div class="form-group"><label>E-mail</label><input type="email" id="cadastroEmail"></div>
       <div class="form-group"><label>Senha</label><input type="password" id="cadastroSenha"></div>
+      <label class="declaracao-check">
+        <input type="checkbox" id="cadastroDeclaracao">
+        <span>Declaro que todas as informações inclusas por mim são verdadeiras.</span>
+      </label>
       <button class="btn btn-primary" onclick="criarConta()">Criar conta</button>
     </div>
   </div>
@@ -652,9 +677,20 @@ function clearUser() {
 }
 
 async function criarConta() {
+  const nome = document.getElementById('cadastroNome').value.trim()
   const email = document.getElementById('cadastroEmail').value
   const senha = document.getElementById('cadastroSenha').value
-  const { error } = await sb.auth.signUp({ email, password: senha })
+  const declarou = document.getElementById('cadastroDeclaracao').checked
+
+  if (!nome) return toast('Preencha seu nome')
+  if (!email || !senha) return toast('Preencha e-mail e senha')
+  if (!declarou) return toast('Você precisa confirmar a declaração de veracidade das informações')
+
+  const { error } = await sb.auth.signUp({
+    email,
+    password: senha,
+    options: { data: { nome, name: nome, full_name: nome, display_name: nome } }
+  })
   if (error) return toast(error.message)
   toast('Conta criada com sucesso 💙')
   closeModal()
