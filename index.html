@@ -399,6 +399,10 @@ img{max-width:100%;height:auto;}
         <div class="card-header">💙 Lugares parceiros</div>
         <div class="card-body" id="partners"></div>
       </div>
+      <div class="card" style="margin-top:28px;">
+        <div class="card-header">🤝 Patrocinadores</div>
+        <div class="card-body" id="sponsors"></div>
+      </div>
       <div class="card" style="margin-top:28px;overflow:hidden;">
         <div class="card-header">🛍 Produtos recomendados</div>
         <div class="products-carousel">
@@ -533,6 +537,10 @@ const sb = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 let currentUser = null
 let rankingData = []
+
+// Nomes dos estabelecimentos patrocinadores (em minúsculo, sem espaços nas pontas).
+// Só aparecem no quadro "Patrocinadores" se a nota média for >= 8,5.
+const ESTABELECIMENTOS_PATROCINADORES = ["habib's"]
 let map = null
 let markers = []
 let infoWindowAberta = null
@@ -906,11 +914,15 @@ function agruparEstabelecimentos(lista) {
 function renderRanking(lista) {
   const ranking = document.getElementById('ranking')
   const partners = document.getElementById('partners')
+  const sponsors = document.getElementById('sponsors')
   ranking.innerHTML = ''
   partners.innerHTML = ''
+  sponsors.innerHTML = ''
 
   if (lista.length === 0) {
     ranking.innerHTML = '<p style="color:var(--muted)">Nenhuma recomendação ainda.</p>'
+    partners.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Nenhum lugar parceiro (nota ≥ 8,5) no momento.</p>'
+    sponsors.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Nenhum patrocinador com nota suficiente no momento.</p>'
     atualizarMapa([])
     return
   }
@@ -961,6 +973,27 @@ ${grupo.totalAvaliacoes} ${grupo.totalAvaliacoes === 1 ? 'avaliação' : 'avalia
       `
       div.addEventListener('click', () => abrirDetalhe(grupo, idx))
       partners.appendChild(div)
+    })
+  }
+
+  const patrocinadores = grupos.filter(g =>
+    ESTABELECIMENTOS_PATROCINADORES.includes((g.Estabelecimento || '').trim().toLowerCase()) && g.notaMedia >= 8.5
+  )
+  if (patrocinadores.length === 0) {
+    sponsors.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Nenhum patrocinador com nota suficiente no momento.</p>'
+  } else {
+    patrocinadores.forEach(grupo => {
+      const idx = grupos.indexOf(grupo)
+      const div = document.createElement('div')
+      div.className = 'partner-item'
+      div.title = 'Clique para ver detalhes'
+      div.innerHTML = `
+        <h4>${grupo.Estabelecimento}</h4>
+        <p>${grupo.Cidade || '-'}</p>
+        <div class="partner-score">⭐ ${formatarNota(grupo.notaMedia)}</div>
+      `
+      div.addEventListener('click', () => abrirDetalhe(grupo, idx))
+      sponsors.appendChild(div)
     })
   }
 
