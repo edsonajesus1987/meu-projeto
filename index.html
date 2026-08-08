@@ -121,7 +121,7 @@ footer p{max-width:760px;margin:auto;line-height:1.8;color:var(--muted);}
 .tabs{display:flex;gap:10px;margin:28px 0;}
 .tab{flex:1;padding:13px;border:none;border-radius:14px;background:#EEF3FF;cursor:pointer;font-family:'Sora',sans-serif;font-weight:600;}
 .tab.active{background:linear-gradient(135deg,#5B8CFF,#7A9DFF);color:white;}
-.hidden{display:none;}
+.hidden{display:none!important;}
 #toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(100px);background:#1F2B46;color:white;padding:16px 24px;border-radius:999px;transition:.3s;z-index:999999;}
 #toast.show{transform:translateX(-50%) translateY(0);}
 .instagram-btn{height:46px;padding:0 18px;border-radius:16px;background:linear-gradient(135deg,#5B8CFF,#7A9DFF);display:flex;align-items:center;justify-content:center;text-decoration:none;font-weight:600;font-size:.92rem;color:white;transition:.25s;box-shadow:0 10px 25px rgba(91,140,255,.25);}
@@ -349,8 +349,8 @@ img{max-width:100%;height:auto;}
                 <option value="Vestuário e Moda">Vestuário e Moda</option>
               </select>
             </div>
-            <div class="form-group"><label>Como foi sua experiência?</label><textarea id="descricao" rows="4"></textarea></div>
-            <div class="form-group"><label>Nível de acolhimento (0 a 10)</label><input type="number" id="atendimento" min="0" max="10"></div>
+            <div class="form-group"><label>Como foi sua experiência? (nota de 0 a 10)</label><input type="number" id="atendimento" min="0" max="10"></div>
+            <div class="form-group"><label>Nível de acolhimento</label><textarea id="descricao" rows="4" placeholder="Descreva como foi o nível de acolhimento no local..."></textarea></div>
             <button class="btn btn-primary" onclick="salvar()">Compartilhar experiência</button>
           </div>
         </div>
