@@ -136,6 +136,7 @@ textarea{resize:none;}
 .side-box p{font-size:.92rem;line-height:1.8;color:var(--muted);}
 footer{margin-top:70px;padding:50px 20px;text-align:center;}
 footer p{max-width:760px;margin:auto;line-height:1.8;color:var(--muted);}
+.footer-stats{margin-top:12px;font-weight:600;color:#5B8CFF!important;font-size:.9rem;}
 .modal-overlay{position:fixed;inset:0;background:rgba(15,20,35,.55);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.2s;z-index:9999;backdrop-filter:blur(8px);}
 .modal-overlay.open{opacity:1;pointer-events:all;}
 .modal{width:100%;max-width:430px;background:white;border-radius:36px;padding:36px;position:relative;box-shadow:0 20px 70px rgba(0,0,0,.18);}
@@ -276,7 +277,7 @@ img{max-width:100%;height:auto;}
         <option value="Esportes e Lazer">Esportes e Lazer</option>
         <option value="Supermercados e Mercearias">Supermercados e Mercearias</option>
         <option value="Vestuário e Moda">Vestuário e Moda</option>
-              </select>
+      </select>
       <select id="searchCity" onchange="filterRanking()">
         <option value="">Todas as cidades</option>
         <option value="Barueri">Barueri</option>
@@ -422,6 +423,7 @@ img{max-width:100%;height:auto;}
 
 <footer>
   <p>AutiGuia • Cada recomendação ajuda outra família a encontrar um lugar melhor para viver momentos especiais com mais conforto, acolhimento e segurança.</p>
+  <p class="footer-stats" id="footerStats"></p>
 </footer>
 
 <!-- MODAL LOGIN -->
@@ -697,6 +699,18 @@ async function init() {
     else clearUser()
   })
   loadRanking()
+  carregarTotalUsuarios()
+}
+
+async function carregarTotalUsuarios() {
+  const el = document.getElementById('footerStats')
+  if (!el) return
+  const { data, error } = await sb.rpc('total_usuarios')
+  if (error || data === null || data === undefined) {
+    el.textContent = ''
+    return
+  }
+  el.textContent = `💙 ${data} ${data === 1 ? 'pessoa cadastrada' : 'pessoas cadastradas'} na comunidade`
 }
 
 function setUser(user) {
