@@ -349,8 +349,10 @@ img{max-width:100%;height:auto;}
                 <option value="Vestuário e Moda">Vestuário e Moda</option>
               </select>
             </div>
-            <div class="form-group"><label>Como foi sua experiência? (nota de 0 a 10)</label><input type="number" id="atendimento" min="0" max="10"></div>
-            <div class="form-group"><label>Nível de acolhimento</label><textarea id="descricao" rows="4" placeholder="Descreva como foi o nível de acolhimento no local..."></textarea></div>
+            <div class="form-group"><label>Como foi sua experiência? (nota de 0 a 10)</label><input type="number" id="atendimento" min="0" max="10" step="1" inputmode="numeric" oninput="clampScore(this)"></div>
+            <div class="form-group"><label>Qual o nível de ruído? (0 a 10, sendo 0 muito baixo e 10 muito alto)</label><input type="number" id="ruido" min="0" max="10" step="1" inputmode="numeric" oninput="clampScore(this)"></div>
+            <div class="form-group"><label>Qual o nível de iluminação? (0 a 10, sendo 0 muito baixo e 10 muito alto)</label><input type="number" id="iluminacao" min="0" max="10" step="1" inputmode="numeric" oninput="clampScore(this)"></div>
+            <div class="form-group"><label>Nível de acolhimento <span style="font-weight:400;color:var(--muted);">(opcional)</span></label><textarea id="descricao" rows="4" placeholder="Descreva como foi o nível de acolhimento no local..."></textarea></div>
             <button class="btn btn-primary" onclick="salvar()">Compartilhar experiência</button>
           </div>
         </div>
@@ -691,15 +693,42 @@ async function logout() {
 
 
 
+function clampScore(el) {
+  if (el.value === '') return
+  let v = Number(el.value)
+  if (isNaN(v)) { el.value = ''; return }
+  if (v < 0) v = 0
+  if (v > 10) v = 10
+  el.value = Math.round(v)
+}
+
+function isValidScore(v) {
+  return Number.isInteger(v) && v >= 0 && v <= 10
+}
+
 async function salvar() {
   if (!currentUser) return toast('Faça login primeiro')
-  const nome = document.getElementById('nome').value
-const endereco = document.getElementById('endereco').value
+  const nome = document.getElementById('nome').value.trim()
+  const endereco = document.getElementById('endereco').value.trim()
   const cidade = document.getElementById('cidade').value
   const categoria = document.getElementById('categoria').value
-  const descricao = document.getElementById('descricao').value
-  const atendimento = document.getElementById('atendimento').value
-  
+  const descricao = document.getElementById('descricao').value.trim()
+  const atendimentoStr = document.getElementById('atendimento').value
+  const ruidoStr = document.getElementById('ruido').value
+  const iluminacaoStr = document.getElementById('iluminacao').value
+
+  if (!nome || !endereco || !cidade || !categoria || atendimentoStr === '' || ruidoStr === '' || iluminacaoStr === '') {
+    return toast('Preencha todos os campos obrigatórios (o nível de acolhimento é opcional)')
+  }
+
+  const atendimento = Number(atendimentoStr)
+  const ruido = Number(ruidoStr)
+  const iluminacao = Number(iluminacaoStr)
+
+  if (!isValidScore(atendimento) || !isValidScore(ruido) || !isValidScore(iluminacao)) {
+    return toast('As notas devem ser números inteiros de 0 a 10')
+  }
+
   const { error } = await sb.from('Cadastro').insert({
   Estabelecimento: nome,
   Endereco: endereco,
@@ -707,12 +736,21 @@ const endereco = document.getElementById('endereco').value
   Categoria: categoria,
   Motivo: descricao,
   Atendimento: atendimento,
-  
+  Ruido: ruido,
+  Iluminacao: iluminacao,
   Email: currentUser.email,
   user_id: currentUser.id
 })
   if (error) return toast(error.message)
   toast('Experiência compartilhada 💙')
+  document.getElementById('nome').value = ''
+  document.getElementById('endereco').value = ''
+  document.getElementById('cidade').value = ''
+  document.getElementById('categoria').value = ''
+  document.getElementById('descricao').value = ''
+  document.getElementById('atendimento').value = ''
+  document.getElementById('ruido').value = ''
+  document.getElementById('iluminacao').value = ''
   loadRanking()
 }
 
