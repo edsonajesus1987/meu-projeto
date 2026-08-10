@@ -134,6 +134,18 @@ textarea{resize:none;}
 .side-box{padding:26px;border-radius:30px;margin-top:24px;background:linear-gradient(135deg,rgba(91,140,255,.08),rgba(178,141,255,.08));border:1px solid #E8EEFF;width:100%;max-width:100%;min-width:0;box-sizing:border-box;overflow-wrap:break-word;word-break:break-word;}
 .side-box h3{margin-bottom:12px;font-size:1.15rem;}
 .side-box p{font-size:.92rem;line-height:1.8;color:var(--muted);}
+.link-direitos{display:inline-block;margin-top:14px;font-size:.85rem;font-weight:700;color:#5B8CFF;text-decoration:none;}
+.link-direitos:hover{text-decoration:underline;}
+.missao-destaque{max-width:1250px;margin:0 auto;padding:32px 40px;border-radius:28px;background:linear-gradient(135deg,rgba(91,140,255,.10),rgba(178,141,255,.10));border:1px solid #E4EBFF;text-align:center;}
+.missao-destaque h3{font-size:1.3rem;margin-bottom:10px;color:var(--text);}
+.missao-destaque p{font-size:1rem;line-height:1.8;color:var(--muted);max-width:720px;margin:0 auto;}
+.missao-destaque .link-direitos{margin-top:16px;}
+.lei-item{border:1px solid #EDF2FF;border-radius:16px;padding:14px 18px;margin-bottom:12px;background:#FAFBFF;}
+.lei-item summary{cursor:pointer;font-weight:700;font-size:.92rem;color:var(--text);list-style:none;}
+.lei-item summary::-webkit-details-marker{display:none;}
+.lei-item summary::before{content:'▸ ';color:#5B8CFF;}
+.lei-item[open] summary::before{content:'▾ ';}
+.lei-item p{margin-top:10px;font-size:.87rem;line-height:1.7;color:var(--muted);}
 footer{margin-top:70px;padding:50px 20px;text-align:center;}
 footer p{max-width:760px;margin:auto;line-height:1.8;color:var(--muted);}
 .footer-stats{margin-top:12px;font-weight:600;color:#5B8CFF!important;font-size:.9rem;}
@@ -187,6 +199,9 @@ nav{padding:14px 16px;height:auto;flex-direction:column;gap:16px;align-items:fle
 .side-box{padding:20px;}
 .side-box h3{font-size:1.05rem;}
 .side-box p{font-size:.98rem;line-height:1.7;}
+.missao-destaque{padding:24px 20px;border-radius:22px;}
+.missao-destaque h3{font-size:1.1rem;}
+.missao-destaque p{font-size:.92rem;}
 .search-box{flex-direction:column;padding:14px;border-radius:24px;}
 .search-box input,.search-box select{width:100%;}
 .card{border-radius:26px;}
@@ -236,7 +251,6 @@ img{max-width:100%;height:auto;}
 
 <nav>
   <div class="logo">
-    <div class="logo-icon-img"><img src="logo-autguia.png" alt="AutGuia"></div>
     <div class="logo-text-wrap">
       <div class="logo-text">
         <span class="c1">A</span><span class="c2">u</span><span class="c3">t</span><span class="c4">i</span><span class="c5">G</span><span class="c6">u</span><span class="c7">i</span><span class="c8">a</span>
@@ -269,13 +283,30 @@ img{max-width:100%;height:auto;}
       <select id="searchCategory" onchange="filterRanking()">
         <option value="">Todas as categorias</option>
         <option value="Alimentação e Bebidas">Alimentação e Bebidas</option>
+        <option value="Animais de Estimação (Pet Shops)">Animais de Estimação (Pet Shops)</option>
+        <option value="Artes e Artesanato">Artes e Artesanato</option>
         <option value="Automotivo">Automotivo</option>
         <option value="Beleza e Estética">Beleza e Estética</option>
         <option value="Brinquedos e Jogos">Brinquedos e Jogos</option>
+        <option value="Construção e Reforma">Construção e Reforma</option>
         <option value="Cultura e Entretenimento">Cultura e Entretenimento</option>
         <option value="Educação e Cursos">Educação e Cursos</option>
         <option value="Esportes e Lazer">Esportes e Lazer</option>
+        <option value="Farmácias e Saúde">Farmácias e Saúde</option>
+        <option value="Floricultura e Jardinagem">Floricultura e Jardinagem</option>
+        <option value="Hotelaria e Hospedagem">Hotelaria e Hospedagem</option>
+        <option value="Imóveis">Imóveis</option>
+        <option value="Informática e Tecnologia">Informática e Tecnologia</option>
+        <option value="Instrumentos Musicais">Instrumentos Musicais</option>
+        <option value="Joias e Acessórios">Joias e Acessórios</option>
+        <option value="Livrarias e Papelaria">Livrarias e Papelaria</option>
+        <option value="Materiais de Escritório">Materiais de Escritório</option>
+        <option value="Móveis e Decoração">Móveis e Decoração</option>
+        <option value="Ótica e Fotografia">Ótica e Fotografia</option>
+        <option value="Serviços Financeiros">Serviços Financeiros</option>
+        <option value="Serviços Gerais">Serviços Gerais</option>
         <option value="Supermercados e Mercearias">Supermercados e Mercearias</option>
+        <option value="Turismo e Viagens">Turismo e Viagens</option>
         <option value="Vestuário e Moda">Vestuário e Moda</option>
       </select>
       <select id="searchCity" onchange="filterRanking()">
@@ -292,8 +323,6 @@ img{max-width:100%;height:auto;}
     </div>
   </div>
 </section>
-
-
 
 <section class="section">
   <div class="main-grid">
@@ -335,13 +364,30 @@ img{max-width:100%;height:auto;}
               <select id="categoria">
                 <option value="">Selecione uma categoria</option>
                 <option value="Alimentação e Bebidas">Alimentação e Bebidas</option>
+                <option value="Animais de Estimação (Pet Shops)">Animais de Estimação (Pet Shops)</option>
+                <option value="Artes e Artesanato">Artes e Artesanato</option>
                 <option value="Automotivo">Automotivo</option>
                 <option value="Beleza e Estética">Beleza e Estética</option>
                 <option value="Brinquedos e Jogos">Brinquedos e Jogos</option>
+                <option value="Construção e Reforma">Construção e Reforma</option>
                 <option value="Cultura e Entretenimento">Cultura e Entretenimento</option>
                 <option value="Educação e Cursos">Educação e Cursos</option>
                 <option value="Esportes e Lazer">Esportes e Lazer</option>
+                <option value="Farmácias e Saúde">Farmácias e Saúde</option>
+                <option value="Floricultura e Jardinagem">Floricultura e Jardinagem</option>
+                <option value="Hotelaria e Hospedagem">Hotelaria e Hospedagem</option>
+                <option value="Imóveis">Imóveis</option>
+                <option value="Informática e Tecnologia">Informática e Tecnologia</option>
+                <option value="Instrumentos Musicais">Instrumentos Musicais</option>
+                <option value="Joias e Acessórios">Joias e Acessórios</option>
+                <option value="Livrarias e Papelaria">Livrarias e Papelaria</option>
+                <option value="Materiais de Escritório">Materiais de Escritório</option>
+                <option value="Móveis e Decoração">Móveis e Decoração</option>
+                <option value="Ótica e Fotografia">Ótica e Fotografia</option>
+                <option value="Serviços Financeiros">Serviços Financeiros</option>
+                <option value="Serviços Gerais">Serviços Gerais</option>
                 <option value="Supermercados e Mercearias">Supermercados e Mercearias</option>
+                <option value="Turismo e Viagens">Turismo e Viagens</option>
                 <option value="Vestuário e Moda">Vestuário e Moda</option>
               </select>
             </div>
@@ -416,6 +462,7 @@ img{max-width:100%;height:auto;}
       <div class="side-box">
         <h3>♾️ Nossa missão</h3>
         <p>Ajudar famílias e pessoas autistas a encontrarem ambientes mais acolhedores através da força da comunidade e da troca de experiências reais.</p>
+        <a href="javascript:void(0)" class="link-direitos" onclick="openDireitos()">📜 Conheça seus direitos →</a>
       </div>
     </div>
   </div>
@@ -489,6 +536,47 @@ img{max-width:100%;height:auto;}
       <button class="ver-mapa-btn" onclick="verNoMapa()">📍 Ver no mapa</button>
       <p class="dica-clique">Clique fora para fechar</p>
     </div>
+  </div>
+</div>
+
+<!-- MODAL DIREITOS E LEGISLAÇÃO -->
+<div class="modal-overlay" id="direitosModal" onclick="if(event.target===this)closeDireitos()">
+  <div class="modal" style="max-width:560px;max-height:85vh;overflow-y:auto;">
+    <button class="close-modal" onclick="closeDireitos()">✕</button>
+    <h2>📜 Direitos e legislação sobre autismo</h2>
+    <p style="color:var(--muted);line-height:1.7;margin:14px 0 22px;">Resumo das principais leis brasileiras que garantem direitos às pessoas autistas e suas famílias. Isso não substitui orientação jurídica — em caso de dúvida, procure um advogado ou a Defensoria Pública.</p>
+
+    <details class="lei-item" open>
+      <summary>Lei Berenice Piana (Lei nº 12.764/2012)</summary>
+      <p>Institui a Política Nacional de Proteção dos Direitos da Pessoa com Transtorno do Espectro Autista e considera a pessoa com TEA como pessoa com deficiência para todos os efeitos legais. Garante direito à vida digna, ao diagnóstico precoce, a atendimento multiprofissional pelo SUS, à educação, e a acompanhante especializado em sala de aula regular quando necessário.</p>
+    </details>
+
+    <details class="lei-item">
+      <summary>Lei Brasileira de Inclusão (Lei nº 13.146/2015)</summary>
+      <p>Também chamada de Estatuto da Pessoa com Deficiência. Como a pessoa com TEA é equiparada legalmente à pessoa com deficiência, ela passa a ter acesso a todos os direitos previstos nesta lei: acessibilidade, inclusão escolar, direito ao trabalho, à moradia e proibição de qualquer discriminação por motivo da deficiência.</p>
+    </details>
+
+    <details class="lei-item">
+      <summary>CIPTEA — Carteira de Identificação da Pessoa com TEA (Lei nº 13.977/2020)</summary>
+      <p>Também conhecida como Lei Romeo Mion, criou a CIPTEA: um documento gratuito, emitido pelo estado ou município, que facilita a identificação da pessoa autista e garante atendimento prioritário em serviços públicos e privados, especialmente nas áreas de saúde, educação e assistência social.</p>
+    </details>
+
+    <details class="lei-item">
+      <summary>Atendimento prioritário (Lei nº 10.048/2000)</summary>
+      <p>Garante atendimento prioritário em filas e serviços a pessoas com deficiência — o que inclui pessoas autistas, já reconhecidas como pessoas com deficiência pela Lei Berenice Piana.</p>
+    </details>
+
+    <details class="lei-item">
+      <summary>Convenção da ONU sobre os Direitos das Pessoas com Deficiência (Decreto nº 6.949/2009)</summary>
+      <p>Tratado internacional incorporado ao Brasil com força de emenda constitucional, que reforça o compromisso do país com a igualdade de direitos, a acessibilidade e a não discriminação de pessoas com deficiência, incluindo o autismo.</p>
+    </details>
+
+    <details class="lei-item">
+      <summary>BPC/LOAS — Benefício de Prestação Continuada</summary>
+      <p>Pessoas com deficiência (incluindo TEA) em situação de baixa renda podem ter direito a um benefício mensal de um salário mínimo, mediante avaliação social e médica do INSS. As regras de renda podem mudar — vale confirmar as condições atuais direto no site do INSS ou do Ministério do Desenvolvimento Social.</p>
+    </details>
+
+    <p style="font-size:.78rem;color:var(--muted);margin-top:18px;">Este resumo tem caráter informativo e pode ficar desatualizado com o tempo. Para orientação específica, consulte um advogado, a Defensoria Pública ou os canais oficiais do governo.</p>
   </div>
 </div>
 
@@ -639,7 +727,7 @@ function abrirDetalhe(grupo, index) {
       div.innerHTML = `
         <div class="avaliacao-topo">
           <span class="avaliacao-nota">⭐ ${Number(av.Atendimento) || 0}/10 <span class="avaliacao-seta">▾</span></span>
-          <span class="avaliacao-autor">${escapeHtml(av.Email || 'Anônimo')}</span>
+          <span class="avaliacao-autor">${escapeHtml(av.Nome || 'Família anônima')}</span>
         </div>
         <p class="avaliacao-texto">${av.Motivo ? escapeHtml(av.Motivo) : 'Nenhuma descrição informada.'}</p>
         <div class="avaliacao-detalhes">
@@ -812,6 +900,7 @@ async function salvar() {
   Ruido: ruido,
   Iluminacao: iluminacao,
   Email: currentUser.email,
+  Nome: currentUser.user_metadata?.nome || currentUser.user_metadata?.full_name || null,
   user_id: currentUser.id
 })
   if (error) return toast(error.message)
@@ -1027,6 +1116,8 @@ function mostrarTodos() {
 
 function openModal() { document.getElementById('modal').classList.add('open') }
 function closeModal() { document.getElementById('modal').classList.remove('open') }
+function openDireitos() { document.getElementById('direitosModal').classList.add('open') }
+function closeDireitos() { document.getElementById('direitosModal').classList.remove('open') }
 
 
 function switchTab(tab) {
