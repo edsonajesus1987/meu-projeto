@@ -136,6 +136,13 @@ textarea{resize:none;}
 .side-box p{font-size:.92rem;line-height:1.8;color:var(--muted);}
 .link-direitos{display:inline-block;margin-top:14px;font-size:.85rem;font-weight:700;color:#5B8CFF;text-decoration:none;}
 .link-direitos:hover{text-decoration:underline;}
+.link-esqueci{display:block;text-align:center;margin-top:16px;font-size:.85rem;font-weight:600;color:#5B8CFF;text-decoration:none;}
+.admin-linha{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #EDF2FF;font-size:.9rem;}
+.admin-linha strong{color:#5B8CFF;}
+.admin-linha-detalhe{padding:10px 0;border-bottom:1px solid #EDF2FF;}
+.admin-linha-detalhe .produto-nome{font-size:.9rem;color:var(--text);}
+.admin-linha-detalhe .meta{font-size:.78rem;color:var(--muted);margin-top:3px;}
+.link-esqueci:hover{text-decoration:underline;}
 .missao-destaque{max-width:1250px;margin:0 auto;padding:32px 40px;border-radius:28px;background:linear-gradient(135deg,rgba(91,140,255,.10),rgba(178,141,255,.10));border:1px solid #E4EBFF;text-align:center;}
 .missao-destaque h3{font-size:1.3rem;margin-bottom:10px;color:var(--text);}
 .missao-destaque p{font-size:1rem;line-height:1.8;color:var(--muted);max-width:720px;margin:0 auto;}
@@ -262,6 +269,7 @@ img{max-width:100%;height:auto;}
     <a href="https://instagram.com/autiguia" target="_blank" class="instagram-btn">📸 Instagram</a>
     <div id="userArea" class="hidden">
       <span id="userEmail"></span>
+      <button class="btn btn-light hidden" id="adminBtn" onclick="abrirPainelAdmin()">📊 Admin</button>
       <button class="btn btn-light" onclick="logout()">Sair</button>
     </div>
     <button class="btn btn-primary" id="loginBtn" onclick="openModal()">Entrar</button>
@@ -416,7 +424,7 @@ img{max-width:100%;height:auto;}
         <div class="card-header">🤝 Patrocinadores</div>
         <div class="card-body" id="sponsors"></div>
       </div>
-      <div class="card" style="margin-top:28px;overflow:hidden;">
+      <div class="card hidden" id="productsCard" style="margin-top:28px;overflow:hidden;">
         <div class="card-header">🛍 Produtos recomendados</div>
         <div class="products-carousel">
           <div class="products-track">
@@ -424,37 +432,37 @@ img{max-width:100%;height:auto;}
               <img src="https://m.media-amazon.com/images/I/61xVQw6wFOL._AC_SL1500_.jpg" alt="Fone Antirruído"/>
               <h4>Fone Antirruído Infantil</h4>
               <p>Ajuda na redução de estímulos sonoros.</p>
-              <a href="SEU_LINK_AFILIADO" target="_blank" class="btn btn-primary product-btn">Ver produto</a>
+              <a href="SEU_LINK_AFILIADO" target="_blank" class="btn btn-primary product-btn" onclick="registrarCliqueProduto('Fone Antirruído Infantil')">Ver produto</a>
             </div>
             <div class="product-card">
               <img src="https://m.media-amazon.com/images/I/71r8Q2v7d7L._AC_SL1500_.jpg" alt="Kit Sensorial"/>
               <h4>Kit Sensorial</h4>
               <p>Estimulação sensorial educativa.</p>
-              <a href="SEU_LINK_AFILIADO" target="_blank" class="btn btn-primary product-btn">Ver produto</a>
+              <a href="SEU_LINK_AFILIADO" target="_blank" class="btn btn-primary product-btn" onclick="registrarCliqueProduto('Kit Sensorial')">Ver produto</a>
             </div>
             <div class="product-card">
               <img src="https://m.media-amazon.com/images/I/71z2w6lqzXL._AC_SL1500_.jpg" alt="Cobertor Sensorial"/>
               <h4>Cobertor Sensorial</h4>
               <p>Sensação de conforto e segurança.</p>
-              <a href="SEU_LINK_AFILIADO" target="_blank" class="btn btn-primary product-btn">Ver produto</a>
+              <a href="SEU_LINK_AFILIADO" target="_blank" class="btn btn-primary product-btn" onclick="registrarCliqueProduto('Cobertor Sensorial')">Ver produto</a>
             </div>
             <div class="product-card">
               <img src="https://m.media-amazon.com/images/I/61d4zDk-Z-L._AC_SL1200_.jpg" alt="Pop It"/>
               <h4>Pop It Sensorial</h4>
               <p>Ajuda no relaxamento e foco.</p>
-              <a href="SEU_LINK_AFILIADO" target="_blank" class="btn btn-primary product-btn">Ver produto</a>
+              <a href="SEU_LINK_AFILIADO" target="_blank" class="btn btn-primary product-btn" onclick="registrarCliqueProduto('Pop It Sensorial')">Ver produto</a>
             </div>
             <div class="product-card">
               <img src="https://m.media-amazon.com/images/I/61xVQw6wFOL._AC_SL1500_.jpg"/>
               <h4>Fone Antirruído Infantil</h4>
               <p>Ajuda na redução de estímulos sonoros.</p>
-              <a href="SEU_LINK_AFILIADO" target="_blank" class="btn btn-primary product-btn">Ver produto</a>
+              <a href="SEU_LINK_AFILIADO" target="_blank" class="btn btn-primary product-btn" onclick="registrarCliqueProduto('Fone Antirruído Infantil')">Ver produto</a>
             </div>
             <div class="product-card">
               <img src="https://m.media-amazon.com/images/I/71r8Q2v7d7L._AC_SL1500_.jpg"/>
               <h4>Kit Sensorial</h4>
               <p>Estimulação sensorial educativa.</p>
-              <a href="SEU_LINK_AFILIADO" target="_blank" class="btn btn-primary product-btn">Ver produto</a>
+              <a href="SEU_LINK_AFILIADO" target="_blank" class="btn btn-primary product-btn" onclick="registrarCliqueProduto('Kit Sensorial')">Ver produto</a>
             </div>
           </div>
         </div>
@@ -487,6 +495,7 @@ img{max-width:100%;height:auto;}
       <div class="form-group"><label>E-mail</label><input type="email" id="loginEmail"></div>
       <div class="form-group"><label>Senha</label><input type="password" id="loginSenha"></div>
       <button class="btn btn-primary" onclick="login()">Entrar</button>
+      <a href="javascript:void(0)" class="link-esqueci" onclick="abrirEsqueciSenha()">Esqueci minha senha</a>
     </div>
     <div id="cadastroPanel" class="hidden">
       <div class="form-group"><label>Nome</label><input type="text" id="cadastroNome"></div>
@@ -577,6 +586,41 @@ img{max-width:100%;height:auto;}
     </details>
 
     <p style="font-size:.78rem;color:var(--muted);margin-top:18px;">Este resumo tem caráter informativo e pode ficar desatualizado com o tempo. Para orientação específica, consulte um advogado, a Defensoria Pública ou os canais oficiais do governo.</p>
+  </div>
+</div>
+
+<!-- MODAL ESQUECI MINHA SENHA -->
+<div class="modal-overlay" id="esqueciSenhaModal" onclick="if(event.target===this)fecharEsqueciSenha()">
+  <div class="modal">
+    <button class="close-modal" onclick="fecharEsqueciSenha()">✕</button>
+    <h2>Esqueceu sua senha? 🔑</h2>
+    <p style="color:var(--muted);line-height:1.7;margin:14px 0 20px;">Informe o e-mail da sua conta. Vamos te enviar um link seguro para você criar uma senha nova.</p>
+    <div class="form-group"><label>E-mail</label><input type="email" id="esqueciSenhaEmail"></div>
+    <button class="btn btn-primary" onclick="enviarLinkRecuperacao()">Enviar link de redefinição</button>
+  </div>
+</div>
+
+<!-- MODAL DEFINIR NOVA SENHA (aberto automaticamente ao clicar no link do e-mail) -->
+<div class="modal-overlay" id="novaSenhaModal">
+  <div class="modal">
+    <h2>Defina sua nova senha 🔒</h2>
+    <p style="color:var(--muted);line-height:1.7;margin:14px 0 20px;">Escolha uma senha nova para sua conta AutiGuia.</p>
+    <div class="form-group"><label>Nova senha</label><input type="password" id="novaSenha1"></div>
+    <div class="form-group"><label>Confirme a nova senha</label><input type="password" id="novaSenha2"></div>
+    <button class="btn btn-primary" onclick="salvarNovaSenha()">Salvar nova senha</button>
+  </div>
+</div>
+
+<!-- MODAL PAINEL ADMIN -->
+<div class="modal-overlay" id="adminModal" onclick="if(event.target===this)fecharPainelAdmin()">
+  <div class="modal" style="max-width:640px;max-height:85vh;overflow-y:auto;">
+    <button class="close-modal" onclick="fecharPainelAdmin()">✕</button>
+    <h2>📊 Painel Admin</h2>
+    <p style="color:var(--muted);line-height:1.7;margin:10px 0 20px;">Cliques em "Ver produto" no quadro Produtos recomendados.</p>
+    <h3 style="font-size:1rem;margin-bottom:8px;">Total por produto</h3>
+    <div id="adminResumo"></div>
+    <h3 style="font-size:1rem;margin:22px 0 8px;">Detalhe dos cliques</h3>
+    <div id="adminDetalhe"></div>
   </div>
 </div>
 
@@ -783,11 +827,71 @@ async function init() {
   const { data: { session } } = await sb.auth.getSession()
   if (session) setUser(session.user)
   sb.auth.onAuthStateChange((event, session) => {
+    if (event === 'PASSWORD_RECOVERY') {
+      abrirNovaSenha()
+      return
+    }
     if (session) setUser(session.user)
     else clearUser()
   })
   loadRanking()
   carregarTotalUsuarios()
+}
+
+function fecharPainelAdmin() {
+  document.getElementById('adminModal').classList.remove('open')
+}
+
+async function abrirPainelAdmin() {
+  document.getElementById('adminModal').classList.add('open')
+  const resumoEl = document.getElementById('adminResumo')
+  const detalheEl = document.getElementById('adminDetalhe')
+  resumoEl.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Carregando...</p>'
+  detalheEl.innerHTML = ''
+
+  const { data, error } = await sb.from('CliquesProdutos').select('*').order('created_at', { ascending: false })
+
+  if (error) {
+    resumoEl.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Não foi possível carregar os dados (' + escapeHtml(error.message) + ').</p>'
+    return
+  }
+
+  if (!data || data.length === 0) {
+    resumoEl.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Nenhum clique registrado ainda.</p>'
+    return
+  }
+
+  const contagem = {}
+  data.forEach(c => { contagem[c.produto] = (contagem[c.produto] || 0) + 1 })
+  const ordenado = Object.entries(contagem).sort((a, b) => b[1] - a[1])
+
+  resumoEl.innerHTML = ordenado.map(([produto, total]) => `
+    <div class="admin-linha">
+      <span>${escapeHtml(produto)}</span>
+      <strong>${total} ${total === 1 ? 'clique' : 'cliques'}</strong>
+    </div>
+  `).join('')
+
+  detalheEl.innerHTML = data.map(c => `
+    <div class="admin-linha-detalhe">
+      <div class="produto-nome"><strong>${escapeHtml(c.produto)}</strong> — ${escapeHtml(c.nome || c.email || 'Anônimo')}</div>
+      <div class="meta">${c.created_at ? new Date(c.created_at).toLocaleString('pt-BR') : ''}</div>
+    </div>
+  `).join('')
+}
+
+async function registrarCliqueProduto(produto) {
+  if (!currentUser) return
+  try {
+    await sb.from('CliquesProdutos').insert({
+      produto: produto,
+      nome: currentUser.user_metadata?.nome || currentUser.user_metadata?.full_name || null,
+      email: currentUser.email,
+      user_id: currentUser.id
+    })
+  } catch (e) {
+    // não bloqueia a navegação do usuário caso o registro falhe
+  }
 }
 
 async function carregarTotalUsuarios() {
@@ -801,13 +905,17 @@ async function carregarTotalUsuarios() {
   el.textContent = `💙 ${data} ${data === 1 ? 'pessoa cadastrada' : 'pessoas cadastradas'} na comunidade`
 }
 
-function setUser(user) {
+async function setUser(user) {
   currentUser = user
   document.getElementById('userArea').classList.remove('hidden')
   document.getElementById('loginBtn').classList.add('hidden')
   document.getElementById('lockedMsg').classList.add('hidden')
   document.getElementById('cadastroForm').classList.remove('hidden')
+  document.getElementById('productsCard').classList.remove('hidden')
   document.getElementById('userEmail').innerText = user.email
+
+  const { data } = await sb.from('admins').select('user_id').eq('user_id', user.id).maybeSingle()
+  document.getElementById('adminBtn').classList.toggle('hidden', !data)
 }
 
 function clearUser() {
@@ -816,6 +924,8 @@ function clearUser() {
   document.getElementById('loginBtn').classList.remove('hidden')
   document.getElementById('lockedMsg').classList.remove('hidden')
   document.getElementById('cadastroForm').classList.add('hidden')
+  document.getElementById('productsCard').classList.add('hidden')
+  document.getElementById('adminBtn').classList.add('hidden')
 }
 
 async function criarConta() {
@@ -1116,6 +1226,51 @@ function mostrarTodos() {
 
 function openModal() { document.getElementById('modal').classList.add('open') }
 function closeModal() { document.getElementById('modal').classList.remove('open') }
+
+function abrirEsqueciSenha() {
+  closeModal()
+  document.getElementById('esqueciSenhaModal').classList.add('open')
+}
+
+function fecharEsqueciSenha() {
+  document.getElementById('esqueciSenhaModal').classList.remove('open')
+}
+
+async function enviarLinkRecuperacao() {
+  const email = document.getElementById('esqueciSenhaEmail').value.trim()
+  if (!email) return toast('Informe seu e-mail')
+
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + window.location.pathname
+  })
+  if (error) return toast(error.message)
+  toast('Enviamos um link de redefinição para seu e-mail 💙')
+  fecharEsqueciSenha()
+}
+
+function abrirNovaSenha() {
+  document.getElementById('modal').classList.remove('open')
+  document.getElementById('esqueciSenhaModal').classList.remove('open')
+  document.getElementById('novaSenhaModal').classList.add('open')
+}
+
+function fecharNovaSenha() {
+  document.getElementById('novaSenhaModal').classList.remove('open')
+}
+
+async function salvarNovaSenha() {
+  const senha1 = document.getElementById('novaSenha1').value
+  const senha2 = document.getElementById('novaSenha2').value
+
+  if (!senha1 || !senha2) return toast('Preencha os dois campos de senha')
+  if (senha1.length < 6) return toast('A senha precisa ter pelo menos 6 caracteres')
+  if (senha1 !== senha2) return toast('As senhas não coincidem')
+
+  const { error } = await sb.auth.updateUser({ password: senha1 })
+  if (error) return toast(error.message)
+  toast('Senha atualizada com sucesso 💙')
+  fecharNovaSenha()
+}
 function openDireitos() { document.getElementById('direitosModal').classList.add('open') }
 function closeDireitos() { document.getElementById('direitosModal').classList.remove('open') }
 
