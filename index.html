@@ -616,11 +616,34 @@ img{max-width:100%;height:auto;}
   <div class="modal" style="max-width:640px;max-height:85vh;overflow-y:auto;">
     <button class="close-modal" onclick="fecharPainelAdmin()">✕</button>
     <h2>📊 Painel Admin</h2>
-    <p style="color:var(--muted);line-height:1.7;margin:10px 0 20px;">Cliques em "Ver produto" no quadro Produtos recomendados.</p>
-    <h3 style="font-size:1rem;margin-bottom:8px;">Total por produto</h3>
-    <div id="adminResumo"></div>
-    <h3 style="font-size:1rem;margin:22px 0 8px;">Detalhe dos cliques</h3>
-    <div id="adminDetalhe"></div>
+    <div class="tabs" style="margin:18px 0 10px;">
+      <button class="tab active" id="tabAdminCliques" onclick="mudarAbaAdmin('cliques')">Cliques</button>
+      <button class="tab" id="tabAdminBuscas" onclick="mudarAbaAdmin('buscas')">Buscas</button>
+      <button class="tab" id="tabAdminSessoes" onclick="mudarAbaAdmin('sessoes')">Sessões</button>
+    </div>
+
+    <div id="adminPainelCliques">
+      <p style="color:var(--muted);line-height:1.7;margin:10px 0 20px;font-size:.9rem;">Cliques em "Ver produto" no quadro Produtos recomendados.</p>
+      <h3 style="font-size:1rem;margin-bottom:8px;">Total por produto</h3>
+      <div id="adminResumo"></div>
+      <h3 style="font-size:1rem;margin:22px 0 8px;">Detalhe dos cliques</h3>
+      <div id="adminDetalhe"></div>
+    </div>
+
+    <div id="adminPainelBuscas" class="hidden">
+      <p style="color:var(--muted);line-height:1.7;margin:10px 0 20px;font-size:.9rem;">Uso dos filtros de categoria e cidade na busca.</p>
+      <h3 style="font-size:1rem;margin-bottom:8px;">Categorias mais buscadas</h3>
+      <div id="adminCategorias"></div>
+      <h3 style="font-size:1rem;margin:22px 0 8px;">Cidades mais buscadas</h3>
+      <div id="adminCidades"></div>
+      <h3 style="font-size:1rem;margin:22px 0 8px;">Últimas buscas</h3>
+      <div id="adminBuscasDetalhe"></div>
+    </div>
+
+    <div id="adminPainelSessoes" class="hidden">
+      <p style="color:var(--muted);line-height:1.7;margin:10px 0 20px;font-size:.9rem;">Tempo que cada pessoa passou logada na plataforma.</p>
+      <div id="adminSessoesLista"></div>
+    </div>
   </div>
 </div>
 
@@ -821,6 +844,8 @@ function verNoMapa() {
 
 // ── SUPABASE ─────────────────────────────────────
 
+window.addEventListener('beforeunload', () => { encerrarSessao() })
+
 init()
 
 async function init() {
@@ -842,8 +867,43 @@ function fecharPainelAdmin() {
   document.getElementById('adminModal').classList.remove('open')
 }
 
+function mudarAbaAdmin(aba) {
+  document.getElementById('adminPainelCliques').classList.toggle('hidden', aba !== 'cliques')
+  document.getElementById('adminPainelBuscas').classList.toggle('hidden', aba !== 'buscas')
+  document.getElementById('adminPainelSessoes').classList.toggle('hidden', aba !== 'sessoes')
+  document.getElementById('tabAdminCliques').classList.toggle('active', aba === 'cliques')
+  document.getElementById('tabAdminBuscas').classList.toggle('active', aba === 'buscas')
+  document.getElementById('tabAdminSessoes').classList.toggle('active', aba === 'sessoes')
+
+  if (aba === 'cliques') carregarAdminCliques()
+  if (aba === 'buscas') carregarAdminBuscas()
+  if (aba === 'sessoes') carregarAdminSessoes()
+}
+
+function construirBarras(ordenado, cor) {
+  if (ordenado.length === 0) {
+    return '<p style="color:var(--muted);font-size:.9rem;">Sem dados ainda.</p>'
+  }
+  const max = ordenado[0][1] || 1
+  return ordenado.map(([label, total]) => `
+    <div style="margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:4px;">
+        <span>${escapeHtml(label)}</span>
+        <strong>${total}</strong>
+      </div>
+      <div style="background:#EEF2FF;border-radius:999px;height:8px;overflow:hidden;">
+        <div style="background:${cor};height:100%;width:${Math.round((total / max) * 100)}%;"></div>
+      </div>
+    </div>
+  `).join('')
+}
+
 async function abrirPainelAdmin() {
   document.getElementById('adminModal').classList.add('open')
+  mudarAbaAdmin('cliques')
+}
+
+async function carregarAdminCliques() {
   const resumoEl = document.getElementById('adminResumo')
   const detalheEl = document.getElementById('adminDetalhe')
   resumoEl.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Carregando...</p>'
@@ -880,6 +940,77 @@ async function abrirPainelAdmin() {
   `).join('')
 }
 
+async function carregarAdminBuscas() {
+  const catEl = document.getElementById('adminCategorias')
+  const cidEl = document.getElementById('adminCidades')
+  const detEl = document.getElementById('adminBuscasDetalhe')
+  catEl.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Carregando...</p>'
+  cidEl.innerHTML = ''
+  detEl.innerHTML = ''
+
+  const { data, error } = await sb.from('Buscas').select('*').order('created_at', { ascending: false })
+
+  if (error) {
+    catEl.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Não foi possível carregar os dados (' + escapeHtml(error.message) + ').</p>'
+    return
+  }
+
+  if (!data || data.length === 0) {
+    catEl.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Nenhuma busca registrada ainda.</p>'
+    return
+  }
+
+  const contagemCat = {}
+  const contagemCid = {}
+  data.forEach(b => {
+    if (b.categoria) contagemCat[b.categoria] = (contagemCat[b.categoria] || 0) + 1
+    if (b.cidade) contagemCid[b.cidade] = (contagemCid[b.cidade] || 0) + 1
+  })
+  const ordenadoCat = Object.entries(contagemCat).sort((a, b) => b[1] - a[1])
+  const ordenadoCid = Object.entries(contagemCid).sort((a, b) => b[1] - a[1])
+
+  catEl.innerHTML = construirBarras(ordenadoCat, '#5B8CFF')
+  cidEl.innerHTML = construirBarras(ordenadoCid, '#67D66E')
+
+  detEl.innerHTML = data.slice(0, 30).map(b => `
+    <div class="admin-linha-detalhe">
+      <div class="produto-nome"><strong>${escapeHtml(b.nome || b.email || 'Visitante anônimo')}</strong> — ${escapeHtml(b.categoria || 'todas categorias')} · ${escapeHtml(b.cidade || 'todas cidades')}</div>
+      <div class="meta">${b.created_at ? new Date(b.created_at).toLocaleString('pt-BR') : ''}</div>
+    </div>
+  `).join('')
+}
+
+function formatarDuracao(loginAt, logoutAt, lastPing) {
+  const inicio = new Date(loginAt).getTime()
+  const fim = logoutAt ? new Date(logoutAt).getTime() : (lastPing ? new Date(lastPing).getTime() : Date.now())
+  const minutos = Math.max(0, Math.round((fim - inicio) / 60000))
+  return logoutAt ? (minutos + ' min') : (minutos + ' min (em andamento)')
+}
+
+async function carregarAdminSessoes() {
+  const listaEl = document.getElementById('adminSessoesLista')
+  listaEl.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Carregando...</p>'
+
+  const { data, error } = await sb.from('Sessoes').select('*').order('login_at', { ascending: false }).limit(50)
+
+  if (error) {
+    listaEl.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Não foi possível carregar os dados (' + escapeHtml(error.message) + ').</p>'
+    return
+  }
+
+  if (!data || data.length === 0) {
+    listaEl.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Nenhuma sessão registrada ainda.</p>'
+    return
+  }
+
+  listaEl.innerHTML = data.map(s => `
+    <div class="admin-linha-detalhe">
+      <div class="produto-nome"><strong>${escapeHtml(s.nome || s.email || 'Anônimo')}</strong> — ${formatarDuracao(s.login_at, s.logout_at, s.last_ping)}</div>
+      <div class="meta">Entrou em ${s.login_at ? new Date(s.login_at).toLocaleString('pt-BR') : '-'}</div>
+    </div>
+  `).join('')
+}
+
 async function registrarCliqueProduto(produto) {
   if (!currentUser) return
   try {
@@ -905,6 +1036,37 @@ async function carregarTotalUsuarios() {
   el.textContent = `💙 ${data} ${data === 1 ? 'pessoa cadastrada' : 'pessoas cadastradas'} na comunidade`
 }
 
+let sessaoAtualId = null
+let heartbeatInterval = null
+
+async function iniciarSessao(user) {
+  if (sessaoAtualId) return
+  const { data, error } = await sb.from('Sessoes').insert({
+    user_id: user.id,
+    nome: user.user_metadata?.nome || user.user_metadata?.full_name || null,
+    email: user.email,
+    login_at: new Date().toISOString(),
+    last_ping: new Date().toISOString()
+  }).select().single()
+  if (!error && data) {
+    sessaoAtualId = data.id
+    heartbeatInterval = setInterval(atualizarPing, 60000)
+  }
+}
+
+async function atualizarPing() {
+  if (!sessaoAtualId) return
+  await sb.from('Sessoes').update({ last_ping: new Date().toISOString() }).eq('id', sessaoAtualId)
+}
+
+async function encerrarSessao() {
+  if (!sessaoAtualId) return
+  const idEncerrar = sessaoAtualId
+  sessaoAtualId = null
+  if (heartbeatInterval) { clearInterval(heartbeatInterval); heartbeatInterval = null }
+  await sb.from('Sessoes').update({ logout_at: new Date().toISOString(), last_ping: new Date().toISOString() }).eq('id', idEncerrar)
+}
+
 async function setUser(user) {
   currentUser = user
   document.getElementById('userArea').classList.remove('hidden')
@@ -916,6 +1078,8 @@ async function setUser(user) {
 
   const { data } = await sb.from('admins').select('user_id').eq('user_id', user.id).maybeSingle()
   document.getElementById('adminBtn').classList.toggle('hidden', !data)
+
+  iniciarSessao(user)
 }
 
 function clearUser() {
@@ -958,6 +1122,7 @@ async function login() {
 }
 
 async function logout() {
+  await encerrarSessao()
   await sb.auth.signOut()
   toast('Sessão encerrada')
 }
@@ -1199,6 +1364,26 @@ function filterRanking() {
     return okCategoria && okCidade
   })
   renderRanking(filtrado)
+  registrarBusca(document.getElementById('searchCategory').value, document.getElementById('searchCity').value)
+}
+
+let ultimaBuscaRegistrada = ''
+async function registrarBusca(categoria, cidade) {
+  if (!categoria && !cidade) return
+  const chave = categoria + '|' + cidade
+  if (chave === ultimaBuscaRegistrada) return
+  ultimaBuscaRegistrada = chave
+  try {
+    await sb.from('Buscas').insert({
+      categoria: categoria || null,
+      cidade: cidade || null,
+      user_id: currentUser ? currentUser.id : null,
+      nome: currentUser ? (currentUser.user_metadata?.nome || currentUser.user_metadata?.full_name || null) : null,
+      email: currentUser ? currentUser.email : null
+    })
+  } catch (e) {
+    // não bloqueia a navegação do usuário caso o registro falhe
+  }
 }
 
 function mostrarTop5() {
