@@ -642,6 +642,11 @@ img{max-width:100%;height:auto;}
 
     <div id="adminPainelSessoes" class="hidden">
       <p style="color:var(--muted);line-height:1.7;margin:10px 0 20px;font-size:.9rem;">Tempo que cada pessoa passou logada na plataforma.</p>
+      <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+        <input type="text" id="adminSessoesFiltroUsuario" placeholder="Filtrar por nome ou e-mail..." oninput="renderizarSessoesFiltradas()" style="flex:2;min-width:160px;">
+        <input type="date" id="adminSessoesFiltroData" onchange="renderizarSessoesFiltradas()" style="flex:1;min-width:140px;">
+        <button class="btn btn-light" onclick="limparFiltroSessoes()" style="flex:0 0 auto;">Limpar</button>
+      </div>
       <div id="adminSessoesLista"></div>
     </div>
   </div>
@@ -987,23 +992,53 @@ function formatarDuracao(loginAt, logoutAt, lastPing) {
   return logoutAt ? (minutos + ' min') : (minutos + ' min (em andamento)')
 }
 
+let sessoesCarregadas = []
+
 async function carregarAdminSessoes() {
   const listaEl = document.getElementById('adminSessoesLista')
   listaEl.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Carregando...</p>'
 
-  const { data, error } = await sb.from('Sessoes').select('*').order('login_at', { ascending: false }).limit(50)
+  const { data, error } = await sb.from('Sessoes').select('*').order('login_at', { ascending: false }).limit(300)
 
   if (error) {
     listaEl.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Não foi possível carregar os dados (' + escapeHtml(error.message) + ').</p>'
     return
   }
 
-  if (!data || data.length === 0) {
+  sessoesCarregadas = data || []
+  renderizarSessoesFiltradas()
+}
+
+function limparFiltroSessoes() {
+  document.getElementById('adminSessoesFiltroUsuario').value = ''
+  document.getElementById('adminSessoesFiltroData').value = ''
+  renderizarSessoesFiltradas()
+}
+
+function renderizarSessoesFiltradas() {
+  const listaEl = document.getElementById('adminSessoesLista')
+  const termoUsuario = document.getElementById('adminSessoesFiltroUsuario').value.trim().toLowerCase()
+  const dataFiltro = document.getElementById('adminSessoesFiltroData').value
+
+  if (sessoesCarregadas.length === 0) {
     listaEl.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Nenhuma sessão registrada ainda.</p>'
     return
   }
 
-  listaEl.innerHTML = data.map(s => `
+  const filtradas = sessoesCarregadas.filter(s => {
+    const okUsuario = !termoUsuario ||
+      (s.nome || '').toLowerCase().includes(termoUsuario) ||
+      (s.email || '').toLowerCase().includes(termoUsuario)
+    const okData = !dataFiltro || (s.login_at && s.login_at.slice(0, 10) === dataFiltro)
+    return okUsuario && okData
+  })
+
+  if (filtradas.length === 0) {
+    listaEl.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Nenhuma sessão encontrada com esse filtro.</p>'
+    return
+  }
+
+  listaEl.innerHTML = filtradas.map(s => `
     <div class="admin-linha-detalhe">
       <div class="produto-nome"><strong>${escapeHtml(s.nome || s.email || 'Anônimo')}</strong> — ${formatarDuracao(s.login_at, s.logout_at, s.last_ping)}</div>
       <div class="meta">Entrou em ${s.login_at ? new Date(s.login_at).toLocaleString('pt-BR') : '-'}</div>
@@ -1014,14 +1049,15 @@ async function carregarAdminSessoes() {
 async function registrarCliqueProduto(produto) {
   if (!currentUser) return
   try {
-    await sb.from('CliquesProdutos').insert({
+    const { error } = await sb.from('CliquesProdutos').insert({
       produto: produto,
       nome: currentUser.user_metadata?.nome || currentUser.user_metadata?.full_name || null,
       email: currentUser.email,
       user_id: currentUser.id
     })
+    if (error) console.error('Erro ao registrar clique:', error.message)
   } catch (e) {
-    // não bloqueia a navegação do usuário caso o registro falhe
+    console.error('Erro ao registrar clique:', e)
   }
 }
 
@@ -1039,8 +1075,23 @@ async function carregarTotalUsuarios() {
 let sessaoAtualId = null
 let heartbeatInterval = null
 
+function iniciarHeartbeat() {
+  if (heartbeatInterval) clearInterval(heartbeatInterval)
+  heartbeatInterval = setInterval(atualizarPing, 60000)
+}
+
 async function iniciarSessao(user) {
   if (sessaoAtualId) return
+
+  const idSalvo = sessionStorage.getItem('autiguia_sessao_id')
+  const userSalvo = sessionStorage.getItem('autiguia_sessao_user')
+  if (idSalvo && userSalvo === user.id) {
+    sessaoAtualId = idSalvo
+    iniciarHeartbeat()
+    atualizarPing()
+    return
+  }
+
   const { data, error } = await sb.from('Sessoes').insert({
     user_id: user.id,
     nome: user.user_metadata?.nome || user.user_metadata?.full_name || null,
@@ -1050,7 +1101,11 @@ async function iniciarSessao(user) {
   }).select().single()
   if (!error && data) {
     sessaoAtualId = data.id
-    heartbeatInterval = setInterval(atualizarPing, 60000)
+    sessionStorage.setItem('autiguia_sessao_id', data.id)
+    sessionStorage.setItem('autiguia_sessao_user', user.id)
+    iniciarHeartbeat()
+  } else if (error) {
+    console.error('Erro ao iniciar sessão:', error.message)
   }
 }
 
@@ -1063,6 +1118,8 @@ async function encerrarSessao() {
   if (!sessaoAtualId) return
   const idEncerrar = sessaoAtualId
   sessaoAtualId = null
+  sessionStorage.removeItem('autiguia_sessao_id')
+  sessionStorage.removeItem('autiguia_sessao_user')
   if (heartbeatInterval) { clearInterval(heartbeatInterval); heartbeatInterval = null }
   await sb.from('Sessoes').update({ logout_at: new Date().toISOString(), last_ping: new Date().toISOString() }).eq('id', idEncerrar)
 }
@@ -1374,15 +1431,16 @@ async function registrarBusca(categoria, cidade) {
   if (chave === ultimaBuscaRegistrada) return
   ultimaBuscaRegistrada = chave
   try {
-    await sb.from('Buscas').insert({
+    const { error } = await sb.from('Buscas').insert({
       categoria: categoria || null,
       cidade: cidade || null,
       user_id: currentUser ? currentUser.id : null,
       nome: currentUser ? (currentUser.user_metadata?.nome || currentUser.user_metadata?.full_name || null) : null,
       email: currentUser ? currentUser.email : null
     })
+    if (error) console.error('Erro ao registrar busca:', error.message)
   } catch (e) {
-    // não bloqueia a navegação do usuário caso o registro falhe
+    console.error('Erro ao registrar busca:', e)
   }
 }
 
