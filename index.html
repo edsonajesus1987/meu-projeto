@@ -81,12 +81,15 @@ textarea{resize:none;}
 /* PAINEL DE DETALHES */
 .detalhe-overlay{position:fixed;inset:0;background:rgba(15,20,35,.50);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.25s;z-index:8888;backdrop-filter:blur(6px);}
 .detalhe-overlay.open{opacity:1;pointer-events:all;}
-.detalhe-modal{width:100%;max-width:480px;background:white;border-radius:36px;padding:0;position:relative;box-shadow:0 24px 80px rgba(0,0,0,.18);overflow:hidden;transform:translateY(20px);transition:.25s;}
+.detalhe-modal{width:100%;max-width:480px;max-height:85vh;background:white;border-radius:36px;padding:0;position:relative;box-shadow:0 24px 80px rgba(0,0,0,.18);overflow:hidden;transform:translateY(20px);transition:.25s;display:flex;flex-direction:column;}
 .detalhe-overlay.open .detalhe-modal{transform:translateY(0);}
-.detalhe-header{padding:28px 32px 20px;background:linear-gradient(135deg,#5B8CFF,#7A9DFF);color:white;}
+.detalhe-header{padding:28px 32px 20px;background:linear-gradient(135deg,#5B8CFF,#7A9DFF);color:white;flex-shrink:0;}
 .detalhe-header h3{font-size:1.4rem;font-weight:700;margin-bottom:6px;line-height:1.2;}
 .detalhe-header p{font-size:.88rem;opacity:.85;}
-.detalhe-body{padding:28px 32px;}
+.detalhe-body{padding:28px 32px;overflow-y:auto;flex:1;min-height:0;}
+.detalhe-footer{padding:16px 32px 24px;flex-shrink:0;border-top:1px solid #EDF2FF;}
+.detalhe-footer .ver-mapa-btn{margin-top:0;}
+.detalhe-footer .dica-clique{border-top:none;padding-top:0;margin-top:10px;}
 .detalhe-nota{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;font-weight:700;font-size:1rem;margin-bottom:20px;}
 .detalhe-nota.alta{background:#e8faf0;color:#1a7a3e;}
 .detalhe-nota.media{background:#fffbea;color:#8a6200;}
@@ -94,8 +97,8 @@ textarea{resize:none;}
 .detalhe-secao{margin-bottom:18px;}
 .detalhe-secao label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em;}
 .detalhe-secao p{font-size:.95rem;line-height:1.7;color:var(--text);}
-.detalhe-medias{display:flex;gap:10px;margin-bottom:8px;}
-.detalhe-media-item{flex:1;border-radius:16px;padding:14px 8px;text-align:center;background:#F5F8FF;}
+.detalhe-medias{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px;}
+.detalhe-media-item{flex:1 1 calc(33.333% - 8px);min-width:90px;border-radius:16px;padding:14px 8px;text-align:center;background:#F5F8FF;}
 .detalhe-media-item .valor{font-weight:700;font-size:1.05rem;color:#4A5A80;}
 .detalhe-media-item .rotulo{font-size:.68rem;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.04em;}
 .detalhe-media-item.alta{background:#e8faf0;}
@@ -140,6 +143,15 @@ textarea{resize:none;}
 .admin-linha{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #EDF2FF;font-size:.9rem;}
 .admin-linha strong{color:#5B8CFF;}
 .admin-linha-detalhe{padding:10px 0;border-bottom:1px solid #EDF2FF;}
+.admin-resposta-box{background:#F5F8FF;border-radius:12px;padding:10px 14px;font-size:.85rem;color:var(--text);}
+.admin-resposta-input{width:100%;padding:10px;border:none;border-radius:12px;background:#F8FAFF;font-family:'Sora',sans-serif;font-size:.85rem;color:#24324B;resize:vertical;margin-bottom:8px;}
+.conversa-mensagens{flex:1;overflow-y:auto;margin:18px 0;display:flex;flex-direction:column;gap:10px;max-height:48vh;padding-right:4px;}
+.bolha-propria{align-self:flex-end;background:linear-gradient(135deg,#5B8CFF,#7A9DFF);color:white;padding:10px 14px;border-radius:16px 16px 4px 16px;max-width:80%;font-size:.88rem;line-height:1.5;}
+.bolha-outro{align-self:flex-start;background:#F0F3FF;color:var(--text);padding:10px 14px;border-radius:16px 16px 16px 4px;max-width:80%;font-size:.88rem;line-height:1.5;}
+.bolha-hora{font-size:.68rem;opacity:.75;margin-top:4px;}
+.thread-item{padding:14px 0;border-bottom:1px solid #EDF2FF;cursor:pointer;transition:.2s;}
+.thread-item:hover{background:rgba(91,140,255,.06);}
+.thread-nao-lida{color:#FF6B81;font-weight:700;font-size:.75rem;margin-left:8px;}
 .admin-linha-detalhe .produto-nome{font-size:.9rem;color:var(--text);}
 .admin-linha-detalhe .meta{font-size:.78rem;color:var(--muted);margin-top:3px;}
 .link-esqueci:hover{text-decoration:underline;}
@@ -173,6 +185,7 @@ footer p{max-width:760px;margin:auto;line-height:1.8;color:var(--muted);}
 .instagram-btn:hover{transform:translateY(-2px);background:linear-gradient(135deg,#F58529,#DD2A7B,#8134AF,#515BD4);color:white;}
 .login-share-box{display:flex;flex-direction:column;gap:8px;}
 .login-share-text{color:var(--muted);line-height:1.8;margin-bottom:20px;}
+.produtos-aviso{font-size:.78rem;color:var(--muted);padding:14px 28px 0;line-height:1.6;}
 .products-carousel{overflow:hidden;padding:28px;}
 .products-track{display:flex;gap:22px;width:max-content;padding-right:22px;animation:scrollProducts 35s linear infinite;}
 .product-card{width:240px;flex-shrink:0;background:white;border-radius:24px;padding:18px;box-shadow:0 8px 24px rgba(0,0,0,.06);border:1px solid #EEF2FF;}
@@ -213,6 +226,7 @@ nav{padding:14px 16px;height:auto;flex-direction:column;gap:16px;align-items:fle
 .search-box input,.search-box select{width:100%;}
 .card{border-radius:26px;}
 .card-header{padding:20px;font-size:.95rem;}
+.produtos-aviso{padding:12px 20px 0;}
 .products-carousel{padding:14px;padding-bottom:6px;}
 .products-track{gap:16px;padding-right:16px;animation-duration:22s;}
 .product-card{width:170px;min-width:170px;flex-shrink:0;}
@@ -222,11 +236,12 @@ nav{padding:14px 16px;height:auto;flex-direction:column;gap:16px;align-items:fle
 footer{padding:35px 16px;}
 footer p{font-size:.9rem;line-height:1.7;}
 .modal{margin:20px;padding:28px;border-radius:28px;}
-.detalhe-modal{margin:16px;border-radius:28px;}
+.detalhe-modal{margin:16px;border-radius:28px;max-height:88vh;}
 .detalhe-header{padding:22px 24px 16px;}
 .detalhe-body{padding:20px 24px;}
+.detalhe-footer{padding:14px 24px 20px;}
 .detalhe-medias{gap:6px;}
-.detalhe-media-item{padding:10px 4px;}
+.detalhe-media-item{padding:10px 4px;min-width:75px;}
 .detalhe-media-item .valor{font-size:.9rem;}
 .detalhe-media-item .rotulo{font-size:.6rem;}
 .tabs{flex-direction:column;}
@@ -402,6 +417,8 @@ img{max-width:100%;height:auto;}
             <div class="form-group"><label>Como foi sua experiência? (nota de 0 a 10)</label><input type="number" id="atendimento" min="0" max="10" step="1" inputmode="numeric" oninput="clampScore(this)"></div>
             <div class="form-group"><label>Qual o nível de ruído? (0 a 10, sendo 0 muito baixo e 10 muito alto)</label><input type="number" id="ruido" min="0" max="10" step="1" inputmode="numeric" oninput="clampScore(this)"></div>
             <div class="form-group"><label>Qual o nível de iluminação? (0 a 10, sendo 0 muito baixo e 10 muito alto)</label><input type="number" id="iluminacao" min="0" max="10" step="1" inputmode="numeric" oninput="clampScore(this)"></div>
+            <div class="form-group"><label>Há fila preferencial?</label><select id="filaPreferencial"><option value="">Selecione</option><option value="sim">Sim</option><option value="nao">Não</option></select></div>
+            <div class="form-group"><label>Existe aglomeração de pessoas? (0 a 10, sendo 0 espaço confortável e 10 muito lotado)</label><input type="number" id="aglomeracao" min="0" max="10" step="1" inputmode="numeric" oninput="clampScore(this)"></div>
             <div class="form-group"><label>Nível de acolhimento <span style="font-weight:400;color:var(--muted);">(opcional)</span></label><textarea id="descricao" rows="4" placeholder="Descreva como foi o nível de acolhimento no local..."></textarea></div>
             <button class="btn btn-primary" onclick="salvar()">Compartilhar experiência</button>
           </div>
@@ -412,6 +429,15 @@ img{max-width:100%;height:auto;}
       <div class="card">
         <div class="card-header" id="rankingHeader">Locais recomendados pela comunidade</div>
         <div class="card-body ranking-scroll" id="ranking">Carregando recomendações...</div>
+      </div>
+
+      <!-- FALE COM A GENTE -->
+      <div class="card hidden" id="mensagemCard" style="margin-top:28px;">
+        <div class="card-header">💬 Fale com a gente</div>
+        <div class="card-body">
+          <p style="color:var(--muted);font-size:.9rem;margin-bottom:14px;">Envie uma dúvida, comentário ou elogio, e acompanhe as respostas da equipe.</p>
+          <button class="btn btn-primary" onclick="abrirConversa()">Abrir conversa</button>
+        </div>
       </div>
     </div>
 
@@ -426,6 +452,7 @@ img{max-width:100%;height:auto;}
       </div>
       <div class="card hidden" id="productsCard" style="margin-top:28px;overflow:hidden;">
         <div class="card-header">🛍 Produtos recomendados</div>
+        <p class="produtos-aviso">Os produtos exibidos são vendidos por terceiros. Preço, entrega, qualidade e garantia são de responsabilidade exclusiva do vendedor — o AutiGuia não participa da venda nem se responsabiliza por ela.</p>
         <div class="products-carousel">
           <div class="products-track">
             <div class="product-card">
@@ -532,16 +559,26 @@ img{max-width:100%;height:auto;}
           <div class="valor" id="det-iluminacao">💡 -</div>
           <div class="rotulo">Iluminação</div>
         </div>
+        <div class="detalhe-media-item">
+          <div class="valor" id="det-fila">🎫 -</div>
+          <div class="rotulo">Fila preferencial</div>
+        </div>
+        <div class="detalhe-media-item">
+          <div class="valor" id="det-aglomeracao">👥 -</div>
+          <div class="rotulo">Aglomeração</div>
+        </div>
       </div>
       <p id="det-contagem" class="detalhe-contagem">-</p>
       <div class="detalhe-secao">
   <label>Endereço</label>
   <p id="det-endereco">-</p>
 </div>
-      <div class="detalhe-secao">
+      <div class="detalhe-secao" style="margin-bottom:0;">
         <label>Últimas avaliações</label>
         <div id="det-avaliacoes"></div>
       </div>
+    </div>
+    <div class="detalhe-footer">
       <button class="ver-mapa-btn" onclick="verNoMapa()">📍 Ver no mapa</button>
       <p class="dica-clique">Clique fora para fechar</p>
     </div>
@@ -611,6 +648,33 @@ img{max-width:100%;height:auto;}
   </div>
 </div>
 
+<!-- MODAL CONVERSA (USUÁRIO) -->
+<div class="modal-overlay" id="conversaModal" onclick="if(event.target===this)fecharConversa()">
+  <div class="modal" style="max-width:480px;max-height:82vh;display:flex;flex-direction:column;">
+    <button class="close-modal" onclick="fecharConversa()">✕</button>
+    <h2>💬 Fale com a gente</h2>
+    <p style="color:var(--muted);font-size:.8rem;margin-top:6px;">Não é um chat ao vivo — nossa equipe responde por aqui assim que possível, geralmente em até 2 dias úteis.</p>
+    <div id="conversaMensagens" class="conversa-mensagens"></div>
+    <div style="display:flex;gap:8px;align-items:flex-end;">
+      <textarea id="conversaTexto" rows="2" placeholder="Escreva sua mensagem..." style="flex:1;margin:0;"></textarea>
+      <button class="btn btn-primary" onclick="enviarMensagemConversa()" style="padding:14px 18px;">Enviar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONVERSA (ADMIN) -->
+<div class="modal-overlay" id="adminConversaModal" onclick="if(event.target===this)fecharConversaAdmin()">
+  <div class="modal" style="max-width:480px;max-height:82vh;display:flex;flex-direction:column;">
+    <button class="close-modal" onclick="fecharConversaAdmin()">✕</button>
+    <h2 id="adminConversaTitulo">💬 Conversa</h2>
+    <div id="adminConversaMensagens" class="conversa-mensagens"></div>
+    <div style="display:flex;gap:8px;align-items:flex-end;">
+      <textarea id="adminConversaTexto" rows="2" placeholder="Responder..." style="flex:1;margin:0;"></textarea>
+      <button class="btn btn-primary" onclick="enviarRespostaAdmin()" style="padding:14px 18px;">Enviar</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL PAINEL ADMIN -->
 <div class="modal-overlay" id="adminModal" onclick="if(event.target===this)fecharPainelAdmin()">
   <div class="modal" style="max-width:640px;max-height:85vh;overflow-y:auto;">
@@ -620,6 +684,7 @@ img{max-width:100%;height:auto;}
       <button class="tab active" id="tabAdminCliques" onclick="mudarAbaAdmin('cliques')">Cliques</button>
       <button class="tab" id="tabAdminBuscas" onclick="mudarAbaAdmin('buscas')">Buscas</button>
       <button class="tab" id="tabAdminSessoes" onclick="mudarAbaAdmin('sessoes')">Sessões</button>
+      <button class="tab" id="tabAdminMensagens" onclick="mudarAbaAdmin('mensagens')">Mensagens</button>
     </div>
 
     <div id="adminPainelCliques">
@@ -648,6 +713,11 @@ img{max-width:100%;height:auto;}
         <button class="btn btn-light" onclick="limparFiltroSessoes()" style="flex:0 0 auto;">Limpar</button>
       </div>
       <div id="adminSessoesLista"></div>
+    </div>
+
+    <div id="adminPainelMensagens" class="hidden">
+      <p style="color:var(--muted);line-height:1.7;margin:10px 0 20px;font-size:.9rem;">Dúvidas, comentários e elogios enviados pelos usuários.</p>
+      <div id="adminMensagensLista"></div>
     </div>
   </div>
 </div>
@@ -784,6 +854,8 @@ function abrirDetalhe(grupo, index) {
 
   document.getElementById('det-ruido').textContent = '🔊 ' + (grupo.ruidoMedia === null ? '-' : formatarNota(grupo.ruidoMedia))
   document.getElementById('det-iluminacao').textContent = '💡 ' + (grupo.iluminacaoMedia === null ? '-' : formatarNota(grupo.iluminacaoMedia))
+  document.getElementById('det-fila').textContent = '🎫 ' + (grupo.filaPreferencialPct === null ? '-' : grupo.filaPreferencialPct + '% Sim')
+  document.getElementById('det-aglomeracao').textContent = '👥 ' + (grupo.aglomeracaoMedia === null ? '-' : formatarNota(grupo.aglomeracaoMedia))
 
   const cont = document.getElementById('det-avaliacoes')
   cont.innerHTML = ''
@@ -796,15 +868,19 @@ function abrirDetalhe(grupo, index) {
       div.className = 'avaliacao-item'
       const temRuido = av.Ruido !== null && av.Ruido !== undefined && av.Ruido !== ''
       const temIluminacao = av.Iluminacao !== null && av.Iluminacao !== undefined && av.Iluminacao !== ''
+      const temFila = av.FilaPreferencial !== null && av.FilaPreferencial !== undefined
+      const temAglomeracao = av.Aglomeracao !== null && av.Aglomeracao !== undefined && av.Aglomeracao !== ''
       div.innerHTML = `
         <div class="avaliacao-topo">
           <span class="avaliacao-nota">⭐ ${Number(av.Atendimento) || 0}/10 <span class="avaliacao-seta">▾</span></span>
           <span class="avaliacao-autor">${escapeHtml(av.Nome || 'Família anônima')}</span>
         </div>
         <p class="avaliacao-texto">${av.Motivo ? escapeHtml(av.Motivo) : 'Nenhuma descrição informada.'}</p>
-        <div class="avaliacao-detalhes">
+        <div class="avaliacao-detalhes" style="flex-wrap:wrap;">
           <span>🔊 Ruído: ${temRuido ? Number(av.Ruido) + '/10' : 'não informado'}</span>
           <span>💡 Iluminação: ${temIluminacao ? Number(av.Iluminacao) + '/10' : 'não informado'}</span>
+          <span>🎫 Fila preferencial: ${temFila ? (av.FilaPreferencial ? 'Sim' : 'Não') : 'não informado'}</span>
+          <span>👥 Aglomeração: ${temAglomeracao ? Number(av.Aglomeracao) + '/10' : 'não informado'}</span>
         </div>
       `
       div.addEventListener('click', () => div.classList.toggle('expandido'))
@@ -876,13 +952,16 @@ function mudarAbaAdmin(aba) {
   document.getElementById('adminPainelCliques').classList.toggle('hidden', aba !== 'cliques')
   document.getElementById('adminPainelBuscas').classList.toggle('hidden', aba !== 'buscas')
   document.getElementById('adminPainelSessoes').classList.toggle('hidden', aba !== 'sessoes')
+  document.getElementById('adminPainelMensagens').classList.toggle('hidden', aba !== 'mensagens')
   document.getElementById('tabAdminCliques').classList.toggle('active', aba === 'cliques')
   document.getElementById('tabAdminBuscas').classList.toggle('active', aba === 'buscas')
   document.getElementById('tabAdminSessoes').classList.toggle('active', aba === 'sessoes')
+  document.getElementById('tabAdminMensagens').classList.toggle('active', aba === 'mensagens')
 
   if (aba === 'cliques') carregarAdminCliques()
   if (aba === 'buscas') carregarAdminBuscas()
   if (aba === 'sessoes') carregarAdminSessoes()
+  if (aba === 'mensagens') carregarAdminMensagens()
 }
 
 function construirBarras(ordenado, cor) {
@@ -1046,6 +1125,181 @@ function renderizarSessoesFiltradas() {
   `).join('')
 }
 
+async function carregarAdminMensagens() {
+  const el = document.getElementById('adminMensagensLista')
+  el.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Carregando...</p>'
+
+  const { data, error } = await sb.from('Mensagens').select('*').order('created_at', { ascending: false })
+
+  if (error) {
+    el.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Não foi possível carregar (' + escapeHtml(error.message) + ').</p>'
+    return
+  }
+  if (!data || data.length === 0) {
+    el.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Nenhuma mensagem ainda.</p>'
+    return
+  }
+
+  // agrupa por usuário (data já vem do mais recente pro mais antigo)
+  const threads = {}
+  data.forEach(m => {
+    if (!threads[m.user_id]) threads[m.user_id] = { nome: m.nome, email: m.email, mensagens: [] }
+    threads[m.user_id].mensagens.push(m)
+  })
+  const listaThreads = Object.entries(threads)
+    .map(([userId, t]) => ({ userId, nome: t.nome, email: t.email, ultima: t.mensagens[0], total: t.mensagens.length }))
+    .sort((a, b) => new Date(b.ultima.created_at) - new Date(a.ultima.created_at))
+
+  el.innerHTML = listaThreads.map(t => `
+    <div class="thread-item" onclick="abrirConversaAdmin('${t.userId}')">
+      <div class="produto-nome">
+        <strong>${escapeHtml(t.nome || t.email || 'Anônimo')}</strong>
+        ${t.ultima.remetente === 'usuario' ? '<span class="thread-nao-lida">● aguardando resposta</span>' : ''}
+      </div>
+      <p style="font-size:.85rem;color:var(--muted);margin:4px 0;">${escapeHtml((t.ultima.remetente === 'admin' ? 'Você: ' : '') + t.ultima.texto).slice(0, 90)}</p>
+      <div class="meta">${t.total} ${t.total === 1 ? 'mensagem' : 'mensagens'} · ${new Date(t.ultima.created_at).toLocaleString('pt-BR')}</div>
+    </div>
+  `).join('')
+}
+
+let adminConversaUserId = null
+
+async function abrirConversaAdmin(userId) {
+  adminConversaUserId = userId
+  document.getElementById('adminModal').classList.remove('open')
+  document.getElementById('adminConversaModal').classList.add('open')
+  await carregarConversaAdmin()
+}
+
+function fecharConversaAdmin() {
+  document.getElementById('adminConversaModal').classList.remove('open')
+  adminConversaUserId = null
+  document.getElementById('adminModal').classList.add('open')
+  carregarAdminMensagens()
+}
+
+async function carregarConversaAdmin() {
+  const cont = document.getElementById('adminConversaMensagens')
+  cont.innerHTML = '<p style="color:var(--muted);font-size:.85rem;">Carregando...</p>'
+
+  const { data, error } = await sb.from('Mensagens').select('*').eq('user_id', adminConversaUserId).order('created_at', { ascending: true })
+  if (error || !data) {
+    cont.innerHTML = '<p style="color:var(--muted);font-size:.85rem;">Não foi possível carregar.</p>'
+    return
+  }
+
+  document.getElementById('adminConversaTitulo').textContent = '💬 ' + (data[0]?.nome || data[0]?.email || 'Conversa')
+  cont.innerHTML = data.map(m => `
+    <div class="${m.remetente === 'admin' ? 'bolha-propria' : 'bolha-outro'}">
+      ${escapeHtml(m.texto)}
+      <div class="bolha-hora">${m.created_at ? new Date(m.created_at).toLocaleString('pt-BR') : ''}</div>
+    </div>
+  `).join('')
+  cont.scrollTop = cont.scrollHeight
+}
+
+async function enviarRespostaAdmin() {
+  const texto = document.getElementById('adminConversaTexto').value.trim()
+  if (!texto || !adminConversaUserId) return
+
+  const { data: msgs } = await sb.from('Mensagens').select('nome,email').eq('user_id', adminConversaUserId).limit(1)
+  const nome = msgs && msgs[0] ? msgs[0].nome : null
+  const email = msgs && msgs[0] ? msgs[0].email : null
+
+  const { error } = await sb.from('Mensagens').insert({
+    user_id: adminConversaUserId,
+    nome: nome,
+    email: email,
+    remetente: 'admin',
+    texto: texto
+  })
+  if (error) return toast(error.message)
+  document.getElementById('adminConversaTexto').value = ''
+  await carregarConversaAdmin()
+  carregarAdminMensagens()
+}
+
+function abrirConversa() {
+  document.getElementById('conversaModal').classList.add('open')
+  carregarConversa()
+}
+
+function fecharConversa() {
+  document.getElementById('conversaModal').classList.remove('open')
+}
+
+async function carregarConversa() {
+  if (!currentUser) return
+  const cont = document.getElementById('conversaMensagens')
+  cont.innerHTML = '<p style="color:var(--muted);font-size:.85rem;">Carregando...</p>'
+
+  const { data, error } = await sb.from('Mensagens').select('*').eq('user_id', currentUser.id).order('created_at', { ascending: true })
+  if (error) {
+    cont.innerHTML = '<p style="color:var(--muted);font-size:.85rem;">Não foi possível carregar.</p>'
+    return
+  }
+  if (!data || data.length === 0) {
+    cont.innerHTML = '<p style="color:var(--muted);font-size:.85rem;">Ainda não há mensagens. Escreva sua dúvida, comentário ou elogio abaixo. 💙</p>'
+    return
+  }
+
+  cont.innerHTML = data.map(m => `
+    <div class="${m.remetente === 'usuario' ? 'bolha-propria' : 'bolha-outro'}">
+      ${escapeHtml(m.texto)}
+      <div class="bolha-hora">${m.created_at ? new Date(m.created_at).toLocaleString('pt-BR') : ''}</div>
+    </div>
+  `).join('')
+  cont.scrollTop = cont.scrollHeight
+
+  marcarRespostasComoVistas(data)
+}
+
+async function enviarMensagemConversa() {
+  if (!currentUser) return toast('Faça login primeiro')
+  const campo = document.getElementById('conversaTexto')
+  const texto = campo.value.trim()
+  if (!texto) return
+
+  const { error } = await sb.from('Mensagens').insert({
+    user_id: currentUser.id,
+    nome: currentUser.user_metadata?.nome || currentUser.user_metadata?.full_name || null,
+    email: currentUser.email,
+    remetente: 'usuario',
+    texto: texto
+  })
+  if (error) return toast(error.message)
+  campo.value = ''
+  toast('Mensagem enviada! A equipe responde por aqui assim que possível 💙')
+  carregarConversa()
+}
+
+function marcarRespostasComoVistas(mensagens) {
+  if (!currentUser) return
+  const idsAdmin = mensagens.filter(m => m.remetente === 'admin').map(m => m.id)
+  if (idsAdmin.length === 0) return
+  const maiorId = Math.max(...idsAdmin)
+  localStorage.setItem('autiguia_ultima_resposta_vista_' + currentUser.id, String(maiorId))
+}
+
+async function verificarRespostas(user) {
+  const { data, error } = await sb.from('Mensagens')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('remetente', 'admin')
+    .order('id', { ascending: false })
+    .limit(1)
+
+  if (error || !data || data.length === 0) return
+
+  const ultimoVistoStr = localStorage.getItem('autiguia_ultima_resposta_vista_' + user.id)
+  const ultimoVisto = ultimoVistoStr ? Number(ultimoVistoStr) : 0
+  const ultimoId = data[0].id
+
+  if (ultimoId > ultimoVisto) {
+    abrirConversa()
+  }
+}
+
 async function registrarCliqueProduto(produto) {
   if (!currentUser) return
   try {
@@ -1124,6 +1378,31 @@ async function encerrarSessao() {
   await sb.from('Sessoes').update({ logout_at: new Date().toISOString(), last_ping: new Date().toISOString() }).eq('id', idEncerrar)
 }
 
+let canalMensagens = null
+
+function assinarNovasMensagens(user) {
+  if (canalMensagens) return
+  canalMensagens = sb.channel('mensagens-' + user.id)
+    .on('postgres_changes', {
+      event: 'INSERT',
+      schema: 'public',
+      table: 'Mensagens',
+      filter: `user_id=eq.${user.id}`
+    }, (payload) => {
+      if (payload.new && payload.new.remetente === 'admin') {
+        abrirConversa()
+      }
+    })
+    .subscribe()
+}
+
+function cancelarAssinaturaMensagens() {
+  if (canalMensagens) {
+    sb.removeChannel(canalMensagens)
+    canalMensagens = null
+  }
+}
+
 async function setUser(user) {
   currentUser = user
   document.getElementById('userArea').classList.remove('hidden')
@@ -1131,12 +1410,15 @@ async function setUser(user) {
   document.getElementById('lockedMsg').classList.add('hidden')
   document.getElementById('cadastroForm').classList.remove('hidden')
   document.getElementById('productsCard').classList.remove('hidden')
-  document.getElementById('userEmail').innerText = user.email
+  document.getElementById('mensagemCard').classList.remove('hidden')
+  document.getElementById('userEmail').innerText = user.user_metadata?.nome || user.user_metadata?.full_name || user.email
 
   const { data } = await sb.from('admins').select('user_id').eq('user_id', user.id).maybeSingle()
   document.getElementById('adminBtn').classList.toggle('hidden', !data)
 
   iniciarSessao(user)
+  verificarRespostas(user)
+  assinarNovasMensagens(user)
 }
 
 function clearUser() {
@@ -1146,7 +1428,9 @@ function clearUser() {
   document.getElementById('lockedMsg').classList.remove('hidden')
   document.getElementById('cadastroForm').classList.add('hidden')
   document.getElementById('productsCard').classList.add('hidden')
+  document.getElementById('mensagemCard').classList.add('hidden')
   document.getElementById('adminBtn').classList.add('hidden')
+  cancelarAssinaturaMensagens()
 }
 
 async function criarConta() {
@@ -1209,16 +1493,20 @@ async function salvar() {
   const atendimentoStr = document.getElementById('atendimento').value
   const ruidoStr = document.getElementById('ruido').value
   const iluminacaoStr = document.getElementById('iluminacao').value
+  const filaPreferencialStr = document.getElementById('filaPreferencial').value
+  const aglomeracaoStr = document.getElementById('aglomeracao').value
 
-  if (!nome || !endereco || !cidade || !categoria || atendimentoStr === '' || ruidoStr === '' || iluminacaoStr === '') {
+  if (!nome || !endereco || !cidade || !categoria || atendimentoStr === '' || ruidoStr === '' || iluminacaoStr === '' || filaPreferencialStr === '' || aglomeracaoStr === '') {
     return toast('Preencha todos os campos obrigatórios (o nível de acolhimento é opcional)')
   }
 
   const atendimento = Number(atendimentoStr)
   const ruido = Number(ruidoStr)
   const iluminacao = Number(iluminacaoStr)
+  const aglomeracao = Number(aglomeracaoStr)
+  const filaPreferencial = filaPreferencialStr === 'sim'
 
-  if (!isValidScore(atendimento) || !isValidScore(ruido) || !isValidScore(iluminacao)) {
+  if (!isValidScore(atendimento) || !isValidScore(ruido) || !isValidScore(iluminacao) || !isValidScore(aglomeracao)) {
     return toast('As notas devem ser números inteiros de 0 a 10')
   }
 
@@ -1231,6 +1519,8 @@ async function salvar() {
   Atendimento: atendimento,
   Ruido: ruido,
   Iluminacao: iluminacao,
+  FilaPreferencial: filaPreferencial,
+  Aglomeracao: aglomeracao,
   Email: currentUser.email,
   Nome: currentUser.user_metadata?.nome || currentUser.user_metadata?.full_name || null,
   user_id: currentUser.id
@@ -1245,6 +1535,8 @@ async function salvar() {
   document.getElementById('atendimento').value = ''
   document.getElementById('ruido').value = ''
   document.getElementById('iluminacao').value = ''
+  document.getElementById('filaPreferencial').value = ''
+  document.getElementById('aglomeracao').value = ''
   loadRanking()
 }
 
@@ -1282,7 +1574,11 @@ function agruparEstabelecimentos(lista) {
         somaRuido: 0,
         countRuido: 0,
         somaIluminacao: 0,
-        countIluminacao: 0
+        countIluminacao: 0,
+        countFilaSim: 0,
+        countFilaTotal: 0,
+        somaAglomeracao: 0,
+        countAglomeracao: 0
       }
     }
     const g = grupos[chave]
@@ -1296,6 +1592,14 @@ function agruparEstabelecimentos(lista) {
       g.somaIluminacao += Number(item.Iluminacao) || 0
       g.countIluminacao++
     }
+    if (item.FilaPreferencial !== null && item.FilaPreferencial !== undefined) {
+      g.countFilaTotal++
+      if (item.FilaPreferencial === true) g.countFilaSim++
+    }
+    if (item.Aglomeracao !== null && item.Aglomeracao !== undefined && item.Aglomeracao !== '') {
+      g.somaAglomeracao += Number(item.Aglomeracao) || 0
+      g.countAglomeracao++
+    }
   })
 
   return Object.values(grupos).map(g => {
@@ -1308,6 +1612,8 @@ function agruparEstabelecimentos(lista) {
     g.notaMedia = g.totalAvaliacoes ? g.somaNotas / g.totalAvaliacoes : 0
     g.ruidoMedia = g.countRuido ? g.somaRuido / g.countRuido : null
     g.iluminacaoMedia = g.countIluminacao ? g.somaIluminacao / g.countIluminacao : null
+    g.filaPreferencialPct = g.countFilaTotal ? Math.round((g.countFilaSim / g.countFilaTotal) * 100) : null
+    g.aglomeracaoMedia = g.countAglomeracao ? g.somaAglomeracao / g.countAglomeracao : null
     return g
   })
 }
