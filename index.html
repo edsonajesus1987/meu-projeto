@@ -40,6 +40,10 @@ nav{height:90px;display:flex;align-items:center;justify-content:space-between;pa
 .hero p{font-size:1.08rem;line-height:1.9;color:var(--muted);max-width:650px;margin-bottom:35px;}
 .search-box{display:flex;gap:14px;padding:16px;border-radius:28px;background:rgba(255,255,255,.78);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.45);box-shadow:var(--shadow);}
 .search-box input,.search-box select{flex:1;padding:16px;border:none;outline:none;border-radius:18px;background:#F8FAFF;font-family:'Sora',sans-serif;font-size:.95rem;color:#24324B;}
+.btn-buscar{flex:0 0 auto;padding:16px 32px;border-radius:18px;white-space:nowrap;}
+.mini-busca{display:flex;gap:10px;padding:18px 28px;background:#F8FAFF;border-bottom:1px solid #EEF2FF;flex-wrap:wrap;}
+.mini-busca select{flex:1;min-width:140px;padding:12px 14px;border:none;outline:none;border-radius:14px;background:white;font-family:'Sora',sans-serif;font-size:.88rem;color:#24324B;}
+.mini-busca .btn-buscar{padding:12px 22px;font-size:.88rem;border-radius:14px;}
 .search-box select{cursor:pointer;appearance:none;-webkit-appearance:none;-moz-appearance:none;}
 .top-benefits{max-width:1250px;margin:0 auto 35px;display:grid;grid-template-columns:repeat(5,1fr);background:white;border-radius:18px;overflow:hidden;box-shadow:var(--shadow);border:1px solid #EEF2FF;}
 .benefit-item{display:flex;align-items:center;gap:12px;padding:18px;border-right:1px solid #EEF2FF;}
@@ -81,7 +85,7 @@ textarea{resize:none;}
 /* PAINEL DE DETALHES */
 .detalhe-overlay{position:fixed;inset:0;background:rgba(15,20,35,.50);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:.25s;z-index:8888;backdrop-filter:blur(6px);}
 .detalhe-overlay.open{opacity:1;pointer-events:all;}
-.detalhe-modal{width:100%;max-width:480px;max-height:85vh;background:white;border-radius:36px;padding:0;position:relative;box-shadow:0 24px 80px rgba(0,0,0,.18);overflow:hidden;transform:translateY(20px);transition:.25s;display:flex;flex-direction:column;}
+.detalhe-modal{width:100%;max-width:480px;max-height:85vh;max-height:85dvh;background:white;border-radius:36px;padding:0;position:relative;box-shadow:0 24px 80px rgba(0,0,0,.18);overflow:hidden;transform:translateY(20px);transition:.25s;display:flex;flex-direction:column;}
 .detalhe-overlay.open .detalhe-modal{transform:translateY(0);}
 .detalhe-header{padding:28px 32px 20px;background:linear-gradient(135deg,#5B8CFF,#7A9DFF);color:white;flex-shrink:0;}
 .detalhe-header h3{font-size:1.4rem;font-weight:700;margin-bottom:6px;line-height:1.2;}
@@ -152,6 +156,7 @@ textarea{resize:none;}
 .thread-item{padding:14px 0;border-bottom:1px solid #EDF2FF;cursor:pointer;transition:.2s;}
 .thread-item:hover{background:rgba(91,140,255,.06);}
 .thread-nao-lida{color:#FF6B81;font-weight:700;font-size:.75rem;margin-left:8px;}
+.admin-badge{background:#FF6B81;color:white;font-size:.68rem;font-weight:700;padding:1px 7px;border-radius:999px;margin-left:6px;}
 .admin-linha-detalhe .produto-nome{font-size:.9rem;color:var(--text);}
 .admin-linha-detalhe .meta{font-size:.78rem;color:var(--muted);margin-top:3px;}
 .link-esqueci:hover{text-decoration:underline;}
@@ -224,6 +229,9 @@ nav{padding:14px 16px;height:auto;flex-direction:column;gap:16px;align-items:fle
 .missao-destaque p{font-size:.92rem;}
 .search-box{flex-direction:column;padding:14px;border-radius:24px;}
 .search-box input,.search-box select{width:100%;}
+.btn-buscar{width:100%;}
+.mini-busca{flex-direction:column;padding:14px 20px;}
+.mini-busca select,.mini-busca .btn-buscar{width:100%;}
 .card{border-radius:26px;}
 .card-header{padding:20px;font-size:.95rem;}
 .produtos-aviso{padding:12px 20px 0;}
@@ -236,7 +244,7 @@ nav{padding:14px 16px;height:auto;flex-direction:column;gap:16px;align-items:fle
 footer{padding:35px 16px;}
 footer p{font-size:.9rem;line-height:1.7;}
 .modal{margin:20px;padding:28px;border-radius:28px;}
-.detalhe-modal{margin:16px;border-radius:28px;max-height:88vh;}
+.detalhe-modal{margin:16px;border-radius:28px;max-height:88vh;max-height:88dvh;}
 .detalhe-header{padding:22px 24px 16px;}
 .detalhe-body{padding:20px 24px;}
 .detalhe-footer{padding:14px 24px 20px;}
@@ -284,7 +292,7 @@ img{max-width:100%;height:auto;}
     <a href="https://instagram.com/autiguia" target="_blank" class="instagram-btn">📸 Instagram</a>
     <div id="userArea" class="hidden">
       <span id="userEmail"></span>
-      <button class="btn btn-light hidden" id="adminBtn" onclick="abrirPainelAdmin()">📊 Admin</button>
+      <button class="btn btn-light hidden" id="adminBtn" onclick="abrirPainelAdmin()">📊 Admin<span id="adminBadge" class="admin-badge hidden"></span></button>
       <button class="btn btn-light" onclick="logout()">Sair</button>
     </div>
     <button class="btn btn-primary" id="loginBtn" onclick="openModal()">Entrar</button>
@@ -302,48 +310,6 @@ img{max-width:100%;height:auto;}
   <div class="hero-content">
     <h1>Encontre lugares mais acolhedores para pessoas autistas e suas famílias</h1>
     <p>O AutiGuia ajuda famílias atípicas e pessoas autistas a encontrarem ambientes mais tranquilos, acolhedores e preparados para proporcionar experiências melhores, mais seguras e confortáveis.</p>
-    <div class="search-box">
-      <select id="searchCategory" onchange="filterRanking()">
-        <option value="">Todas as categorias</option>
-        <option value="Alimentação e Bebidas">Alimentação e Bebidas</option>
-        <option value="Animais de Estimação (Pet Shops)">Animais de Estimação (Pet Shops)</option>
-        <option value="Artes e Artesanato">Artes e Artesanato</option>
-        <option value="Automotivo">Automotivo</option>
-        <option value="Beleza e Estética">Beleza e Estética</option>
-        <option value="Brinquedos e Jogos">Brinquedos e Jogos</option>
-        <option value="Construção e Reforma">Construção e Reforma</option>
-        <option value="Cultura e Entretenimento">Cultura e Entretenimento</option>
-        <option value="Educação e Cursos">Educação e Cursos</option>
-        <option value="Esportes e Lazer">Esportes e Lazer</option>
-        <option value="Farmácias e Saúde">Farmácias e Saúde</option>
-        <option value="Floricultura e Jardinagem">Floricultura e Jardinagem</option>
-        <option value="Hotelaria e Hospedagem">Hotelaria e Hospedagem</option>
-        <option value="Imóveis">Imóveis</option>
-        <option value="Informática e Tecnologia">Informática e Tecnologia</option>
-        <option value="Instrumentos Musicais">Instrumentos Musicais</option>
-        <option value="Joias e Acessórios">Joias e Acessórios</option>
-        <option value="Livrarias e Papelaria">Livrarias e Papelaria</option>
-        <option value="Materiais de Escritório">Materiais de Escritório</option>
-        <option value="Móveis e Decoração">Móveis e Decoração</option>
-        <option value="Ótica e Fotografia">Ótica e Fotografia</option>
-        <option value="Serviços Financeiros">Serviços Financeiros</option>
-        <option value="Serviços Gerais">Serviços Gerais</option>
-        <option value="Supermercados e Mercearias">Supermercados e Mercearias</option>
-        <option value="Turismo e Viagens">Turismo e Viagens</option>
-        <option value="Vestuário e Moda">Vestuário e Moda</option>
-      </select>
-      <select id="searchCity" onchange="filterRanking()">
-        <option value="">Todas as cidades</option>
-        <option value="Barueri">Barueri</option>
-        <option value="Carapicuiba">Carapicuiba</option>
-        <option value="Cotia">Cotia</option>
-        <option value="Itapevi">Itapevi</option>
-        <option value="Osasco">Osasco</option>
-        <option value="São Paulo">São Paulo</option>
-        <option value="São Roque">São Roque</option>
-        <option value="Vargem Grande Paulista">Vargem Grande Paulista</option>
-      </select>
-    </div>
   </div>
 </section>
 
@@ -428,6 +394,49 @@ img{max-width:100%;height:auto;}
       <!-- RANKING -->
       <div class="card">
         <div class="card-header" id="rankingHeader">Locais recomendados pela comunidade</div>
+        <div class="mini-busca">
+          <select id="searchCategory">
+            <option value="">Todas as categorias</option>
+            <option value="Alimentação e Bebidas">Alimentação e Bebidas</option>
+            <option value="Animais de Estimação (Pet Shops)">Animais de Estimação (Pet Shops)</option>
+            <option value="Artes e Artesanato">Artes e Artesanato</option>
+            <option value="Automotivo">Automotivo</option>
+            <option value="Beleza e Estética">Beleza e Estética</option>
+            <option value="Brinquedos e Jogos">Brinquedos e Jogos</option>
+            <option value="Construção e Reforma">Construção e Reforma</option>
+            <option value="Cultura e Entretenimento">Cultura e Entretenimento</option>
+            <option value="Educação e Cursos">Educação e Cursos</option>
+            <option value="Esportes e Lazer">Esportes e Lazer</option>
+            <option value="Farmácias e Saúde">Farmácias e Saúde</option>
+            <option value="Floricultura e Jardinagem">Floricultura e Jardinagem</option>
+            <option value="Hotelaria e Hospedagem">Hotelaria e Hospedagem</option>
+            <option value="Imóveis">Imóveis</option>
+            <option value="Informática e Tecnologia">Informática e Tecnologia</option>
+            <option value="Instrumentos Musicais">Instrumentos Musicais</option>
+            <option value="Joias e Acessórios">Joias e Acessórios</option>
+            <option value="Livrarias e Papelaria">Livrarias e Papelaria</option>
+            <option value="Materiais de Escritório">Materiais de Escritório</option>
+            <option value="Móveis e Decoração">Móveis e Decoração</option>
+            <option value="Ótica e Fotografia">Ótica e Fotografia</option>
+            <option value="Serviços Financeiros">Serviços Financeiros</option>
+            <option value="Serviços Gerais">Serviços Gerais</option>
+            <option value="Supermercados e Mercearias">Supermercados e Mercearias</option>
+            <option value="Turismo e Viagens">Turismo e Viagens</option>
+            <option value="Vestuário e Moda">Vestuário e Moda</option>
+          </select>
+          <select id="searchCity">
+            <option value="">Todas as cidades</option>
+            <option value="Barueri">Barueri</option>
+            <option value="Carapicuiba">Carapicuiba</option>
+            <option value="Cotia">Cotia</option>
+            <option value="Itapevi">Itapevi</option>
+            <option value="Osasco">Osasco</option>
+            <option value="São Paulo">São Paulo</option>
+            <option value="São Roque">São Roque</option>
+            <option value="Vargem Grande Paulista">Vargem Grande Paulista</option>
+          </select>
+          <button class="btn btn-primary btn-buscar" onclick="filterRanking()">🔍 Buscar</button>
+        </div>
         <div class="card-body ranking-scroll" id="ranking">Carregando recomendações...</div>
       </div>
 
@@ -587,7 +596,7 @@ img{max-width:100%;height:auto;}
 
 <!-- MODAL DIREITOS E LEGISLAÇÃO -->
 <div class="modal-overlay" id="direitosModal" onclick="if(event.target===this)closeDireitos()">
-  <div class="modal" style="max-width:560px;max-height:85vh;overflow-y:auto;">
+  <div class="modal" style="max-width:560px;max-height:85vh;max-height:85dvh;overflow-y:auto;">
     <button class="close-modal" onclick="closeDireitos()">✕</button>
     <h2>📜 Direitos e legislação sobre autismo</h2>
     <p style="color:var(--muted);line-height:1.7;margin:14px 0 22px;">Resumo das principais leis brasileiras que garantem direitos às pessoas autistas e suas famílias. Isso não substitui orientação jurídica — em caso de dúvida, procure um advogado ou a Defensoria Pública.</p>
@@ -650,7 +659,7 @@ img{max-width:100%;height:auto;}
 
 <!-- MODAL CONVERSA (USUÁRIO) -->
 <div class="modal-overlay" id="conversaModal" onclick="if(event.target===this)fecharConversa()">
-  <div class="modal" style="max-width:480px;max-height:82vh;display:flex;flex-direction:column;">
+  <div class="modal" style="max-width:480px;max-height:82vh;max-height:82dvh;display:flex;flex-direction:column;">
     <button class="close-modal" onclick="fecharConversa()">✕</button>
     <h2>💬 Fale com a gente</h2>
     <p style="color:var(--muted);font-size:.8rem;margin-top:6px;">Não é um chat ao vivo — nossa equipe responde por aqui assim que possível, geralmente em até 2 dias úteis.</p>
@@ -664,7 +673,7 @@ img{max-width:100%;height:auto;}
 
 <!-- MODAL CONVERSA (ADMIN) -->
 <div class="modal-overlay" id="adminConversaModal" onclick="if(event.target===this)fecharConversaAdmin()">
-  <div class="modal" style="max-width:480px;max-height:82vh;display:flex;flex-direction:column;">
+  <div class="modal" style="max-width:480px;max-height:82vh;max-height:82dvh;display:flex;flex-direction:column;">
     <button class="close-modal" onclick="fecharConversaAdmin()">✕</button>
     <h2 id="adminConversaTitulo">💬 Conversa</h2>
     <div id="adminConversaMensagens" class="conversa-mensagens"></div>
@@ -675,9 +684,18 @@ img{max-width:100%;height:auto;}
   </div>
 </div>
 
+<!-- MODAL STATUS DA AVALIAÇÃO -->
+<div class="modal-overlay" id="statusAvaliacaoModal" onclick="if(event.target===this)fecharStatusAvaliacao()">
+  <div class="modal">
+    <button class="close-modal" onclick="fecharStatusAvaliacao()">✕</button>
+    <h2 id="statusAvaliacaoTitulo">-</h2>
+    <p id="statusAvaliacaoTexto" style="color:var(--muted);line-height:1.7;margin-top:14px;"></p>
+  </div>
+</div>
+
 <!-- MODAL PAINEL ADMIN -->
 <div class="modal-overlay" id="adminModal" onclick="if(event.target===this)fecharPainelAdmin()">
-  <div class="modal" style="max-width:640px;max-height:85vh;overflow-y:auto;">
+  <div class="modal" style="max-width:640px;max-height:85vh;max-height:85dvh;overflow-y:auto;">
     <button class="close-modal" onclick="fecharPainelAdmin()">✕</button>
     <h2>📊 Painel Admin</h2>
     <div class="tabs" style="margin:18px 0 10px;">
@@ -685,6 +703,7 @@ img{max-width:100%;height:auto;}
       <button class="tab" id="tabAdminBuscas" onclick="mudarAbaAdmin('buscas')">Buscas</button>
       <button class="tab" id="tabAdminSessoes" onclick="mudarAbaAdmin('sessoes')">Sessões</button>
       <button class="tab" id="tabAdminMensagens" onclick="mudarAbaAdmin('mensagens')">Mensagens</button>
+      <button class="tab" id="tabAdminAprovacoes" onclick="mudarAbaAdmin('aprovacoes')">Aprovações</button>
     </div>
 
     <div id="adminPainelCliques">
@@ -719,6 +738,11 @@ img{max-width:100%;height:auto;}
       <p style="color:var(--muted);line-height:1.7;margin:10px 0 20px;font-size:.9rem;">Dúvidas, comentários e elogios enviados pelos usuários.</p>
       <div id="adminMensagensLista"></div>
     </div>
+
+    <div id="adminPainelAprovacoes" class="hidden">
+      <p style="color:var(--muted);line-height:1.7;margin:10px 0 20px;font-size:.9rem;">Avaliações novas ficam aqui até serem aprovadas ou rejeitadas — só depois disso aparecem no site.</p>
+      <div id="adminAprovacoesLista"></div>
+    </div>
   </div>
 </div>
 
@@ -738,7 +762,7 @@ let rankingData = []
 
 // Nomes dos estabelecimentos patrocinadores (em minúsculo, sem espaços nas pontas).
 // Só aparecem no quadro "Patrocinadores" se a nota média for >= 8,5.
-const ESTABELECIMENTOS_PATROCINADORES = ["XPTO"]
+const ESTABELECIMENTOS_PATROCINADORES = ["Habib's", "XPTO"]
 let map = null
 let markers = []
 let infoWindowAberta = null
@@ -953,15 +977,18 @@ function mudarAbaAdmin(aba) {
   document.getElementById('adminPainelBuscas').classList.toggle('hidden', aba !== 'buscas')
   document.getElementById('adminPainelSessoes').classList.toggle('hidden', aba !== 'sessoes')
   document.getElementById('adminPainelMensagens').classList.toggle('hidden', aba !== 'mensagens')
+  document.getElementById('adminPainelAprovacoes').classList.toggle('hidden', aba !== 'aprovacoes')
   document.getElementById('tabAdminCliques').classList.toggle('active', aba === 'cliques')
   document.getElementById('tabAdminBuscas').classList.toggle('active', aba === 'buscas')
   document.getElementById('tabAdminSessoes').classList.toggle('active', aba === 'sessoes')
   document.getElementById('tabAdminMensagens').classList.toggle('active', aba === 'mensagens')
+  document.getElementById('tabAdminAprovacoes').classList.toggle('active', aba === 'aprovacoes')
 
   if (aba === 'cliques') carregarAdminCliques()
   if (aba === 'buscas') carregarAdminBuscas()
   if (aba === 'sessoes') carregarAdminSessoes()
   if (aba === 'mensagens') carregarAdminMensagens()
+  if (aba === 'aprovacoes') carregarAdminAprovacoes()
 }
 
 function construirBarras(ordenado, cor) {
@@ -984,7 +1011,7 @@ function construirBarras(ordenado, cor) {
 
 async function abrirPainelAdmin() {
   document.getElementById('adminModal').classList.add('open')
-  mudarAbaAdmin('cliques')
+  mudarAbaAdmin('aprovacoes')
 }
 
 async function carregarAdminCliques() {
@@ -1300,6 +1327,130 @@ async function verificarRespostas(user) {
   }
 }
 
+async function carregarAdminAprovacoes() {
+  const el = document.getElementById('adminAprovacoesLista')
+  el.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Carregando...</p>'
+
+  const { data, error } = await sb.from('Cadastro').select('*').eq('Aprovado', false).eq('Rejeitado', false).order('created_at', { ascending: false })
+
+  if (error) {
+    el.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Não foi possível carregar (' + escapeHtml(error.message) + ').</p>'
+    return
+  }
+  if (!data || data.length === 0) {
+    el.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Nenhuma avaliação pendente no momento. 🎉</p>'
+    return
+  }
+
+  el.innerHTML = data.map(r => `
+    <div class="admin-linha-detalhe" style="padding:16px 0;">
+      <div class="produto-nome"><strong>${escapeHtml(r.Estabelecimento || '-')}</strong> — ${escapeHtml(r.Cidade || '-')} · ${escapeHtml(r.Categoria || '-')}</div>
+      <p style="font-size:.85rem;color:var(--muted);margin:6px 0;">${r.Motivo ? escapeHtml(r.Motivo) : 'Sem comentário'}</p>
+      <div class="meta">⭐ ${Number(r.Atendimento) || 0}/10 · por ${escapeHtml(r.Nome || r.Email || 'Anônimo')} · ${r.created_at ? new Date(r.created_at).toLocaleString('pt-BR') : ''}</div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button class="btn btn-primary" style="padding:8px 16px;font-size:.85rem;" onclick="aprovarAvaliacao(${r.id})">✅ Aprovar</button>
+        <button class="btn btn-light" style="padding:8px 16px;font-size:.85rem;" onclick="rejeitarAvaliacao(${r.id})">🗑️ Rejeitar</button>
+      </div>
+    </div>
+  `).join('')
+}
+
+async function aprovarAvaliacao(id) {
+  const { error } = await sb.from('Cadastro').update({ Aprovado: true, Rejeitado: false, Notificado: false }).eq('id', id)
+  if (error) return toast(error.message)
+  toast('Avaliação aprovada e publicada 💙')
+  carregarAdminAprovacoes()
+  atualizarBadgeAdmin()
+}
+
+async function rejeitarAvaliacao(id) {
+  const motivo = prompt('Motivo da rejeição (opcional — deixe em branco se não quiser informar):')
+  if (motivo === null) return // admin cancelou
+
+  const { error } = await sb.from('Cadastro').update({
+    Aprovado: false,
+    Rejeitado: true,
+    MotivoRejeicao: motivo.trim() || null,
+    Notificado: false
+  }).eq('id', id)
+  if (error) return toast(error.message)
+  toast('Avaliação rejeitada')
+  carregarAdminAprovacoes()
+  atualizarBadgeAdmin()
+}
+
+async function atualizarBadgeAdmin() {
+  const badge = document.getElementById('adminBadge')
+  if (!badge) return
+  const { count, error } = await sb.from('Cadastro').select('*', { count: 'exact', head: true }).eq('Aprovado', false)
+  if (error || !count) {
+    badge.classList.add('hidden')
+    return
+  }
+  badge.textContent = count
+  badge.classList.remove('hidden')
+}
+
+async function verificarStatusAvaliacoes(user) {
+  const { data, error } = await sb.from('Cadastro')
+    .select('*')
+    .eq('user_id', user.id)
+    .eq('Notificado', false)
+    .or('Aprovado.eq.true,Rejeitado.eq.true')
+    .order('id', { ascending: true })
+    .limit(1)
+
+  if (error || !data || data.length === 0) return
+  mostrarStatusAvaliacao(data[0])
+}
+
+function mostrarStatusAvaliacao(registro) {
+  const titulo = document.getElementById('statusAvaliacaoTitulo')
+  const texto = document.getElementById('statusAvaliacaoTexto')
+
+  if (registro.Aprovado) {
+    titulo.textContent = '✅ Sua avaliação foi aprovada!'
+    texto.textContent = `A avaliação que você enviou para "${registro.Estabelecimento}" já está publicada no site. Obrigado por ajudar outras famílias! 💙`
+  } else {
+    titulo.textContent = '❌ Sua avaliação não foi aprovada'
+    texto.textContent = registro.MotivoRejeicao
+      ? `A avaliação enviada para "${registro.Estabelecimento}" não foi aprovada. Motivo: ${registro.MotivoRejeicao}`
+      : `A avaliação enviada para "${registro.Estabelecimento}" não foi aprovada pela nossa equipe.`
+  }
+
+  document.getElementById('statusAvaliacaoModal').classList.add('open')
+  sb.from('Cadastro').update({ Notificado: true }).eq('id', registro.id).then(() => {})
+}
+
+function fecharStatusAvaliacao() {
+  document.getElementById('statusAvaliacaoModal').classList.remove('open')
+}
+
+let canalAvaliacoes = null
+
+function assinarStatusAvaliacoes(user) {
+  if (canalAvaliacoes) return
+  canalAvaliacoes = sb.channel('avaliacoes-' + user.id)
+    .on('postgres_changes', {
+      event: 'UPDATE',
+      schema: 'public',
+      table: 'Cadastro',
+      filter: `user_id=eq.${user.id}`
+    }, (payload) => {
+      if (payload.new && !payload.new.Notificado && (payload.new.Aprovado || payload.new.Rejeitado)) {
+        mostrarStatusAvaliacao(payload.new)
+      }
+    })
+    .subscribe()
+}
+
+function cancelarAssinaturaAvaliacoes() {
+  if (canalAvaliacoes) {
+    sb.removeChannel(canalAvaliacoes)
+    canalAvaliacoes = null
+  }
+}
+
 async function registrarCliqueProduto(produto) {
   if (!currentUser) return
   try {
@@ -1415,10 +1566,13 @@ async function setUser(user) {
 
   const { data } = await sb.from('admins').select('user_id').eq('user_id', user.id).maybeSingle()
   document.getElementById('adminBtn').classList.toggle('hidden', !data)
+  if (data) atualizarBadgeAdmin()
 
   iniciarSessao(user)
   verificarRespostas(user)
   assinarNovasMensagens(user)
+  verificarStatusAvaliacoes(user)
+  assinarStatusAvaliacoes(user)
 }
 
 function clearUser() {
@@ -1431,6 +1585,7 @@ function clearUser() {
   document.getElementById('mensagemCard').classList.add('hidden')
   document.getElementById('adminBtn').classList.add('hidden')
   cancelarAssinaturaMensagens()
+  cancelarAssinaturaAvaliacoes()
 }
 
 async function criarConta() {
@@ -1523,10 +1678,11 @@ async function salvar() {
   Aglomeracao: aglomeracao,
   Email: currentUser.email,
   Nome: currentUser.user_metadata?.nome || currentUser.user_metadata?.full_name || null,
-  user_id: currentUser.id
+  user_id: currentUser.id,
+  Aprovado: false
 })
   if (error) return toast(error.message)
-  toast('Experiência compartilhada 💙')
+  toast('Sua avaliação foi enviada e está em análise! Assim que for aprovada, ela aparece no site 💙')
   document.getElementById('nome').value = ''
   document.getElementById('endereco').value = ''
   document.getElementById('cidade').value = ''
